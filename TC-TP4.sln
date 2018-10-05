@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "TC-TP4", "TC-TP4\TC-TP4.pyproj", "{EB28A866-38BD-4CFF-BB99-43419FE72FF9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EB28A866-38BD-4CFF-BB99-43419FE72FF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB28A866-38BD-4CFF-BB99-43419FE72FF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E79908F0-0848-4E16-82A0-DC87BDA782BF}
+	EndGlobalSection
+EndGlobal
