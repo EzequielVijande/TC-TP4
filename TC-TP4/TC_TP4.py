@@ -15,3 +15,7 @@
 # la eleccion del tipo de filtro(Pasa-Bajos, Pasa-Altos, Pasa-Banda,Rechaza-Banda) asi como tambien la aproximacion
 # que el usuario desea emplear(Algunas opciones son Butterworth y Chebycheff). Luego de seleccionar el tipo de filtro y
 # aproximacion deseada, se deben establecer los parametros de la plantilla que se desea.
+
+from ApGUI import ApGUI
+
+interfaz= ApGUI()
