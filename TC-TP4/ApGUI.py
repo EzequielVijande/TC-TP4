@@ -51,30 +51,32 @@ class ApGUI(object):
 
     #Funciones de inicializacion
     def placeFilterButtons(self):
-        self.ButtonsFrame = LabelFrame(self.root, text="Tipo de filtro", labelanchor="n")
+        self.ButtonsFrame = LabelFrame(self.root, text="Tipo de filtro", labelanchor="n",background="goldenrod")
         self.ButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.filter=tk.IntVar()
         self.rButton_low_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa bajos", 
-            variable = self.filter, value = LP).pack(fill=BOTH,expand=True)
+            variable = self.filter, value = LP,background="light goldenrod").pack(fill=BOTH,expand=True)
         self.rButton_high_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa altos", 
-            variable = self.filter, value = HP).pack(fill=BOTH,expand=True)
+            variable = self.filter, value = HP,background="light goldenrod").pack(fill=BOTH,expand=True)
         self.rButton_band_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa banda", 
-            variable = self.filter, value = BP).pack(fill=BOTH,expand=True)
+            variable = self.filter, value = BP,background="light goldenrod").pack(fill=BOTH,expand=True)
         self.rButton_band_reject = tk.Radiobutton(self.ButtonsFrame, text="Rechaza banda", 
-            variable = self.filter, value = BR).pack(fill=BOTH,expand=True)
+            variable = self.filter, value = BR,background="light goldenrod").pack(fill=BOTH,expand=True)
         self.rButton_group_delay = tk.Radiobutton(self.ButtonsFrame, text="Retardo de grupo", 
-            variable = self.filter, value = GR).pack(fill=BOTH,expand=True)
+            variable = self.filter, value = GR,background="light goldenrod").pack(fill=BOTH,expand=True)
 
 
     def placeAproximationButtons(self):
-        self.AproxButtonsFrame = LabelFrame(self.root, text="Aproximacion", labelanchor="n")
+        self.AproxButtonsFrame = LabelFrame(self.root, text="Aproximacion", labelanchor="n",background="goldenrod")
         self.AproxButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.selected_aprox = StringVar(master=self.AproxButtonsFrame)
         self.selected_aprox.set(APROXIMACIONES[0]) # Empieza conButterworth como default
 
         self.pull_down_menu = OptionMenu(self.AproxButtonsFrame, self.selected_aprox, *APROXIMACIONES)
+        self.pull_down_menu.config(bg="light goldenrod")
         self.pull_down_menu.pack(side=TOP,fill=BOTH,expand=True)
-        self.GraphButton= Button(master=self.AproxButtonsFrame,text="Graph",command=self.graph_button_call).pack(side=BOTTOM,fill=BOTH,expand=True)
+        self.GraphButton= Button(master=self.AproxButtonsFrame,text="Graph",command=self.graph_button_call
+                                 ,background="light goldenrod").pack(side=BOTTOM,fill=BOTH,expand=True)
 
     def placeSpecifications(self):
         self.ApString= StringVar()
@@ -84,59 +86,67 @@ class ApGUI(object):
         self.w0String= StringVar()
         self.qString= StringVar()
 
-        self.SpecsFrame = LabelFrame(self.root, text="Especificaciones", labelanchor="n")
+        self.SpecsFrame = LabelFrame(self.root, text="Especificaciones", labelanchor="n",background="goldenrod")
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         #Entrada de Ap
-        Label(master=self.SpecsFrame,text="Ap(dB)=",anchor=W).pack(anchor=NW)
+        Label(master=self.SpecsFrame,text="Ap(dB)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ApString).pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de As
-        Label(master=self.SpecsFrame,text="As(dB)=",anchor=W).pack(anchor=NW)
+        Label(master=self.SpecsFrame,text="As(dB)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.AsString).pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de wp
-        Label(master=self.SpecsFrame,text="wp(rad/seg)=",anchor=W).pack(anchor=NW)
+        Label(master=self.SpecsFrame,text="wp(rad/seg)",anchor=W
+              ,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wpString).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de ws
-        Label(master=self.SpecsFrame,text="ws(rad/seg)=",anchor=W).pack(anchor=NW)
+        Label(master=self.SpecsFrame,text="ws(rad/seg)",anchor=W
+              ,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wsString).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de w0
-        Label(master=self.SpecsFrame,text="wo(rad/seg)=",anchor=W).pack(anchor=NW)
+        Label(master=self.SpecsFrame,text="wo(rad/seg)",anchor=W
+              ,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.w0String).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Q
-        Label(master=self.SpecsFrame,text="Q=",anchor=W).pack(anchor=NW)
+        Label(master=self.SpecsFrame,text="Q",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.qString).pack(anchor=NE,fill=BOTH,expand=True)
 
     def PlaceGraphic(self):
-        self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n")
+        self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n",background="goldenrod")
         self.GraphicsFrame.pack(anchor=NE,side=RIGHT,fill=BOTH,expand=True)
         self.Graph = Canvas(master=self.GraphicsFrame, width=GRAPH_WIDTH, height=GRAPH_HEIGHT)
+        self.Graph.config(bg="snow2")
         self.Graph.pack(side=TOP,fill=BOTH,expand=True)
         #Botones para cambiar de graficas
-        self.AttButton = Button(master=self.GraphicsFrame,text="Atenuacion")
+        self.AttButton = Button(master=self.GraphicsFrame,text="Atenuacion",background="pale turquoise")
         self.AttButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.AttNButton = Button(master=self.GraphicsFrame,text="Atenuacion Norm")
+        self.AttNButton = Button(master=self.GraphicsFrame,text="Atenuacion Norm",background="pale turquoise")
         self.AttNButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.FaseButton = Button(master=self.GraphicsFrame,text="Fase")
+        self.FaseButton = Button(master=self.GraphicsFrame,text="Fase",background="pale turquoise")
         self.FaseButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.ZeroesButton = Button(master=self.GraphicsFrame,text="Polos y ceros")
+        self.ZeroesButton = Button(master=self.GraphicsFrame,text="Polos y ceros",background="pale turquoise")
         self.ZeroesButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.ImpulseButton = Button(master=self.GraphicsFrame,text="Resp al impulso")
+        self.ImpulseButton = Button(master=self.GraphicsFrame,text="Resp al impulso",background="pale turquoise")
         self.ImpulseButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.StepButton = Button(master=self.GraphicsFrame,text="Resp al Escalon")
+        self.StepButton = Button(master=self.GraphicsFrame,text="Resp al Escalon",background="pale turquoise")
         self.StepButton.pack(side=LEFT,fill=BOTH,expand=True)
         #Boton que superpone plantilla
         self.PutTemplate= IntVar()
         self.TemplateButton = Checkbutton(master=self.GraphicsFrame, text="Superponer plantilla",
-                        variable=self.PutTemplate,onvalue=1, offvalue=0,command=self.put_template_call)
+                        variable=self.PutTemplate,onvalue=1, offvalue=0,command=self.put_template_call,background="pale turquoise")
         self.TemplateButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.SaveButton= Button(master=self.GraphicsFrame,text="Save",command=self.save_call).pack(side=LEFT,fill=BOTH,expand=True)
-        self.LoadButton= Button(master=self.GraphicsFrame,text="Load",command=self.load_call).pack(side=LEFT,fill=BOTH,expand=True)
-        self.NextButton= Button(master=self.GraphicsFrame,text="Next",command=self.next_call).pack(side=LEFT,fill=BOTH,expand=True)
+        self.SaveButton= Button(master=self.GraphicsFrame,text="Save",command=self.save_call
+                                ,background="pale turquoise").pack(side=LEFT,fill=BOTH,expand=True)
+        self.LoadButton= Button(master=self.GraphicsFrame,text="Load",command=self.load_call
+                                ,background="pale turquoise").pack(side=LEFT,fill=BOTH,expand=True)
+        self.NextButton= Button(master=self.GraphicsFrame,text="Next",command=self.next_call
+                                ,background="pale turquoise").pack(side=LEFT,fill=BOTH,expand=True)
 
 
     def placeSliders(self):
-        self.SliderFrame = LabelFrame(self.root, text="Rango de desnormalización(%)", labelanchor="n")
+        self.SliderFrame = LabelFrame(self.root, text="Rango de desnormalización(%)", labelanchor="n",background="goldenrod")
         self.SliderFrame.pack(side=LEFT,anchor=NW,fill=BOTH,expand=True)
         self.SlideNorm = Scale(master=self.SliderFrame, from_=0, to=100,orient=HORIZONTAL)
+        self.SlideNorm.config(bg="light goldenrod")
         self.SlideNorm.pack(fill=BOTH,expand=True)
 
 

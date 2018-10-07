@@ -46,6 +46,7 @@ class Manager(object):
         return
 
     def OnGraphEv(self):
+        self.ValidateInputs()
         return
 
     def OnQuitEv(self):
@@ -67,4 +68,6 @@ class Manager(object):
         return
     def Error(self):
         return
-
+    #Funciones auxiliares
+    def ValidateInputs(self):
+        return
