@@ -52,29 +52,29 @@ class ApGUI(object):
     #Funciones de inicializacion
     def placeFilterButtons(self):
         self.ButtonsFrame = LabelFrame(self.root, text="Tipo de filtro", labelanchor="n")
-        self.ButtonsFrame.pack(anchor=NW)
+        self.ButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.filter=tk.IntVar()
         self.rButton_low_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa bajos", 
-            variable = self.filter, value = LP).pack()
+            variable = self.filter, value = LP).pack(fill=BOTH,expand=True)
         self.rButton_high_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa altos", 
-            variable = self.filter, value = HP).pack()
+            variable = self.filter, value = HP).pack(fill=BOTH,expand=True)
         self.rButton_band_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa banda", 
-            variable = self.filter, value = BP).pack()
+            variable = self.filter, value = BP).pack(fill=BOTH,expand=True)
         self.rButton_band_reject = tk.Radiobutton(self.ButtonsFrame, text="Rechaza banda", 
-            variable = self.filter, value = BR).pack()
+            variable = self.filter, value = BR).pack(fill=BOTH,expand=True)
         self.rButton_group_delay = tk.Radiobutton(self.ButtonsFrame, text="Retardo de grupo", 
-            variable = self.filter, value = GR).pack()
+            variable = self.filter, value = GR).pack(fill=BOTH,expand=True)
 
 
     def placeAproximationButtons(self):
         self.AproxButtonsFrame = LabelFrame(self.root, text="Aproximacion", labelanchor="n")
-        self.AproxButtonsFrame.pack(anchor=NW)
+        self.AproxButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.selected_aprox = StringVar(master=self.AproxButtonsFrame)
         self.selected_aprox.set(APROXIMACIONES[0]) # Empieza conButterworth como default
 
         self.pull_down_menu = OptionMenu(self.AproxButtonsFrame, self.selected_aprox, *APROXIMACIONES)
-        self.pull_down_menu.pack(side=TOP)
-        self.GraphButton= Button(master=self.AproxButtonsFrame,text="Graph",command=self.graph_button_call).pack(side=BOTTOM)
+        self.pull_down_menu.pack(side=TOP,fill=BOTH,expand=True)
+        self.GraphButton= Button(master=self.AproxButtonsFrame,text="Graph",command=self.graph_button_call).pack(side=BOTTOM,fill=BOTH,expand=True)
 
     def placeSpecifications(self):
         self.ApString= StringVar()
@@ -85,25 +85,25 @@ class ApGUI(object):
         self.qString= StringVar()
 
         self.SpecsFrame = LabelFrame(self.root, text="Especificaciones", labelanchor="n")
-        self.SpecsFrame.pack(anchor=NW)
+        self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         #Entrada de Ap
         Label(master=self.SpecsFrame,text="Ap(dB)=",anchor=W).pack(anchor=NW)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ApString).pack(anchor=NE)
+        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ApString).pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de As
         Label(master=self.SpecsFrame,text="As(dB)=",anchor=W).pack(anchor=NW)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.AsString).pack(anchor=NE)
+        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.AsString).pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de wp
         Label(master=self.SpecsFrame,text="wp(rad/seg)=",anchor=W).pack(anchor=NW)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wpString).pack(anchor=NE)
+        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wpString).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de ws
         Label(master=self.SpecsFrame,text="ws(rad/seg)=",anchor=W).pack(anchor=NW)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wsString).pack(anchor=NE)
+        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wsString).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de w0
         Label(master=self.SpecsFrame,text="wo(rad/seg)=",anchor=W).pack(anchor=NW)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.w0String).pack(anchor=NE)
+        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.w0String).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Q
         Label(master=self.SpecsFrame,text="Q=",anchor=W).pack(anchor=NW)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.qString).pack(anchor=NE)
+        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.qString).pack(anchor=NE,fill=BOTH,expand=True)
 
     def PlaceGraphic(self):
         self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n")
@@ -135,9 +135,9 @@ class ApGUI(object):
 
     def placeSliders(self):
         self.SliderFrame = LabelFrame(self.root, text="Rango de desnormalización(%)", labelanchor="n")
-        self.SliderFrame.pack(side=LEFT,anchor=NW)
+        self.SliderFrame.pack(side=LEFT,anchor=NW,fill=BOTH,expand=True)
         self.SlideNorm = Scale(master=self.SliderFrame, from_=0, to=100,orient=HORIZONTAL)
-        self.SlideNorm.pack()
+        self.SlideNorm.pack(fill=BOTH,expand=True)
 
 
     #Getters
