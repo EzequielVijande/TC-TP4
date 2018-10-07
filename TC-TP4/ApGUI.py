@@ -9,16 +9,24 @@ BP=3
 BR=4
 GR=5
 #Aproximaciones
-BUTTER=1
-CHEBY=2
-INV_CHEBY=3
-BESSEL=4
-GAUSS=5
-CAUER=6
-LEGENDRE=7
+APROXIMACIONES=[
+"Butterworth",
+"Chebycheff",
+"Chebycheff inverso",
+"Bessel",
+"Gauss",
+"Cauer",
+"Legendre"
+]
 #Largos y Anchos
 GRAPH_WIDTH=800
 GRAPH_HEIGHT=600
+#Eventos
+FILTER_EV=1
+APROX_EV=2
+NORM_SLIDER_EV=3
+SPEC_EV=4
+
 
 class ApGUI(object):
     """Clase que se encarga de crear,posicionar y actualizar botones y graficas"""
@@ -55,21 +63,12 @@ class ApGUI(object):
     def placeAproximationButtons(self):
         self.AproxButtonsFrame = LabelFrame(self.root, text="Aproximacion", labelanchor="n")
         self.AproxButtonsFrame.pack(anchor=NW)
-        self.Aprox=tk.IntVar()
-        self.rButton_butter = tk.Radiobutton(self.AproxButtonsFrame, text="Butterworth", 
-            variable = self.Aprox, value = BUTTER).pack()
-        self.rButton_cheby = tk.Radiobutton(self.AproxButtonsFrame, text="Chebycheff", 
-            variable = self.Aprox, value = CHEBY).pack()
-        self.rButton_cheby_inv = tk.Radiobutton(self.AproxButtonsFrame, text="Chebycheff inverso", 
-            variable = self.Aprox, value = INV_CHEBY).pack()
-        self.rButton_bessel = tk.Radiobutton(self.AproxButtonsFrame, text="Bessel", 
-            variable = self.Aprox, value = BESSEL).pack()
-        self.rButton_gauss = tk.Radiobutton(self.AproxButtonsFrame, text="Gauss", 
-            variable = self.Aprox, value = GAUSS).pack()
-        self.rButton_cauer = tk.Radiobutton(self.AproxButtonsFrame, text="Cauer", 
-            variable = self.Aprox, value = CAUER).pack()
-        self.rButton_legendre = tk.Radiobutton(self.AproxButtonsFrame, text="Legendre", 
-            variable = self.Aprox, value = LEGENDRE).pack()
+        self.selected_aprox = StringVar(master=self.AproxButtonsFrame)
+        self.selected_aprox.set(APROXIMACIONES[0]) # Empieza conButterworth como default
+
+        self.pull_down_menu = OptionMenu(self.AproxButtonsFrame, self.selected_aprox, *APROXIMACIONES)
+        self.pull_down_menu.pack(side=TOP)
+        self.GraphButton= Button(master=self.AproxButtonsFrame,text="Graph").pack(side=BOTTOM)
 
     def placeSpecifications(self):
         self.ApString= StringVar()
@@ -132,6 +131,7 @@ class ApGUI(object):
         self.SliderFrame.pack(side=LEFT,anchor=NW)
         self.SlideNorm = Scale(master=self.SliderFrame, from_=0, to=100,orient=HORIZONTAL)
         self.SlideNorm.pack()
+
 
 
     #Funciones relacionadas a graficas
