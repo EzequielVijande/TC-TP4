@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
+from tkinter import messagebox
 
 #Filtros
 LP=1
@@ -22,26 +23,31 @@ APROXIMACIONES=[
 GRAPH_WIDTH=800
 GRAPH_HEIGHT=600
 #Eventos
-FILTER_EV=1
-APROX_EV=2
-NORM_SLIDER_EV=3
-SPEC_EV=4
+NO_EV=0
+GRAPH_EV=1
+QUIT_EV=2
+SAVE_EV=3
+LOAD_EV=4
+NEXT_EV=5
+CHANGE_GRAPH_EV=6
+PUT_TEMPLATE_EV=7
 
 
 class ApGUI(object):
     """Clase que se encarga de crear,posicionar y actualizar botones y graficas"""
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
+        self.Ev=NO_EV
         self.root = Tk()
         self.root.geometry('1620x780')
         self.root.resizable(width=True, height=True)
         self.root.title("Aproximador de filtros")
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.PlaceGraphic()
         self.placeFilterButtons()
         self.placeAproximationButtons()
         self.placeSpecifications()
         self.placeSliders()
 
-        self.root.mainloop()
 
     #Funciones de inicializacion
     def placeFilterButtons(self):
@@ -68,7 +74,7 @@ class ApGUI(object):
 
         self.pull_down_menu = OptionMenu(self.AproxButtonsFrame, self.selected_aprox, *APROXIMACIONES)
         self.pull_down_menu.pack(side=TOP)
-        self.GraphButton= Button(master=self.AproxButtonsFrame,text="Graph").pack(side=BOTTOM)
+        self.GraphButton= Button(master=self.AproxButtonsFrame,text="Graph",command=self.graph_button_call).pack(side=BOTTOM)
 
     def placeSpecifications(self):
         self.ApString= StringVar()
@@ -120,10 +126,11 @@ class ApGUI(object):
         #Boton que superpone plantilla
         self.PutTemplate= IntVar()
         self.TemplateButton = Checkbutton(master=self.GraphicsFrame, text="Superponer plantilla",
-                        variable=self.PutTemplate,onvalue=1, offvalue=0)
+                        variable=self.PutTemplate,onvalue=1, offvalue=0,command=self.put_template_call)
         self.TemplateButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.SaveButton= Button(master=self.GraphicsFrame,text="Save").pack(side=LEFT,fill=BOTH,expand=True)
-        self.NextButton= Button(master=self.GraphicsFrame,text="Next").pack(side=LEFT,fill=BOTH,expand=True)
+        self.SaveButton= Button(master=self.GraphicsFrame,text="Save",command=self.save_call).pack(side=LEFT,fill=BOTH,expand=True)
+        self.LoadButton= Button(master=self.GraphicsFrame,text="Load",command=self.load_call).pack(side=LEFT,fill=BOTH,expand=True)
+        self.NextButton= Button(master=self.GraphicsFrame,text="Next",command=self.next_call).pack(side=LEFT,fill=BOTH,expand=True)
 
 
     def placeSliders(self):
@@ -132,6 +139,39 @@ class ApGUI(object):
         self.SlideNorm = Scale(master=self.SliderFrame, from_=0, to=100,orient=HORIZONTAL)
         self.SlideNorm.pack()
 
+
+    #Getters
+    def GetEvent(self):
+        return self.Ev
+
+    def GetFilter(self):
+        return self.filter
+
+    def GetAprox(self):
+        return self.selected_aprox
+
+    #Callbacks
+    def on_closing(self):
+        if messagebox.askokcancel("Cerrar", "Desea cerrar el programa?"):
+            self.Ev=QUIT_EV
+
+    def graph_button_call(self):
+        self.Ev=GRAPH_EV
+
+    def change_graph_button_call(self):
+        self.Ev=CHANGE_GRAPH_EV
+
+    def save_call(self):
+        self.Ev=SAVE_EV
+
+    def load_call(self):
+        self.Ev=LOAD_EV
+
+    def next_call(self):
+        self.Ev=NEXT_EV
+
+    def put_template_call(self):
+        self.Ev=PUT_TEMPLATE_EV
 
 
     #Funciones relacionadas a graficas
@@ -149,3 +189,11 @@ class ApGUI(object):
         return
     def plotStep(t,y):
         return
+
+    #Extras
+    def CloseGUI(self):
+        self.root.destroy()
+    def Update(self):
+        self.root.update()
+    def EventSolved(self):
+        self.Ev = NO_EV

@@ -16,6 +16,16 @@
 # que el usuario desea emplear(Algunas opciones son Butterworth y Chebycheff). Luego de seleccionar el tipo de filtro y
 # aproximacion deseada, se deben establecer los parametros de la plantilla que se desea.
 
-from ApGUI import ApGUI
+import ApGUI as ap
+import UserData as u
+import Manager as M
 
-interfaz= ApGUI()
+
+
+data= u.UserData()
+interfaz= ap.ApGUI()
+Controller= M.Manager(data,interfaz)
+while ( (Controller.getState()) != M.EXIT):
+    interfaz.Update()
+    Controller.Dispatch(interfaz.GetEvent())
+

@@ -24,7 +24,13 @@
     <Compile Include="ApGUI.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Manager.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TC_TP4.py" />
+    <Compile Include="UserData.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
