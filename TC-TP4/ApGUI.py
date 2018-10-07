@@ -16,19 +16,21 @@ BESSEL=4
 GAUSS=5
 CAUER=6
 LEGENDRE=7
+#Largos y Anchos
+GRAPH_WIDTH=800
+GRAPH_HEIGHT=600
 
 class ApGUI(object):
     """Clase que se encarga de crear,posicionar y actualizar botones y graficas"""
     def __init__(self, *args, **kwargs):
         self.root = Tk()
-        self.root.geometry('1920x1080')
+        self.root.geometry('1620x780')
         self.root.resizable(width=True, height=True)
         self.root.title("Aproximador de filtros")
+        self.PlaceGraphic()
         self.placeFilterButtons()
         self.placeAproximationButtons()
         self.placeSpecifications()
-        #self.PlaceGraphic()
-        self.placeMiscButtons()
         self.placeSliders()
 
         self.root.mainloop()
@@ -99,17 +101,35 @@ class ApGUI(object):
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.qString).pack(anchor=NE)
 
     def PlaceGraphic(self):
-        return
-    def placeMiscButtons(self):
-        self.MiscFrame = Frame(self.root)
-        self.MiscFrame.pack(anchor=S)
-        #Boton de save
-        self.SaveButton= Button(master=self.MiscFrame,text="Save").pack(side=LEFT)
-        self.NextButton= Button(master=self.MiscFrame,text="Next").pack(side=RIGHT)
+        self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n")
+        self.GraphicsFrame.pack(anchor=NE,side=RIGHT,fill=BOTH,expand=True)
+        self.Graph = Canvas(master=self.GraphicsFrame, width=GRAPH_WIDTH, height=GRAPH_HEIGHT)
+        self.Graph.pack(side=TOP,fill=BOTH,expand=True)
+        #Botones para cambiar de graficas
+        self.AttButton = Button(master=self.GraphicsFrame,text="Atenuacion")
+        self.AttButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.AttNButton = Button(master=self.GraphicsFrame,text="Atenuacion Norm")
+        self.AttNButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.FaseButton = Button(master=self.GraphicsFrame,text="Fase")
+        self.FaseButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.ZeroesButton = Button(master=self.GraphicsFrame,text="Polos y ceros")
+        self.ZeroesButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.ImpulseButton = Button(master=self.GraphicsFrame,text="Resp al impulso")
+        self.ImpulseButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.StepButton = Button(master=self.GraphicsFrame,text="Resp al Escalon")
+        self.StepButton.pack(side=LEFT,fill=BOTH,expand=True)
+        #Boton que superpone plantilla
+        self.PutTemplate= IntVar()
+        self.TemplateButton = Checkbutton(master=self.GraphicsFrame, text="Superponer plantilla",
+                        variable=self.PutTemplate,onvalue=1, offvalue=0)
+        self.TemplateButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.SaveButton= Button(master=self.GraphicsFrame,text="Save").pack(side=LEFT,fill=BOTH,expand=True)
+        self.NextButton= Button(master=self.GraphicsFrame,text="Next").pack(side=LEFT,fill=BOTH,expand=True)
+
 
     def placeSliders(self):
         self.SliderFrame = LabelFrame(self.root, text="Rango de desnormalización(%)", labelanchor="n")
-        self.SliderFrame.pack(anchor=SW)
+        self.SliderFrame.pack(side=LEFT,anchor=NW)
         self.SlideNorm = Scale(master=self.SliderFrame, from_=0, to=100,orient=HORIZONTAL)
         self.SlideNorm.pack()
 
