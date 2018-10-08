@@ -2,7 +2,7 @@ class UserData(object):
     """Guarda la informacion ingresada por el usuario"""
     def __init__(self):
         #Se incializa con los siguientes valores por default
-        self.type_of_filter=0
+        self.type_of_filter=1 #Empieza por default con el numero del filtro LP
         self.Aproximation="Butterworth"
         self.Ap=0
         self.As=0

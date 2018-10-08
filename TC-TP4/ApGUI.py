@@ -31,6 +31,14 @@ LOAD_EV=4
 NEXT_EV=5
 CHANGE_GRAPH_EV=6
 PUT_TEMPLATE_EV=7
+#Grafica activa
+ATT=1
+ATT_N=2
+FASE=3
+CEROS=4
+RETARDO=5
+IMPULSE=6
+STEP=7
 
 
 class ApGUI(object):
@@ -55,15 +63,21 @@ class ApGUI(object):
         self.ButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.filter=tk.IntVar()
         self.rButton_low_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa bajos", 
-            variable = self.filter, value = LP,background="light goldenrod").pack(fill=BOTH,expand=True)
-        self.rButton_high_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa altos", 
-            variable = self.filter, value = HP,background="light goldenrod").pack(fill=BOTH,expand=True)
-        self.rButton_band_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa banda", 
-            variable = self.filter, value = BP,background="light goldenrod").pack(fill=BOTH,expand=True)
-        self.rButton_band_reject = tk.Radiobutton(self.ButtonsFrame, text="Rechaza banda", 
-            variable = self.filter, value = BR,background="light goldenrod").pack(fill=BOTH,expand=True)
-        self.rButton_group_delay = tk.Radiobutton(self.ButtonsFrame, text="Retardo de grupo", 
-            variable = self.filter, value = GR,background="light goldenrod").pack(fill=BOTH,expand=True)
+            variable = self.filter, value = LP,background="light goldenrod",command=self.filter_call)
+        self.rButton_low_pass.pack(fill=BOTH,expand=True)
+        self.rButton_high_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa altos",command=self.filter_call,
+            variable = self.filter, value = HP,background="light goldenrod")
+        self.rButton_high_pass.pack(fill=BOTH,expand=True)
+        self.rButton_band_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa banda", command=self.filter_call,
+            variable = self.filter, value = BP,background="light goldenrod")
+        self.rButton_band_pass.pack(fill=BOTH,expand=True)
+        self.rButton_band_reject = tk.Radiobutton(self.ButtonsFrame, text="Rechaza banda", command=self.filter_call,
+            variable = self.filter, value = BR,background="light goldenrod")
+        self.rButton_band_reject.pack(fill=BOTH,expand=True)
+        self.rButton_group_delay = tk.Radiobutton(self.ButtonsFrame, text="Retardo de grupo", command=self.filter_call,
+            variable = self.filter, value = GR,background="light goldenrod")
+        self.rButton_group_delay.pack(fill=BOTH,expand=True)
+        self.rButton_low_pass.select() #Por default comienza seleccionado el filtro low_pass
 
 
     def placeAproximationButtons(self):
@@ -92,33 +106,41 @@ class ApGUI(object):
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         #Entrada de Ap
         Label(master=self.SpecsFrame,text="Ap(dB)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ApString).pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ApString)
+        self.entry_ap.pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de As
         Label(master=self.SpecsFrame,text="As(dB)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.AsString).pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_as=Entry(master=self.SpecsFrame,textvariable=self.AsString)
+        self.entry_as.pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de wp
-        Label(master=self.SpecsFrame,text="wp(rad/seg)  (Solo completar para pasa-bajos/altos)",anchor=W
+        Label(master=self.SpecsFrame,text="wp(rad/seg)",anchor=W
               ,background="light goldenrod").pack(fill=BOTH,expand=True)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wpString).pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_wp=Entry(master=self.SpecsFrame,textvariable=self.wpString)
+        self.entry_wp.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de ws
-        Label(master=self.SpecsFrame,text="ws(rad/seg)  (Solo completar para pasa-bajos/altos)",anchor=W
+        Label(master=self.SpecsFrame,text="ws(rad/seg)",anchor=W
               ,background="light goldenrod").pack(fill=BOTH,expand=True)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wsString).pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_ws=Entry(master=self.SpecsFrame,textvariable=self.wsString)
+        self.entry_ws.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de w0
-        Label(master=self.SpecsFrame,text="wo(rad/seg)  (Solo completar para rechaza/pasa-banda)",anchor=W
+        Label(master=self.SpecsFrame,text="wo(rad/seg)",anchor=W
               ,background="light goldenrod").pack(fill=BOTH,expand=True)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.w0String).pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_wo=Entry(master=self.SpecsFrame,textvariable=self.w0String,state='disabled')
+        self.entry_wo.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Q
-        Label(master=self.SpecsFrame,text="Q  (Solo completar para rechaza/pasa-banda)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.qString).pack(anchor=NE,fill=BOTH,expand=True)
+        Label(master=self.SpecsFrame,text="Q",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.entry_Q=Entry(master=self.SpecsFrame,textvariable=self.qString,state='disabled')
+        self.entry_Q.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Δwp
-        Label(master=self.SpecsFrame,text="Δwp(rad/seg)  (Solo completar para rechaza/pasa-banda)",anchor=W
+        Label(master=self.SpecsFrame,text="Δwp(rad/seg)",anchor=W
               ,background="light goldenrod").pack(fill=BOTH,expand=True)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ΔwpString).pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_Δwp=Entry(master=self.SpecsFrame,textvariable=self.ΔwpString,state='disabled')
+        self.entry_Δwp.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Δws
-        Label(master=self.SpecsFrame,text="Δws(rad/seg)  (Solo completar para rechaza/pasa-banda)",anchor=W
+        Label(master=self.SpecsFrame,text="Δws(rad/seg)",anchor=W
               ,background="light goldenrod").pack(fill=BOTH,expand=True)
-        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ΔwsString).pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_Δws=Entry(master=self.SpecsFrame,textvariable=self.ΔwsString,state='disabled')
+        self.entry_Δws.pack(anchor=NE,fill=BOTH,expand=True)
 
     def PlaceGraphic(self):
         self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n",background="goldenrod")
@@ -127,18 +149,27 @@ class ApGUI(object):
         self.Graph.config(bg="snow2")
         self.Graph.pack(side=TOP,fill=BOTH,expand=True)
         #Botones para cambiar de graficas
-        self.AttButton = Button(master=self.GraphicsFrame,text="Atenuacion",background="pale turquoise")
-        self.AttButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.AttNButton = Button(master=self.GraphicsFrame,text="Atenuacion Norm",background="pale turquoise")
-        self.AttNButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.FaseButton = Button(master=self.GraphicsFrame,text="Fase",background="pale turquoise")
-        self.FaseButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.ZeroesButton = Button(master=self.GraphicsFrame,text="Polos y ceros",background="pale turquoise")
-        self.ZeroesButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.ImpulseButton = Button(master=self.GraphicsFrame,text="Resp al impulso",background="pale turquoise")
-        self.ImpulseButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.StepButton = Button(master=self.GraphicsFrame,text="Resp al Escalon",background="pale turquoise")
-        self.StepButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.SelectedGraph= tk.IntVar()
+        self.AttRButton= Radiobutton(master=self.GraphicsFrame,text="Atenuacion",background="pale turquoise",
+                                     indicatoron=False,variable=self.SelectedGraph,value=ATT)
+        self.AttRButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.AttNRButton = Radiobutton(master=self.GraphicsFrame,text="Atenuacion Norm",background="pale turquoise",
+                                     indicatoron=False,variable=self.SelectedGraph,value=ATT_N)
+        self.AttNRButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.FaseRButton = Radiobutton(master=self.GraphicsFrame,text="Fase",background="pale turquoise",
+                                     indicatoron=False,variable=self.SelectedGraph,value=FASE)
+        self.FaseRButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.ZeroesRButton =Radiobutton(master=self.GraphicsFrame,text="Polos y ceros",background="pale turquoise",
+                                     indicatoron=False,variable=self.SelectedGraph,value=CEROS)
+        self.ZeroesRButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.ImpulseRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al impulso",background="pale turquoise",
+                                     indicatoron=False,variable=self.SelectedGraph,value=IMPULSE)
+        self.ImpulseRButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.StepRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al Escalon",background="pale turquoise",
+                                     indicatoron=False,variable=self.SelectedGraph,value=STEP)
+        self.StepRButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.AttRButton.select() #por default empieza seleccionado el grafico de atenuacion
+
         #Boton que superpone plantilla
         self.PutTemplate= IntVar()
         self.TemplateButton = Checkbutton(master=self.GraphicsFrame, text="Superponer plantilla",
@@ -192,8 +223,22 @@ class ApGUI(object):
 
     def put_template_call(self):
         self.Ev=PUT_TEMPLATE_EV
-
-
+    def filter_call(self):
+        fil=self.filter.get()
+        if(fil==BP or fil==BR):
+            self.entry_wp.config(state='disabled') #Desabilito entradas invalidas
+            self.entry_ws.config(state='disabled')
+            self.entry_Δwp.config(state='normal') #Habilito entradas validas
+            self.entry_Δws.config(state='normal')
+            self.entry_wo.config(state='normal')
+            self.entry_Q.config(state='normal')
+        elif(fil==LP or fil==HP):
+            self.entry_wp.config(state='normal') #Habilito entradas validas
+            self.entry_ws.config(state='normal')
+            self.entry_Δwp.config(state='disabled') #Desabilito entradas invalidas
+            self.entry_Δws.config(state='disabled')
+            self.entry_wo.config(state='disabled')
+            self.entry_Q.config(state='disabled')
     #Funciones relacionadas a graficas
     def plotPhase(self, w,fase):
         return
