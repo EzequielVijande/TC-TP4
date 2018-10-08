@@ -49,8 +49,8 @@ class Manager(object):
         result_str= self.ValidateInputs()
         if(result_str!="Ok"):
             self.GUI.DisplayError(result_str)
-        #else:
-        #   self.ShowGraph()
+        else:
+          self.ShowGraph()
 
     def OnQuitEv(self):
         self.GUI.CloseGUI()
@@ -65,13 +65,69 @@ class Manager(object):
 
     def OnNextEv(self):
         return
+
     def OnChangeGraphEv(self):
         return
+
     def OnPutTemplate(self):
-        return
+        WantsTempl= self.GUI.PutTemplate.get()
+        sel_graph= self.GUI.SelectedGraph.get()
+        if(sel_graph==ap.ATT or sel_graph==ap.ATT_N):
+            self.SetUserData()
+            if(WantsTempl):
+               self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
+                                      self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+            else:
+                self.GUI.destroyTemplate()
+        
     def Error(self):
         return
     #Funciones auxiliares
+    def ShowGraph(self):
+        WantsTempl= self.GUI.PutTemplate.get()
+        self.SetUserData()
+        if(WantsTempl):
+           self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
+                                      self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+
+    def SetUserData(self):
+        As= float(self.GUI.AsString.get())
+        Ap= float(self.GUI.ApString.get())
+
+        self.data.setAp(Ap)
+        self.data.setAs(As)
+        filt= self.GUI.filter.get()
+        self.data.setFilter(filt)
+
+        if(filt==ap.LP or filt==ap.HP):
+            ws= float(self.GUI.wsString.get())
+            wp= float(self.GUI.wpString.get())
+            self.data.setws(ws)
+            self.data.setwp(wp)
+        elif(filt==ap.BP or filt==ap.BR):
+            wo= float(self.GUI.w0String.get())
+            Q= float(self.GUI.qString.get())
+            Δwp= float(self.GUI.ΔwpString.get())
+            Δws= float(self.GUI.ΔwsString.get())
+
+            (wpMinus,wpPlus,wsMinus,wsPlus)=  self.calculate_w(wo,Δwp,Δws)
+            self.data.setwpMinus(wpMinus) #setteo userData
+            self.data.setwpPlus(wpPlus)
+            self.data.setwsMinus(wsMinus)
+            self.data.setwsPlus(wsPlus)
+            self.data.setwo(wo)
+            self.data.setQ(Q)
+
+    def calculate_w(self,wo,Δwp,Δws):
+        wpMinus=(-Δwp+(( (Δwp**2)+(4*(wo**2)))**0.5))/2
+        wpPlus= wpMinus+Δwp
+        wsMinus=(-Δws+(( (Δws**2)+(4*(wo**2)))**0.5))/2
+        wsPlus= wsMinus+Δws
+        return (wpMinus,wpPlus,wsMinus,wsPlus)
+
+
+
+
     def ValidateInputs(self):
         fil=self.GUI.filter.get()
         As= self.GUI.AsString.get()

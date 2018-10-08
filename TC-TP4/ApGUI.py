@@ -246,8 +246,34 @@ class ApGUI(object):
         return
     def plotAtte(self, w,att):
         return
-    def placeTemplate(self,wp,ws,Ap,As,wo,Q):
-        return
+    def placeTemplate(self,Ap,As,wp,ws,wo,Q,wpMinus,wpPlus,wsMinus,wsPlus):
+        fil= self.filter.get()
+        if(fil==LP):
+            self.NumRect=2
+
+            x0,y0= self.TransformToCanvasCoords(100*ws,2*As,0,2*As) #Vertice izquierdo superior
+            x1,y1= self.TransformToCanvasCoords(100*ws,2*As,wp,Ap) #Vertice derecho inferior
+            self.first_rect= self.Graph.create_rectangle(x0, y0,x1, y1, fill="firebrick")
+
+            x2,y2= self.TransformToCanvasCoords(100*ws,2*As,ws,As) #Vertice izquierdo superior
+            x3,y3= self.TransformToCanvasCoords(100*ws,2*As,100*ws,0) #Vertice derecho inferior
+            self.second_rect= self.Graph.create_rectangle(x0, y0,x1, y1, fill="firebrick")
+        elif(fil==HP):
+            self.NumRect=2
+            x0,y0= self.TransformToCanvasCoords(100*wp,2*As,0,As) #Vertice izquierdo superior
+            x1,y1= self.TransformToCanvasCoords(100*wp,2*As,ws,0) #Vertice derecho inferior
+            self.first_rect= self.Graph.create_rectangle(x0, y0,x1, y1, fill="firebrick")
+
+            x2,y2= self.TransformToCanvasCoords(100*wp,2*As,wp,2*As) #Vertice izquierdo superior
+            x3,y3= self.TransformToCanvasCoords(100*wp,2*As,100*wp,Ap) #Vertice derecho inferior
+            self.second_rect= self.Graph.create_rectangle(x0, y0,x1, y1, fill="firebrick")
+
+    def destroyTemplate(self):
+        if(self.NumRect==2):
+            self.Graph.delete(self.first_rect)
+            self.Graph.delete(self.second_rect)
+
+            
     def plotZeros(self,sigma,w):
         return
     def plotImpulse(t,y):
@@ -264,3 +290,7 @@ class ApGUI(object):
         self.Ev = NO_EV
     def DisplayError(self,result_str):
         messagebox.showinfo("Error en las especificaciones", result_str)
+    def TransformToCanvasCoords(self,max_X,max_Y,x,y):
+        y_out=GRAPH_HEIGHT-( (y*GRAPH_HEIGHT)/max_Y)
+        x_out=((x*GRAPH_WIDTH)/max_X)
+        return (x_out,y_out)

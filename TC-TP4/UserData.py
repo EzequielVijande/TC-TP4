@@ -6,13 +6,18 @@ class UserData(object):
         self.Aproximation="Butterworth"
         self.Ap=0
         self.As=0
+        self.wp=0
+        self.ws=0
         self.wo=0
+        self.wpMinus=0
+        self.wpPlus=0
+        self.wsMinus=0
+        self.wsPlus=0
         self.Q=0
         self.NormRange=0 #Rango de desnormalizacion
     #Setters
     def setFilter(self,filter):
         self.type_of_filter=filter
-        print(filter)
 
     def setAprox(self,Aprox):
         self.Aproximation=Aprox
@@ -25,6 +30,27 @@ class UserData(object):
 
     def setAp(self,wo):
         self.wo=wo
+
+    def setwp(self,wp):
+        self.wp=wp
+
+    def setws(self,ws):
+        self.ws=ws
+    #Para BP Y BR
+    def setwo(self,wo):
+        self.wo=wo
+    
+    def setwpMinus(self,wpMinus):
+        self.wpMinus=wpMinus
+
+    def setwpPlus(self,wpPlus):
+        self.wpPlus=wpPlus
+
+    def setwsMinus(self,wsMinus):
+        self.wsMinus=wsMinus
+
+    def setwsPlus(self,wsPlus):
+        self.wsPlus=wsPlus
 
     def setQ(self,Q):
         self.Q=Q
