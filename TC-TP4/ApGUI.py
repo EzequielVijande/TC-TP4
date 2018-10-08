@@ -85,6 +85,8 @@ class ApGUI(object):
         self.wsString= StringVar()
         self.w0String= StringVar()
         self.qString= StringVar()
+        self.ΔwpString= StringVar()
+        self.ΔwsString= StringVar()
 
         self.SpecsFrame = LabelFrame(self.root, text="Especificaciones", labelanchor="n",background="goldenrod")
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
@@ -95,20 +97,28 @@ class ApGUI(object):
         Label(master=self.SpecsFrame,text="As(dB)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.AsString).pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de wp
-        Label(master=self.SpecsFrame,text="wp(rad/seg)",anchor=W
+        Label(master=self.SpecsFrame,text="wp(rad/seg)  (Solo completar para pasa-bajos/altos)",anchor=W
               ,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wpString).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de ws
-        Label(master=self.SpecsFrame,text="ws(rad/seg)",anchor=W
+        Label(master=self.SpecsFrame,text="ws(rad/seg)  (Solo completar para pasa-bajos/altos)",anchor=W
               ,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.wsString).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de w0
-        Label(master=self.SpecsFrame,text="wo(rad/seg)",anchor=W
+        Label(master=self.SpecsFrame,text="wo(rad/seg)  (Solo completar para rechaza/pasa-banda)",anchor=W
               ,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.w0String).pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Q
-        Label(master=self.SpecsFrame,text="Q",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
+        Label(master=self.SpecsFrame,text="Q  (Solo completar para rechaza/pasa-banda)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
         entry_ap=Entry(master=self.SpecsFrame,textvariable=self.qString).pack(anchor=NE,fill=BOTH,expand=True)
+        #entrada de Δwp
+        Label(master=self.SpecsFrame,text="Δwp(rad/seg)  (Solo completar para rechaza/pasa-banda)",anchor=W
+              ,background="light goldenrod").pack(fill=BOTH,expand=True)
+        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ΔwpString).pack(anchor=NE,fill=BOTH,expand=True)
+        #entrada de Δws
+        Label(master=self.SpecsFrame,text="Δws(rad/seg)  (Solo completar para rechaza/pasa-banda)",anchor=W
+              ,background="light goldenrod").pack(fill=BOTH,expand=True)
+        entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ΔwsString).pack(anchor=NE,fill=BOTH,expand=True)
 
     def PlaceGraphic(self):
         self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n",background="goldenrod")
@@ -207,3 +217,5 @@ class ApGUI(object):
         self.root.update()
     def EventSolved(self):
         self.Ev = NO_EV
+    def DisplayError(self,result_str):
+        messagebox.showinfo("Error en las especificaciones", result_str)

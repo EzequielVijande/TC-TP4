@@ -21,7 +21,6 @@ import UserData as u
 import Manager as M
 
 
-
 data= u.UserData()
 interfaz= ap.ApGUI()
 Controller= M.Manager(data,interfaz)
