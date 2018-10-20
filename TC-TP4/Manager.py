@@ -136,69 +136,86 @@ class Manager(object):
 
     def ValidateInputs(self):
         fil=self.GUI.filter.get()
-        As= self.GUI.AsString.get()
-        Ap= self.GUI.ApString.get()
+        if(fil!= ap.GR):
 
-        ApSTR= self.IsValidNumber(Ap,"Ap")
-        if(ApSTR!="Ok"):
-            return ApSTR
+            As= self.GUI.AsString.get()
+            Ap= self.GUI.ApString.get()
 
-        AsSTR = self.IsValidNumber(As,"As")
-        if(AsSTR!="Ok"):
-            return AsSTR
-        if((float(Ap))>=(float(As))):
-            return "Ap debe ser menor a As"
+            ApSTR= self.IsValidNumber(Ap,"Ap")
+            if(ApSTR!="Ok"):
+                return ApSTR
 
-        if( (fil==ap.LP) or (fil==ap.HP) ): #No es necesario validar especificaciones de rechaza banda ni de pasa banda
-            wp= self.GUI.wpString.get()
-            ws= self.GUI.wsString.get()
+            AsSTR = self.IsValidNumber(As,"As")
+            if(AsSTR!="Ok"):
+                return AsSTR
+            if((float(Ap))>=(float(As))):
+                return "Ap debe ser menor a As"
 
-            wpSTR= self.IsValidNumber(wp,"wp") #Valido wp
-            if(wpSTR!="Ok"):
-                return wpSTR
+            if( (fil==ap.LP) or (fil==ap.HP) ): #No es necesario validar especificaciones de rechaza banda ni de pasa banda
+                wp= self.GUI.wpString.get()
+                ws= self.GUI.wsString.get()
 
-            wsSTR= self.IsValidNumber(ws,"ws") #Valido ws
-            if(wsSTR!="Ok"):
-                return wsSTR
+                wpSTR= self.IsValidNumber(wp,"wp") #Valido wp
+                if(wpSTR!="Ok"):
+                    return wpSTR
+
+                wsSTR= self.IsValidNumber(ws,"ws") #Valido ws
+                if(wsSTR!="Ok"):
+                    return wsSTR
             
-            elif(fil==ap.LP): #Si es un LP el wp debe ser menor al ws
-                if(ws<=wp):
-                    return "wp debe ser menor que ws"
-            else: #Si es un HP el wp debe ser mayor al ws
-                if(ws>=wp):
-                    return "ws debe ser menor que wp"
+                elif(fil==ap.LP): #Si es un LP el wp debe ser menor al ws
+                    if(ws<=wp):
+                        return "wp debe ser menor que ws"
+                else: #Si es un HP el wp debe ser mayor al ws
+                    if(ws>=wp):
+                        return "ws debe ser menor que wp"
 
-        elif( (fil==ap.BP) or (fil==ap.BR)):
-            Δwp= self.GUI.ΔwpString.get()
-            Δws= self.GUI.ΔwsString.get()
-            wo= self.GUI.w0String.get()
-            Q=self.GUI.qString.get()
+            elif( (fil==ap.BP) or (fil==ap.BR)):
+                Δwp= self.GUI.ΔwpString.get()
+                Δws= self.GUI.ΔwsString.get()
+                wo= self.GUI.w0String.get()
+                Q=self.GUI.qString.get()
             
-            ΔwpSTR= self.IsValidNumber(Δwp,"Δwp") #valido Δwp
-            if(ΔwpSTR != "Ok"):
-                return ΔwpSTR
+                ΔwpSTR= self.IsValidNumber(Δwp,"Δwp") #valido Δwp
+                if(ΔwpSTR != "Ok"):
+                    return ΔwpSTR
 
-            ΔwsSTR= self.IsValidNumber(Δws,"Δws") #valido Δws
-            if(ΔwsSTR != "Ok"):
-                return ΔwsSTR
+                ΔwsSTR= self.IsValidNumber(Δws,"Δws") #valido Δws
+                if(ΔwsSTR != "Ok"):
+                    return ΔwsSTR
 
-            woSTR= self.IsValidNumber(wo,"wo") #valido wo
-            if(woSTR != "Ok"):
-                return ΔwoSTR
+                woSTR= self.IsValidNumber(wo,"wo") #valido wo
+                if(woSTR != "Ok"):
+                    return ΔwoSTR
 
-            QSTR= self.IsValidNumber(Q,"Q") #valido Q
-            if(QSTR != "Ok"):
-                return QSTR
-
-
-            if(fil==ap.BP):
-                if( float(Δwp)>=float(Δws)):
-                    return "Δwp debe ser menor que Δws para un filtro pasa banda"
-            else:
-                if( float(Δwp)<=float(Δws)):
-                    return "Δwp debe ser mayor que Δws para un filtro rechaza banda"
+                QSTR= self.IsValidNumber(Q,"Q") #valido Q
+                if(QSTR != "Ok"):
+                    return QSTR
 
 
+                if(fil==ap.BP):
+                    if( float(Δwp)>=float(Δws)):
+                        return "Δwp debe ser menor que Δws para un filtro pasa banda"
+                else:
+                    if( float(Δwp)<=float(Δws)):
+                        return "Δwp debe ser mayor que Δws para un filtro rechaza banda"
+
+        else:
+            t0=self.GUI.τ0String.get()
+            wrg=self.GUI.wrgString.get()
+            Y=self.GUI.YString.get()
+
+            t0String= self.IsValidNumber(t0)
+            if(t0String != "Ok"):
+                return t0String
+            wrgString= self.IsValidNumber(wrg)
+            if(wrgString != "Ok"):
+                return wrgString
+            YString= self.IsValidNumber(Y)
+            if(YString != "Ok"):
+                return YString
+            elif(float(Y)>1):
+                return "Y debe ser un numero entre 0 y 1"
         return "Ok"
 
 
