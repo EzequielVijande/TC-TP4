@@ -49,8 +49,8 @@ class Manager(object):
         result_str= self.ValidateInputs()
         if(result_str!="Ok"):
             self.GUI.DisplayError(result_str)
-        else:
-          self.ShowGraph()
+        #else:
+         # self.ShowGraph()
 
     def OnQuitEv(self):
         self.GUI.CloseGUI()
@@ -73,10 +73,16 @@ class Manager(object):
         WantsTempl= self.GUI.PutTemplate.get()
         sel_graph= self.GUI.SelectedGraph.get()
         if(sel_graph==ap.ATT or sel_graph==ap.ATT_N):
-            self.SetUserData()
+            
             if(WantsTempl):
-               self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
-                                      self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+                result_str= self.ValidateInputs()
+                if(result_str!="Ok"):
+                    self.GUI.TemplateButton.deselect()
+                    self.GUI.DisplayError(result_str)
+                else:
+                    self.SetUserData()
+                    self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
+                                            self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
             else:
                 self.GUI.destroyTemplate()
         
