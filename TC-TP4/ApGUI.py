@@ -93,6 +93,7 @@ class ApGUI(object):
                                  ,background="light goldenrod").pack(side=BOTTOM,fill=BOTH,expand=True)
 
     def placeSpecifications(self):
+        self.PrevState= LP
         self.ApString= StringVar()
         self.AsString= StringVar()
         self.wpString= StringVar()
@@ -101,46 +102,53 @@ class ApGUI(object):
         self.qString= StringVar()
         self.ΔwpString= StringVar()
         self.ΔwsString= StringVar()
+        self.τ0String= StringVar()
+        self.wrgString= StringVar()
+        self.YString= StringVar()
 
         self.SpecsFrame = LabelFrame(self.root, text="Especificaciones", labelanchor="n",background="goldenrod")
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         #Entrada de Ap
-        Label(master=self.SpecsFrame,text="Ap(dB)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.ApLabel= Label(master=self.SpecsFrame,text="Ap(dB)",anchor=W,background="light goldenrod")
+        self.ApLabel.pack(fill=BOTH,expand=True)
         self.entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ApString)
         self.entry_ap.pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de As
-        Label(master=self.SpecsFrame,text="As(dB)",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.AsLabel= Label(master=self.SpecsFrame,text="As(dB)",anchor=W,background="light goldenrod")
+        self.AsLabel.pack(fill=BOTH,expand=True)
         self.entry_as=Entry(master=self.SpecsFrame,textvariable=self.AsString)
         self.entry_as.pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de wp
-        Label(master=self.SpecsFrame,text="wp(rad/seg)",anchor=W
-              ,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.wpLabel= Label(master=self.SpecsFrame,text="wp(rad/seg)",anchor=W,background="light goldenrod")
+        self.wpLabel.pack(fill=BOTH,expand=True)
         self.entry_wp=Entry(master=self.SpecsFrame,textvariable=self.wpString)
         self.entry_wp.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de ws
-        Label(master=self.SpecsFrame,text="ws(rad/seg)",anchor=W
-              ,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.wsLabel= Label(master=self.SpecsFrame,text="ws(rad/seg)",anchor=W,background="light goldenrod")
+        self.wsLabel.pack(fill=BOTH,expand=True)
         self.entry_ws=Entry(master=self.SpecsFrame,textvariable=self.wsString)
         self.entry_ws.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de w0
-        Label(master=self.SpecsFrame,text="wo(rad/seg)",anchor=W
-              ,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.w0Label= Label(master=self.SpecsFrame,text="wo(rad/seg)",anchor=W,background="light goldenrod")
         self.entry_wo=Entry(master=self.SpecsFrame,textvariable=self.w0String,state='disabled')
-        self.entry_wo.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Q
-        Label(master=self.SpecsFrame,text="Q",anchor=W,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.QLabel= Label(master=self.SpecsFrame,text="Q",anchor=W,background="light goldenrod")
         self.entry_Q=Entry(master=self.SpecsFrame,textvariable=self.qString,state='disabled')
-        self.entry_Q.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Δwp
-        Label(master=self.SpecsFrame,text="Δwp(rad/seg)",anchor=W
-              ,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.ΔwpLabel= Label(master=self.SpecsFrame,text="Δwp(rad/seg)",anchor=W,background="light goldenrod")
         self.entry_Δwp=Entry(master=self.SpecsFrame,textvariable=self.ΔwpString,state='disabled')
-        self.entry_Δwp.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de Δws
-        Label(master=self.SpecsFrame,text="Δws(rad/seg)",anchor=W
-              ,background="light goldenrod").pack(fill=BOTH,expand=True)
+        self.ΔwsLabel= Label(master=self.SpecsFrame,text="Δws(rad/seg)",anchor=W,background="light goldenrod")
         self.entry_Δws=Entry(master=self.SpecsFrame,textvariable=self.ΔwsString,state='disabled')
-        self.entry_Δws.pack(anchor=NE,fill=BOTH,expand=True)
+        #entrada de τ(0)
+        self.τ0Label= Label(master=self.SpecsFrame,text="τ(0) (seg)",anchor=W,background="light goldenrod")
+        self.entry_τ0=Entry(master=self.SpecsFrame,textvariable=self.τ0String,state='disabled')
+        #Entrada de wrg
+        self.wrgLabel=Label(master=self.SpecsFrame,text="wrg (rad/seg)",anchor=W,background="light goldenrod")
+        self.entry_wrg=Entry(master=self.SpecsFrame,textvariable=self.wrgString,state='disabled')
+        #Entrada de Y
+        self.YLabel=Label(master=self.SpecsFrame,text="Y",anchor=W,background="light goldenrod")
+        self.entry_Y=Entry(master=self.SpecsFrame,textvariable=self.YString,state='disabled')
 
     def PlaceGraphic(self):
         self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n",background="goldenrod")
@@ -225,20 +233,21 @@ class ApGUI(object):
         self.Ev=PUT_TEMPLATE_EV
     def filter_call(self):
         fil=self.filter.get()
-        if(fil==BP or fil==BR):
-            self.entry_wp.config(state='disabled') #Desabilito entradas invalidas
-            self.entry_ws.config(state='disabled')
-            self.entry_Δwp.config(state='normal') #Habilito entradas validas
-            self.entry_Δws.config(state='normal')
-            self.entry_wo.config(state='normal')
-            self.entry_Q.config(state='normal')
-        elif(fil==LP or fil==HP):
-            self.entry_wp.config(state='normal') #Habilito entradas validas
-            self.entry_ws.config(state='normal')
-            self.entry_Δwp.config(state='disabled') #Desabilito entradas invalidas
-            self.entry_Δws.config(state='disabled')
-            self.entry_wo.config(state='disabled')
-            self.entry_Q.config(state='disabled')
+        if(self.PrevState!=fil):
+            if(self.PrevState==LP or self.PrevState==HP):
+                self.DestroyLP_HP_Specs()
+            elif(self.PrevState==BP or self.PrevState==BR):
+                self.DestroyBP_BR_Specs()
+            elif(self.PrevState== GR):
+                self.DestroyGR_Specs()
+            if(fil==BP or fil==BR):
+                self.PlaceBP_BR_Specs()
+            elif(fil==LP or fil==HP):
+                self.PlaceLP_HP_Specs()
+            elif(fil==GR):
+                self.PlaceGR_Specs()
+        self.PrevState=fil
+            
     #Funciones relacionadas a graficas
     def plotPhase(self, w,fase):
         return
@@ -276,11 +285,92 @@ class ApGUI(object):
             
     def plotZeros(self,sigma,w):
         return
-    def plotImpulse(t,y):
+    def plotImpulse(self,t,y):
         return
-    def plotStep(t,y):
+    def plotStep(self,t,y):
         return
 
+    #Funciones que cambian las especificaciones
+    def PlaceLP_HP_Specs(self):
+        #Entrada de Ap
+        self.ApLabel.pack(fill=BOTH,expand=True)
+        self.entry_ap.pack(fill=BOTH,expand=True)
+        #Entrada de As
+        self.AsLabel.pack(fill=BOTH,expand=True)
+        self.entry_as.pack(fill=BOTH,expand=True)
+        #Entrada de wp
+        self.wpLabel.pack(fill=BOTH,expand=True)
+        self.entry_wp.pack(fill=BOTH,expand=True)
+        #entrada de ws
+        self.wsLabel.pack(fill=BOTH,expand=True)
+        self.entry_ws.pack(fill=BOTH,expand=True)
+
+    def PlaceBP_BR_Specs(self):
+        #Entrada de Ap
+        self.ApLabel.pack(fill=BOTH, expand=True)
+        self.entry_ap.pack(fill=BOTH,expand=True)
+        #Entrada de As
+        self.AsLabel.pack(fill=BOTH, expand=True)
+        self.entry_as.pack(fill=BOTH,expand=True)
+        #entrada de w0
+        self.w0Label.pack(fill=BOTH, expand=True)
+        self.entry_wo.config(state="normal")
+        self.entry_wo.pack(fill=BOTH,expand=True)
+        #entrada de Q
+        self.QLabel.pack(fill=BOTH, expand=True)
+        self.entry_Q.config(state='normal')
+        self.entry_Q.pack(fill=BOTH,expand=True)
+        #entrada de Δwp
+        self.ΔwpLabel.pack(fill=BOTH, expand=True)
+        self.entry_Δwp.config(state='normal')
+        self.entry_Δwp.pack(fill=BOTH,expand=True)
+        #entrada de Δws
+        self.ΔwsLabel.pack(fill=BOTH, expand=True)
+        self.entry_Δws.config(state='normal')
+        self.entry_Δws.pack(fill=BOTH,expand=True)
+
+    def PlaceGR_Specs(self):
+        self.τ0Label.pack(fill=BOTH,expand=True)
+        self.entry_τ0.config(state="normal")
+        self.entry_τ0.pack(fill=BOTH,expand=True)
+        self.wrgLabel.pack(fill=BOTH,expand=True)
+        self.entry_wrg.config(state="normal")
+        self.entry_wrg.pack(fill=BOTH,expand=True)
+        self.YLabel.pack(fill=BOTH,expand=True)
+        self.entry_Y.config(state="normal")
+        self.entry_Y.pack(fill=BOTH,expand=True)
+
+    def DestroyLP_HP_Specs(self):
+        self.ApLabel.pack_forget()
+        self.AsLabel.pack_forget()
+        self.entry_ap.pack_forget()
+        self.entry_as.pack_forget()
+        self.wpLabel.pack_forget()
+        self.entry_wp.pack_forget()
+        self.wsLabel.pack_forget()
+        self.entry_ws.pack_forget()
+
+    def DestroyBP_BR_Specs(self):
+        self.ApLabel.pack_forget()
+        self.AsLabel.pack_forget()
+        self.entry_ap.pack_forget()
+        self.entry_as.pack_forget()
+        self.w0Label.pack_forget()
+        self.entry_wo.pack_forget()
+        self.QLabel.pack_forget()
+        self.entry_Q.pack_forget()
+        self.ΔwpLabel.pack_forget()
+        self.entry_Δwp.pack_forget()
+        self.ΔwsLabel.pack_forget()
+        self.entry_Δws.pack_forget()
+
+    def DestroyGR_Specs(self):
+        self.τ0Label.pack_forget()
+        self.entry_τ0.pack_forget()
+        self.wrgLabel.pack_forget()
+        self.entry_wrg.pack_forget()
+        self.YLabel.pack_forget()
+        self.entry_Y.pack_forget()
     #Extras
     def CloseGUI(self):
         self.root.destroy()
