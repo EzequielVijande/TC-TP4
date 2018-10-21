@@ -7,6 +7,7 @@ import numpy as np
 #Estados
 EXIT=0
 ETAPA1=1
+ETAPA2=2
 
 
 class Manager(object):
@@ -43,7 +44,12 @@ class Manager(object):
 
             self.GUI.EventSolved()    #Settea que ya no hay evento a resolver   
 
-    #Funciones que manejan eventos
+        elif(self.estado == ETAPA2):
+            if(ev == ap.PREV_EV):
+                self.OnPrevEv()
+            elif(ev == ap.QUIT_EV):
+                self.OnQuitEv()
+    #Funciones que manejan eventos de la primera etapa
     def OnNoEv(self):
         return
 
@@ -66,7 +72,9 @@ class Manager(object):
         return
 
     def OnNextEv(self):
-        return
+        #self.IsNextValid()
+        self.estado=ETAPA2
+        self.GUI.Change_to_stage2()
 
     def OnChangeGraphEv(self):
         self.DisplaySelectedGraph()
@@ -272,3 +280,9 @@ class Manager(object):
             self.GUI.DisplayGraph(self.GUI.Imp_axes)
         elif(type_of_graph == ap.STEP):
             self.GUI.DisplayGraph(self.GUI.Step_axes)
+
+    #Funciones que manejan eventos de la segunda etapa
+
+    def OnPrevEv(self):
+        if(self.GUI.ShowPrevMessage()):
+            self.GUI.Change_to_stage1()

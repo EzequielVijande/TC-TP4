@@ -28,7 +28,7 @@ APROXIMACIONES=[
 #Largos y Anchos
 GRAPH_WIDTH=800
 GRAPH_HEIGHT=600
-#Eventos
+#Eventos de la primera etapa
 NO_EV=0
 GRAPH_EV=1
 QUIT_EV=2
@@ -37,6 +37,14 @@ LOAD_EV=4
 NEXT_EV=5
 CHANGE_GRAPH_EV=6
 PUT_TEMPLATE_EV=7
+#Eventos de la segunda eetapa
+PREV_EV=8
+CREATE_STAGE_EV=9
+DELETE_STAGE_EV=10
+SELECT_STAGE_EV=11
+CHANGED_V_LIMITS_EV=12
+CHANGED_STAGE_PARAMS=13
+
 #Grafica activa
 ATT=1
 ATT_N=2
@@ -231,7 +239,14 @@ class ApGUI(object):
         #Respuesta al escalon
         self.Step_axes= self.fig.add_subplot(111,xlabel="t(seg)",ylabel="u(t)")
 
-        self.TurnOffAxes()
+        self.Att_axes.set_axis_off()
+        self.AttN_axes.set_axis_off()
+        self.PZ_axes.set_axis_off()
+        self.Fase_axes.set_axis_off()
+        self.Q_axes.set_axis_off()
+        self.RG_axes.set_axis_off()
+        self.Imp_axes.set_axis_off()
+        self.Step_axes.set_axis_off()
 
     #Getters
     def GetEvent(self):
@@ -284,20 +299,20 @@ class ApGUI(object):
             
     #Funciones relacionadas a graficas
     def plotPhase(self, w,fase):
-        self.Fase_axes.clear()
-        self.Fase_axes.plot(w,fase)
+        self.Fase_axes.cla()
+        self.Fase_lines=self.Fase_axes.plot(w,fase)
 
     def plotAtteNorm(self, w,attN):
-        self.AttN_axes.clear()
-        self.AttN_axes.plot(w,attN)
+        self.AttN_axes.cla()
+        self.AttN_lines=self.AttN_axes.plot(w,attN)
 
     def plotAtte(self, w,att):
-        self.Att_axes.clear()
-        self.Att_axes.plot(w,att)
+        self.Att_axes.cla()
+        self.Att_lines=self.Att_axes.plot(w,att)
 
     def plotQ(self,qs):
-        self.Q_axes.clear()
-        self.Q_axes.stem(qs)
+        self.Q_axes.cla()
+        self.q_lines=self.Q_axes.stem(qs)
 
     def DisplayGraph(self,axis):
         self.TurnOffAxes()
@@ -334,18 +349,20 @@ class ApGUI(object):
 
             
     def plotZeros(self,sigma,w):
-        return
+        self.PZ_axes.cla()
+        self.PZ_lines=self.PZ_axes.plot(sigma,w)
+
     def plotImpulse(self,t,y):
-        self.Imp_axes.clear()
-        self.Imp_axes.plot(t,y)
+        self.Imp_axes.cla()
+        self.Imp_lines=self.Imp_axes.plot(t,y)
 
     def plotStep(self,t,y):
-        self.Step_axes.clear()
-        self.Step_axes.plot(t,y)
+        self.Step_axes.cla()
+        self.Step_lines=self.Step_axes.plot(t,y)
 
     def PlotGroupDelay(self,f,t):
-        self.RG_axes.clear()
-        self.RG_axes.plot(f,t)
+        self.RG_axes.cla()
+        self.RG_lines= self.RG_axes.plot(f,t)
 
     #Funciones que cambian las especificaciones
     def PlaceLP_HP_Specs(self):
@@ -428,6 +445,7 @@ class ApGUI(object):
         self.entry_wrg.pack_forget()
         self.YLabel.pack_forget()
         self.entry_Y.pack_forget()
+
     #Extras
     def CloseGUI(self):
         self.root.destroy()
@@ -450,3 +468,54 @@ class ApGUI(object):
         self.RG_axes.set_axis_off()
         self.Imp_axes.set_axis_off()
         self.Step_axes.set_axis_off()
+    
+
+    #Funciones de la segunda etapa
+
+    def Change_to_stage2(self):
+        self.AproxButtonsFrame.pack_forget()
+        self.ButtonsFrame.pack_forget()
+        self.SpecsFrame.pack_forget()
+        self.GraphicsFrame.pack_forget()
+        self.SliderFrame.pack_forget()
+        self.InitializeSecondStage()
+
+    def InitializeSecondStage(self):
+        self.PlaceOptions()
+        self.PlaceTransferFunctionGraph()
+        self.PlaceStagesMenu()
+
+    def PlaceOptions(self):
+        self.OptionsFrame = LabelFrame(self.root, text="Opciones", labelanchor="nw",background="goldenrod")
+        self.ButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
+        self.PrevButton= Button(master=self.OptionsFrame,text="Previous",command=self.prev_call
+                                ,background="pale turquoise")
+        self.PrevButton.pack(side=BOTTOM,fill=BOTH,expand=True)
+
+    def PlaceTransferFunctionGraph(self):
+        self.TransferGraphsFrame= LabelFrame(self.root, text="Ganancias",labelanchor="ne",background="goldenrod")
+        self.TransferGraphsFrame.pack(anchor=NE,fill=BOTH,expand=True)
+
+    def PlaceStagesMenu(self):
+        self.StagesMenuFrame= LabelFrame(self.root, text="Etapas",labelanchor="s",background="goldenrod")
+        self.StagesMenuFrame.pack(anchor=S,fill=BOTH,expand=True)
+    #Callbacks de la segunda etapa
+    def prev_call(self):
+        self.Ev= PREV_EV
+    def ShowPrevMessage(self):
+        if messagebox.askokcancel("Volver", "Desea volver a la etapa de diseño previa?"):
+            return True
+        else:
+            return False
+
+    def Change_to_stage1(self):
+        #Saco los elementos de la segunda etapa
+        self.OptionsFrame.pack_forget()
+        self.TransferGraphsFrame.pack_forget()
+        self.StagesMenuFrame.pack_forget()
+        #Vuelvo a poner los elementos de la primera etapa
+        self.GraphicsFrame.pack(anchor=NE,side=RIGHT,fill=BOTH,expand=True)
+        self.ButtonsFrame().pack(anchor=NW,fill=BOTH,expand=True)
+        self.AproxButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
+        self.SpecsFrame().pack(anchor=NW,fill=BOTH,expand=True)
+        self.SliderFrame.pack(side=LEFT,anchor=NW,fill=BOTH,expand=True)
