@@ -2,6 +2,8 @@
 import UserData
 import ApGUI as ap
 
+import numpy as np
+
 #Estados
 EXIT=0
 ETAPA1=1
@@ -49,8 +51,8 @@ class Manager(object):
         result_str= self.ValidateInputs()
         if(result_str!="Ok"):
             self.GUI.DisplayError(result_str)
-        #else:
-         # self.ShowGraph()
+        else:
+          self.ShowGraph()
 
     def OnQuitEv(self):
         self.GUI.CloseGUI()
@@ -67,7 +69,7 @@ class Manager(object):
         return
 
     def OnChangeGraphEv(self):
-        return
+        self.DisplaySelectedGraph()
 
     def OnPutTemplate(self):
         WantsTempl= self.GUI.PutTemplate.get()
@@ -95,6 +97,20 @@ class Manager(object):
         if(WantsTempl):
            self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
                                       self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+        
+        X = np.linspace(0, 2 * np.pi, 50)
+        Y = np.sin(X)
+        #Actualizo todas las graficas
+        self.GUI.plotAtte(X,Y)
+        self.GUI.plotAtteNorm(X,Y)
+        self.GUI.plotPhase(X,Y)
+        self.GUI.plotQ(Y)
+        self.GUI.plotStep(X,Y)
+        self.GUI.plotImpulse(X,Y)
+        self.GUI.plotZeros(X,Y)
+        self.GUI.PlotGroupDelay(X,Y)
+        
+        self.DisplaySelectedGraph()
 
     def SetUserData(self):
         As= float(self.GUI.AsString.get())
@@ -239,3 +255,20 @@ class Manager(object):
             return ("Error de sintaxis en "+argstring)
 
         return "Ok" #El numero parece ser valido
+
+    def DisplaySelectedGraph(self):
+        type_of_graph= self.GUI.SelectedGraph.get()
+        if(type_of_graph == ap.ATT):
+            self.GUI.DisplayGraph(self.GUI.Att_axes)
+        elif(type_of_graph == ap.ATT_N):
+            self.GUI.DisplayGraph(self.GUI.AttN_axes)
+        elif(type_of_graph == ap.FASE):
+            self.GUI.DisplayGraph(self.GUI.Fase_axes)
+        elif(type_of_graph == ap.CEROS):
+            self.GUI.DisplayGraph(self.GUI.PZ_axes)
+        elif(type_of_graph == ap.RETARDO):
+            self.GUI.DisplayGraph(self.GUI.RG_axes)
+        elif(type_of_graph == ap.IMPULSE):
+            self.GUI.DisplayGraph(self.GUI.Imp_axes)
+        elif(type_of_graph == ap.STEP):
+            self.GUI.DisplayGraph(self.GUI.Step_axes)

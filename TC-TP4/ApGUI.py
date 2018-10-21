@@ -1,3 +1,9 @@
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
@@ -39,6 +45,7 @@ CEROS=4
 RETARDO=5
 IMPULSE=6
 STEP=7
+
 
 
 class ApGUI(object):
@@ -153,28 +160,37 @@ class ApGUI(object):
     def PlaceGraphic(self):
         self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n",background="goldenrod")
         self.GraphicsFrame.pack(anchor=NE,side=RIGHT,fill=BOTH,expand=True)
-        self.Graph = Canvas(master=self.GraphicsFrame, width=GRAPH_WIDTH, height=GRAPH_HEIGHT)
-        self.Graph.config(bg="snow2")
-        self.Graph.pack(side=TOP,fill=BOTH,expand=True)
+        self.fig=Figure(figsize=(1,1), dpi=200,facecolor="lavender",constrained_layout=True)
+        self.Graph = FigureCanvasTkAgg(self.fig,master=self.GraphicsFrame)
+        self.Graph.get_tk_widget().config( width=GRAPH_WIDTH, height=GRAPH_HEIGHT)
+        self.Graph.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
+        #Setteo de los axes
+        self.InitializeAxes()
+
+        #Creo una toolbar para los graficos
+        toolbarFrame = Frame(master=self.GraphicsFrame)
+        toolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
+        toolbar = NavigationToolbar2Tk(self.Graph, toolbarFrame)
+        toolbar.pack(fill=BOTH,expand=True)
         #Botones para cambiar de graficas
         self.SelectedGraph= tk.IntVar()
         self.AttRButton= Radiobutton(master=self.GraphicsFrame,text="Atenuacion",background="pale turquoise",
-                                     indicatoron=False,variable=self.SelectedGraph,value=ATT)
+                                     indicatoron=False,variable=self.SelectedGraph,value=ATT,command=self.change_graph_button_call)
         self.AttRButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.AttNRButton = Radiobutton(master=self.GraphicsFrame,text="Atenuacion Norm",background="pale turquoise",
-                                     indicatoron=False,variable=self.SelectedGraph,value=ATT_N)
+                                     indicatoron=False,variable=self.SelectedGraph,value=ATT_N,command=self.change_graph_button_call)
         self.AttNRButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.FaseRButton = Radiobutton(master=self.GraphicsFrame,text="Fase",background="pale turquoise",
-                                     indicatoron=False,variable=self.SelectedGraph,value=FASE)
+                                     indicatoron=False,variable=self.SelectedGraph,value=FASE,command=self.change_graph_button_call)
         self.FaseRButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.ZeroesRButton =Radiobutton(master=self.GraphicsFrame,text="Polos y ceros",background="pale turquoise",
-                                     indicatoron=False,variable=self.SelectedGraph,value=CEROS)
+                                     indicatoron=False,variable=self.SelectedGraph,value=CEROS,command=self.change_graph_button_call)
         self.ZeroesRButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.ImpulseRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al impulso",background="pale turquoise",
-                                     indicatoron=False,variable=self.SelectedGraph,value=IMPULSE)
+                                     indicatoron=False,variable=self.SelectedGraph,value=IMPULSE,command=self.change_graph_button_call)
         self.ImpulseRButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.StepRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al Escalon",background="pale turquoise",
-                                     indicatoron=False,variable=self.SelectedGraph,value=STEP)
+                                     indicatoron=False,variable=self.SelectedGraph,value=STEP,command=self.change_graph_button_call)
         self.StepRButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.AttRButton.select() #por default empieza seleccionado el grafico de atenuacion
 
@@ -197,7 +213,25 @@ class ApGUI(object):
         self.SlideNorm = Scale(master=self.SliderFrame, from_=0, to=100,orient=HORIZONTAL)
         self.SlideNorm.config(bg="light goldenrod")
         self.SlideNorm.pack(fill=BOTH,expand=True)
+    def InitializeAxes(self):
+        #Atenuacion
+        self.Att_axes= self.fig.add_subplot(111,xlabel="f(Hz)",ylabel="|A(f)|(dB)")
+        #Atenuacion normalizada
+        self.AttN_axes= self.fig.add_subplot(111,xlabel="fN(Hz)",ylabel="|A(fN)|(dB)")
+        #Diagrama de polos y ceros
+        self.PZ_axes= self.fig.add_subplot(111,xlabel="Re(s)",ylabel="Im(s)")
+        #Fase
+        self.Fase_axes= self.fig.add_subplot(111,xlabel="f(Hz)",ylabel="fase de H(deg)")
+        #Q
+        self.Q_axes= self.fig.add_subplot(111,xlabel="Numero de curva",ylabel="Qmaximo")
+        #Rechaza Banda
+        self.RG_axes= self.fig.add_subplot(111,xlabel="f(Hz)",ylabel="τ(seg)")
+        #Respuesta al impulso
+        self.Imp_axes= self.fig.add_subplot(111,xlabel="t(seg)",ylabel="h(t)")
+        #Respuesta al escalon
+        self.Step_axes= self.fig.add_subplot(111,xlabel="t(seg)",ylabel="u(t)")
 
+        self.TurnOffAxes()
 
     #Getters
     def GetEvent(self):
@@ -250,11 +284,27 @@ class ApGUI(object):
             
     #Funciones relacionadas a graficas
     def plotPhase(self, w,fase):
-        return
+        self.Fase_axes.clear()
+        self.Fase_axes.plot(w,fase)
+
     def plotAtteNorm(self, w,attN):
-        return
+        self.AttN_axes.clear()
+        self.AttN_axes.plot(w,attN)
+
     def plotAtte(self, w,att):
-        return
+        self.Att_axes.clear()
+        self.Att_axes.plot(w,att)
+
+    def plotQ(self,qs):
+        self.Q_axes.clear()
+        self.Q_axes.stem(qs)
+
+    def DisplayGraph(self,axis):
+        self.TurnOffAxes()
+        axis.grid(b=True,axis='both')
+        axis.set_axis_on()
+        self.Graph.draw()
+
     def placeTemplate(self,Ap,As,wp,ws,wo,Q,wpMinus,wpPlus,wsMinus,wsPlus):
         fil= self.filter.get()
         if(fil==LP):
@@ -286,9 +336,16 @@ class ApGUI(object):
     def plotZeros(self,sigma,w):
         return
     def plotImpulse(self,t,y):
-        return
+        self.Imp_axes.clear()
+        self.Imp_axes.plot(t,y)
+
     def plotStep(self,t,y):
-        return
+        self.Step_axes.clear()
+        self.Step_axes.plot(t,y)
+
+    def PlotGroupDelay(self,f,t):
+        self.RG_axes.clear()
+        self.RG_axes.plot(f,t)
 
     #Funciones que cambian las especificaciones
     def PlaceLP_HP_Specs(self):
@@ -384,3 +441,12 @@ class ApGUI(object):
         y_out=GRAPH_HEIGHT-( (y*GRAPH_HEIGHT)/max_Y)
         x_out=((x*GRAPH_WIDTH)/max_X)
         return (x_out,y_out)
+    def TurnOffAxes(self):
+        self.Att_axes.set_axis_off()
+        self.AttN_axes.set_axis_off()
+        self.PZ_axes.set_axis_off()
+        self.Fase_axes.set_axis_off()
+        self.Q_axes.set_axis_off()
+        self.RG_axes.set_axis_off()
+        self.Imp_axes.set_axis_off()
+        self.Step_axes.set_axis_off()
