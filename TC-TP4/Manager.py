@@ -42,13 +42,19 @@ class Manager(object):
             else:
                 self.Error()
 
-            self.GUI.EventSolved()    #Settea que ya no hay evento a resolver   
 
         elif(self.estado == ETAPA2):
             if(ev == ap.PREV_EV):
                 self.OnPrevEv()
+            elif(ev == ap.SAVE_EV):
+                self.OnSave2Ev()
+            elif(ev == ap.LOAD_EV):
+                self.OnLoad2Ev()
             elif(ev == ap.QUIT_EV):
                 self.OnQuitEv()
+    
+        self.GUI.EventSolved()    #Settea que ya no hay evento a resolver
+
     #Funciones que manejan eventos de la primera etapa
     def OnNoEv(self):
         return
@@ -286,3 +292,8 @@ class Manager(object):
     def OnPrevEv(self):
         if(self.GUI.ShowPrevMessage()):
             self.GUI.Change_to_stage1()
+            self.estado=ETAPA1
+    def OnSave2Ev(self):
+        return
+    def OnLoad2Ev(self):
+        return

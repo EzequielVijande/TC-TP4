@@ -481,24 +481,113 @@ class ApGUI(object):
         self.InitializeSecondStage()
 
     def InitializeSecondStage(self):
-        self.PlaceOptions()
-        self.PlaceTransferFunctionGraph()
         self.PlaceStagesMenu()
+        self.PlaceTransferFunctionGraph()
+        self.PlaceOptions()
 
     def PlaceOptions(self):
-        self.OptionsFrame = LabelFrame(self.root, text="Opciones", labelanchor="nw",background="goldenrod")
-        self.ButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
+        self.vMinString= StringVar() #Valor minimo posible a la entrada
+        self.vMaxString= StringVar() #Valor maximo posible a la salida
+        self.RDString= StringVar() #Variable donde se guarda el rango dinamico
+        self.OptionsFrame = LabelFrame(self.root, text="Opciones",background="goldenrod")
+        self.OptionsFrame.pack(side="left",fill=BOTH,expand=True)
         self.PrevButton= Button(master=self.OptionsFrame,text="Previous",command=self.prev_call
                                 ,background="pale turquoise")
-        self.PrevButton.pack(side=BOTTOM,fill=BOTH,expand=True)
+        self.PrevButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
+        self.Save2Button= Button(master=self.OptionsFrame,text="Save",command=self.save_call
+                                ,background="pale turquoise")
+        self.Save2Button.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
+        self.Load2Button= Button(master=self.OptionsFrame,text="Load",command=self.load_call
+                                ,background="pale turquoise")
+        self.Load2Button.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
+        self.ExportButton= Button(master=self.OptionsFrame,text="Export H(s) as txt",command=self.load_call
+                                ,background="pale turquoise")
+        self.ExportButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
+
+        self.VminLabel= Label(master=self.OptionsFrame,text="Vmin(mV)",background="light goldenrod")
+        self.VminLabel.pack(anchor=SW,fill=BOTH,expand=True)
+        self.entry_Vmin=Entry(master=self.OptionsFrame,textvariable=self.vMinString)
+        self.entry_Vmin.pack(anchor=SE,fill=BOTH,expand=True)
+
+        self.VmaxLabel= Label(master=self.OptionsFrame,text="Vmax(V)",background="light goldenrod")
+        self.VmaxLabel.pack(anchor=SW,fill=BOTH,expand=True)
+        self.entry_Vmax=Entry(master=self.OptionsFrame,textvariable=self.vMaxString)
+        self.entry_Vmax.pack(anchor=SE,fill=BOTH,expand=True)
+
+        self.RangoDText= Message(master=self.OptionsFrame, text="Rango dinamico(dB)="+self.RDString.get(),textvariable=self.RDString)
+        self.RangoDText.pack(side="top",fill=BOTH,expand=True)
 
     def PlaceTransferFunctionGraph(self):
-        self.TransferGraphsFrame= LabelFrame(self.root, text="Ganancias",labelanchor="ne",background="goldenrod")
-        self.TransferGraphsFrame.pack(anchor=NE,fill=BOTH,expand=True)
+        self.fzString= StringVar()
+        self.fpString= StringVar()
+        self.QzString= StringVar()
+        self.QpString= StringVar()
+        self.G0String= StringVar()
+
+        self.TransferGraphsFrame= LabelFrame(master=self.root, text="Ganancias",background="goldenrod")
+        self.TransferGraphsFrame.pack(side="right",fill=BOTH,expand=True)
+
+        #Seccion con la etapa seleccionada
+        self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Etapa seleccionada",background="goldenrod")
+        self.StageGraphFrame.pack(side="right",fill=BOTH,expand=True)
+        self.CurrentStageFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
+        self.CurrentStageCanvas = FigureCanvasTkAgg(self.CurrentStageFig,master=self.StageGraphFrame)
+        self.CurrentStageCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
+        self.CurrentStageCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
+        #Creo una toolbar para los graficos
+        self.SelStagetoolbarFrame = Frame(master=self.StageGraphFrame)
+        self.SelStagetoolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
+        self.SelStagetoolbar = NavigationToolbar2Tk(self.CurrentStageCanvas, self.SelStagetoolbarFrame)
+        self.SelStagetoolbar.pack(fill=BOTH,expand=True)
+        self.CurrentStageCanvas.draw()
+        #Parametros de interes de la etapa seleccionada
+        self.StageParamsFrame= LabelFrame(self.StageGraphFrame,text="Parametros de interes",background="goldenrod")
+        self.StageParamsFrame.pack(side="top",fill=BOTH,expand=True)
+        #fz
+        self.TransfwzLabel= Label(master=self.StageParamsFrame,text="fz(Hz)",background="light goldenrod")
+        self.TransfwzLabel.pack(fill=BOTH,expand=True)
+        self.entry_Transfwz=Entry(master=self.StageParamsFrame,textvariable=self.fzString)
+        self.entry_Transfwz.pack(anchor=NE,fill=BOTH,expand=True)
+        #fp
+        self.TransfwpLabel= Label(master=self.StageParamsFrame,text="fp(Hz)",background="light goldenrod")
+        self.TransfwpLabel.pack(fill=BOTH,expand=True)
+        self.entry_Transfwz=Entry(master=self.StageParamsFrame,textvariable=self.fpString)
+        self.entry_Transfwz.pack(anchor=NE,fill=BOTH,expand=True)
+        #H(0)
+        self.G0Label= Label(master=self.StageParamsFrame,text="H(0)(dB)",background="light goldenrod")
+        self.G0Label.pack(fill=BOTH,expand=True)
+        self.entry_G0=Entry(master=self.StageParamsFrame,textvariable=self.G0String)
+        self.entry_G0.pack(anchor=NE,fill=BOTH,expand=True)
+        #Qp
+        self.QpLabel= Label(master=self.StageParamsFrame,text="Qp",background="light goldenrod")
+        self.QpLabel.pack(fill=BOTH,expand=True)
+        self.entry_Qp=Entry(master=self.StageParamsFrame,textvariable=self.QpString)
+        self.entry_Qp.pack(anchor=NE,fill=BOTH,expand=True)
+        #Qz
+        self.QzLabel= Label(master=self.StageParamsFrame,text="Qz",background="light goldenrod")
+        self.QzLabel.pack(fill=BOTH,expand=True)
+        self.entry_Qz=Entry(master=self.StageParamsFrame,textvariable=self.QzString)
+        self.entry_Qz.pack(anchor=NE,fill=BOTH,expand=True)
+
+        #Seccion con la ganancia de todas las etapas en cascada
+        self.CascadeGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Ganancia total(cascada)",background="goldenrod")
+        self.CascadeGraphFrame.pack(side="left",fill=BOTH,expand=True)
+        self.TransfTotalFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
+        self.TransfTotalCanvas = FigureCanvasTkAgg(self.TransfTotalFig,master=self.CascadeGraphFrame)
+        self.TransfTotalCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
+        self.TransfTotalCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
+        #Creo una toolbar para la grafica de cascada
+        self.TransfTotToolbarFrame = Frame(master=self.CascadeGraphFrame)
+        self.TransfTotToolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
+        self.TransfTotToolbar = NavigationToolbar2Tk(self.TransfTotalCanvas, self.TransfTotToolbarFrame)
+        self.TransfTotToolbar.pack(fill=BOTH,expand=True)
+        self.TransfTotalCanvas.draw()
 
     def PlaceStagesMenu(self):
-        self.StagesMenuFrame= LabelFrame(self.root, text="Etapas",labelanchor="s",background="goldenrod")
-        self.StagesMenuFrame.pack(anchor=S,fill=BOTH,expand=True)
+        self.StagesMenuFrame= LabelFrame(self.root, text="Etapas",background="goldenrod")
+        self.StagesMenuFrame.pack(side="bottom",fill=BOTH,expand=True)
+        self.etapa1button= Button(master=self.StagesMenuFrame,text="Etapa1",background="light goldenrod")
+        self.etapa1button.pack(side="left",fill=BOTH,expand=True)
     #Callbacks de la segunda etapa
     def prev_call(self):
         self.Ev= PREV_EV
@@ -510,12 +599,12 @@ class ApGUI(object):
 
     def Change_to_stage1(self):
         #Saco los elementos de la segunda etapa
-        self.OptionsFrame.pack_forget()
-        self.TransferGraphsFrame.pack_forget()
-        self.StagesMenuFrame.pack_forget()
+        self.OptionsFrame.destroy()
+        self.TransferGraphsFrame.destroy()
+        self.StagesMenuFrame.destroy()
         #Vuelvo a poner los elementos de la primera etapa
         self.GraphicsFrame.pack(anchor=NE,side=RIGHT,fill=BOTH,expand=True)
-        self.ButtonsFrame().pack(anchor=NW,fill=BOTH,expand=True)
+        self.ButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.AproxButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
-        self.SpecsFrame().pack(anchor=NW,fill=BOTH,expand=True)
+        self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.SliderFrame.pack(side=LEFT,anchor=NW,fill=BOTH,expand=True)
