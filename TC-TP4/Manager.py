@@ -248,13 +248,13 @@ class Manager(object):
             wrg=self.GUI.wrgString.get()
             Y=self.GUI.YString.get()
 
-            t0String= self.IsValidNumber(t0)
+            t0String= self.IsValidNumber(t0,"t(0)")
             if(t0String != "Ok"):
                 return t0String
-            wrgString= self.IsValidNumber(wrg)
+            wrgString= self.IsValidNumber(wrg,"wrg")
             if(wrgString != "Ok"):
                 return wrgString
-            YString= self.IsValidNumber(Y)
+            YString= self.IsValidNumber(Y,"Y")
             if(YString != "Ok"):
                 return YString
             elif(float(Y)>1):
@@ -312,8 +312,8 @@ class Manager(object):
                 return 0, ((self.data.wp)/(self.data.ws)),0,((self.data.As)*1.5)
         elif(filt == ap.BP):
             if(selected != ap.ATT_N):
-                xleft= (self.data.wo)-(10*(float(self.GUI.entry_Δws.get())))
-                xright= (self.data.wo)+(10*(float(self.GUI.entry_Δws.get())))
+                xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δws.get())))
+                xright= (self.data.wo)+(20*(float(self.GUI.entry_Δws.get())))
                 ybot=0
                 ytop=(self.data.As)*1.5
                 return xleft, xright,ybot,ytop
@@ -322,8 +322,8 @@ class Manager(object):
 
         elif(filt == ap.BR):
             if(selected != ap.ATT_N):
-                xleft= (self.data.wo)-(10*(float(self.GUI.entry_Δwp.get())))
-                xright= (self.data.wo)+(10*(float(self.GUI.entry_Δwp.get())))
+                xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δwp.get())))
+                xright= (self.data.wo)+(20*(float(self.GUI.entry_Δwp.get())))
                 ybot=0
                 ytop=(self.data.As)*1.5
                 return xleft, xright,ybot,ytop

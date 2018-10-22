@@ -54,6 +54,20 @@ CEROS=4
 RETARDO=5
 IMPULSE=6
 STEP=7
+#Colores principales
+FRAME_COLOR= "navajo white"
+FRAME_TEXT_COLOR="black"
+BUTTON_COLOR= "peach puff"
+BUTTON_FONT_COLOR="black"
+GRAPH_BUTTON_COLOR="orchid1"
+GRAPH_BUTTON_TEXT_COLOR="black"
+#Colores de las graficas
+AXIS_COLOR= "black"
+GRID_COLOR= "blue"
+AXES_BACKGROUND="white"
+LABEL_COLOR="blue"
+
+
 
 
 
@@ -77,38 +91,38 @@ class ApGUI(object):
 
     #Funciones de inicializacion
     def placeFilterButtons(self):
-        self.ButtonsFrame = LabelFrame(self.root, text="Tipo de filtro", labelanchor="n",background="goldenrod")
+        self.ButtonsFrame = LabelFrame(self.root, text="Tipo de filtro", labelanchor="n",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.ButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.filter=tk.IntVar()
         self.rButton_low_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa bajos", 
-            variable = self.filter, value = LP,background="light goldenrod",command=self.filter_call)
+            variable = self.filter, value = LP,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR,command=self.filter_call)
         self.rButton_low_pass.pack(fill=BOTH,expand=True)
         self.rButton_high_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa altos",command=self.filter_call,
-            variable = self.filter, value = HP,background="light goldenrod")
+            variable = self.filter, value = HP,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.rButton_high_pass.pack(fill=BOTH,expand=True)
         self.rButton_band_pass = tk.Radiobutton(self.ButtonsFrame, text="Pasa banda", command=self.filter_call,
-            variable = self.filter, value = BP,background="light goldenrod")
+            variable = self.filter, value = BP,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.rButton_band_pass.pack(fill=BOTH,expand=True)
         self.rButton_band_reject = tk.Radiobutton(self.ButtonsFrame, text="Rechaza banda", command=self.filter_call,
-            variable = self.filter, value = BR,background="light goldenrod")
+            variable = self.filter, value = BR,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.rButton_band_reject.pack(fill=BOTH,expand=True)
         self.rButton_group_delay = tk.Radiobutton(self.ButtonsFrame, text="Retardo de grupo", command=self.filter_call,
-            variable = self.filter, value = GR,background="light goldenrod")
+            variable = self.filter, value = GR,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.rButton_group_delay.pack(fill=BOTH,expand=True)
         self.rButton_low_pass.select() #Por default comienza seleccionado el filtro low_pass
 
 
     def placeAproximationButtons(self):
-        self.AproxButtonsFrame = LabelFrame(self.root, text="Aproximacion", labelanchor="n",background="goldenrod")
+        self.AproxButtonsFrame = LabelFrame(self.root, text="Aproximacion", labelanchor="n",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.AproxButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.selected_aprox = StringVar(master=self.AproxButtonsFrame)
         self.selected_aprox.set(APROXIMACIONES[0]) # Empieza conButterworth como default
 
         self.pull_down_menu = OptionMenu(self.AproxButtonsFrame, self.selected_aprox, *APROXIMACIONES)
-        self.pull_down_menu.config(bg="light goldenrod")
+        self.pull_down_menu.config(bg=BUTTON_COLOR)
         self.pull_down_menu.pack(side=TOP,fill=BOTH,expand=True)
         self.GraphButton= Button(master=self.AproxButtonsFrame,text="Graph",command=self.graph_button_call
-                                 ,background="light goldenrod").pack(side=BOTTOM,fill=BOTH,expand=True)
+                                 ,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR).pack(side=BOTTOM,fill=BOTH,expand=True)
 
     def placeSpecifications(self):
         self.PrevState= LP
@@ -124,52 +138,52 @@ class ApGUI(object):
         self.wrgString= StringVar()
         self.YString= StringVar()
 
-        self.SpecsFrame = LabelFrame(self.root, text="Especificaciones", labelanchor="n",background="goldenrod")
+        self.SpecsFrame = LabelFrame(self.root, text="Especificaciones", labelanchor="n",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         #Entrada de Ap
-        self.ApLabel= Label(master=self.SpecsFrame,text="Ap(dB)",anchor=W,background="light goldenrod")
+        self.ApLabel= Label(master=self.SpecsFrame,text="Ap(dB)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.ApLabel.pack(fill=BOTH,expand=True)
         self.entry_ap=Entry(master=self.SpecsFrame,textvariable=self.ApString)
         self.entry_ap.pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de As
-        self.AsLabel= Label(master=self.SpecsFrame,text="As(dB)",anchor=W,background="light goldenrod")
+        self.AsLabel= Label(master=self.SpecsFrame,text="As(dB)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.AsLabel.pack(fill=BOTH,expand=True)
         self.entry_as=Entry(master=self.SpecsFrame,textvariable=self.AsString)
         self.entry_as.pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de wp
-        self.wpLabel= Label(master=self.SpecsFrame,text="wp(rad/seg)",anchor=W,background="light goldenrod")
+        self.wpLabel= Label(master=self.SpecsFrame,text="wp(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.wpLabel.pack(fill=BOTH,expand=True)
         self.entry_wp=Entry(master=self.SpecsFrame,textvariable=self.wpString)
         self.entry_wp.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de ws
-        self.wsLabel= Label(master=self.SpecsFrame,text="ws(rad/seg)",anchor=W,background="light goldenrod")
+        self.wsLabel= Label(master=self.SpecsFrame,text="ws(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.wsLabel.pack(fill=BOTH,expand=True)
         self.entry_ws=Entry(master=self.SpecsFrame,textvariable=self.wsString)
         self.entry_ws.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de w0
-        self.w0Label= Label(master=self.SpecsFrame,text="wo(rad/seg)",anchor=W,background="light goldenrod")
+        self.w0Label= Label(master=self.SpecsFrame,text="wo(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_wo=Entry(master=self.SpecsFrame,textvariable=self.w0String,state='disabled')
         #entrada de Q
-        self.QLabel= Label(master=self.SpecsFrame,text="Q",anchor=W,background="light goldenrod")
+        self.QLabel= Label(master=self.SpecsFrame,text="Q",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Q=Entry(master=self.SpecsFrame,textvariable=self.qString,state='disabled')
         #entrada de Δwp
-        self.ΔwpLabel= Label(master=self.SpecsFrame,text="Δwp(rad/seg)",anchor=W,background="light goldenrod")
+        self.ΔwpLabel= Label(master=self.SpecsFrame,text="Δwp(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Δwp=Entry(master=self.SpecsFrame,textvariable=self.ΔwpString,state='disabled')
         #entrada de Δws
-        self.ΔwsLabel= Label(master=self.SpecsFrame,text="Δws(rad/seg)",anchor=W,background="light goldenrod")
+        self.ΔwsLabel= Label(master=self.SpecsFrame,text="Δws(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Δws=Entry(master=self.SpecsFrame,textvariable=self.ΔwsString,state='disabled')
         #entrada de τ(0)
-        self.τ0Label= Label(master=self.SpecsFrame,text="τ(0) (seg)",anchor=W,background="light goldenrod")
+        self.τ0Label= Label(master=self.SpecsFrame,text="τ(0) (seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_τ0=Entry(master=self.SpecsFrame,textvariable=self.τ0String,state='disabled')
         #Entrada de wrg
-        self.wrgLabel=Label(master=self.SpecsFrame,text="wrg (rad/seg)",anchor=W,background="light goldenrod")
+        self.wrgLabel=Label(master=self.SpecsFrame,text="wrg (rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_wrg=Entry(master=self.SpecsFrame,textvariable=self.wrgString,state='disabled')
         #Entrada de Y
-        self.YLabel=Label(master=self.SpecsFrame,text="Y",anchor=W,background="light goldenrod")
+        self.YLabel=Label(master=self.SpecsFrame,text="Y",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Y=Entry(master=self.SpecsFrame,textvariable=self.YString,state='disabled')
 
     def PlaceGraphic(self):
-        self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n",background="goldenrod")
+        self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.GraphicsFrame.pack(anchor=NE,side=RIGHT,fill=BOTH,expand=True)
         self.fig=Figure(figsize=(1,1), dpi=200,facecolor="lavender",constrained_layout=True)
         self.Graph = FigureCanvasTkAgg(self.fig,master=self.GraphicsFrame)
@@ -185,22 +199,22 @@ class ApGUI(object):
         toolbar.pack(fill=BOTH,expand=True)
         #Botones para cambiar de graficas
         self.SelectedGraph= tk.IntVar()
-        self.AttRButton= Radiobutton(master=self.GraphicsFrame,text="Atenuacion",background="pale turquoise",
+        self.AttRButton= Radiobutton(master=self.GraphicsFrame,text="Atenuacion",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=ATT,command=self.change_graph_button_call)
         self.AttRButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.AttNRButton = Radiobutton(master=self.GraphicsFrame,text="Atenuacion Norm",background="pale turquoise",
+        self.AttNRButton = Radiobutton(master=self.GraphicsFrame,text="Atenuacion Norm",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=ATT_N,command=self.change_graph_button_call)
         self.AttNRButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.FaseRButton = Radiobutton(master=self.GraphicsFrame,text="Fase",background="pale turquoise",
+        self.FaseRButton = Radiobutton(master=self.GraphicsFrame,text="Fase",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=FASE,command=self.change_graph_button_call)
         self.FaseRButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.ZeroesRButton =Radiobutton(master=self.GraphicsFrame,text="Polos y ceros",background="pale turquoise",
+        self.ZeroesRButton =Radiobutton(master=self.GraphicsFrame,text="Polos y ceros",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=CEROS,command=self.change_graph_button_call)
         self.ZeroesRButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.ImpulseRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al impulso",background="pale turquoise",
+        self.ImpulseRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al impulso",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=IMPULSE,command=self.change_graph_button_call)
         self.ImpulseRButton.pack(side=LEFT,fill=BOTH,expand=True)
-        self.StepRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al Escalon",background="pale turquoise",
+        self.StepRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al Escalon",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=STEP,command=self.change_graph_button_call)
         self.StepRButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.AttRButton.select() #por default empieza seleccionado el grafico de atenuacion
@@ -208,21 +222,21 @@ class ApGUI(object):
         #Boton que superpone plantilla
         self.PutTemplate= IntVar()
         self.TemplateButton = Checkbutton(master=self.GraphicsFrame, text="Superponer plantilla",
-                        variable=self.PutTemplate,onvalue=1, offvalue=0,command=self.put_template_call,background="pale turquoise")
+                        variable=self.PutTemplate,onvalue=1, offvalue=0,command=self.put_template_call,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.TemplateButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.SaveButton= Button(master=self.GraphicsFrame,text="Save",command=self.save_call
-                                ,background="pale turquoise").pack(side=LEFT,fill=BOTH,expand=True)
+                                ,background=GRAPH_BUTTON_COLOR).pack(side=LEFT,fill=BOTH,expand=True)
         self.LoadButton= Button(master=self.GraphicsFrame,text="Load",command=self.load_call
-                                ,background="pale turquoise").pack(side=LEFT,fill=BOTH,expand=True)
+                                ,background=GRAPH_BUTTON_COLOR).pack(side=LEFT,fill=BOTH,expand=True)
         self.NextButton= Button(master=self.GraphicsFrame,text="Next",command=self.next_call
-                                ,background="pale turquoise").pack(side=LEFT,fill=BOTH,expand=True)
+                                ,background=GRAPH_BUTTON_COLOR).pack(side=LEFT,fill=BOTH,expand=True)
 
 
     def placeSliders(self):
-        self.SliderFrame = LabelFrame(self.root, text="Rango de desnormalización(%)", labelanchor="n",background="goldenrod")
+        self.SliderFrame = LabelFrame(self.root, text="Rango de desnormalización(%)", labelanchor="n",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.SliderFrame.pack(side=LEFT,anchor=NW,fill=BOTH,expand=True)
         self.SlideNorm = Scale(master=self.SliderFrame, from_=0, to=100,orient=HORIZONTAL)
-        self.SlideNorm.config(bg="light goldenrod")
+        self.SlideNorm.config(bg=BUTTON_COLOR)
         self.SlideNorm.pack(fill=BOTH,expand=True)
     def InitializeAxes(self):
         #Atenuacion
@@ -561,27 +575,27 @@ class ApGUI(object):
         self.vMinString= StringVar() #Valor minimo posible a la entrada
         self.vMaxString= StringVar() #Valor maximo posible a la salida
         self.RDString= StringVar() #Variable donde se guarda el rango dinamico
-        self.OptionsFrame = LabelFrame(self.root, text="Opciones",background="goldenrod")
+        self.OptionsFrame = LabelFrame(self.root, text="Opciones",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.OptionsFrame.pack(side="left",fill=BOTH,expand=True)
         self.PrevButton= Button(master=self.OptionsFrame,text="Previous",command=self.prev_call
-                                ,background="pale turquoise")
+                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.PrevButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
         self.Save2Button= Button(master=self.OptionsFrame,text="Save",command=self.save_call
-                                ,background="pale turquoise")
+                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.Save2Button.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
         self.Load2Button= Button(master=self.OptionsFrame,text="Load",command=self.load_call
-                                ,background="pale turquoise")
+                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.Load2Button.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
         self.ExportButton= Button(master=self.OptionsFrame,text="Export H(s) as txt",command=self.load_call
-                                ,background="pale turquoise")
+                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.ExportButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
 
-        self.VminLabel= Label(master=self.OptionsFrame,text="Vmin(mV)",background="light goldenrod")
+        self.VminLabel= Label(master=self.OptionsFrame,text="Vmin(mV)",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.VminLabel.pack(anchor=SW,fill=BOTH,expand=True)
         self.entry_Vmin=Entry(master=self.OptionsFrame,textvariable=self.vMinString)
         self.entry_Vmin.pack(anchor=SE,fill=BOTH,expand=True)
 
-        self.VmaxLabel= Label(master=self.OptionsFrame,text="Vmax(V)",background="light goldenrod")
+        self.VmaxLabel= Label(master=self.OptionsFrame,text="Vmax(V)",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.VmaxLabel.pack(anchor=SW,fill=BOTH,expand=True)
         self.entry_Vmax=Entry(master=self.OptionsFrame,textvariable=self.vMaxString)
         self.entry_Vmax.pack(anchor=SE,fill=BOTH,expand=True)
@@ -596,11 +610,11 @@ class ApGUI(object):
         self.QpString= StringVar()
         self.G0String= StringVar()
 
-        self.TransferGraphsFrame= LabelFrame(master=self.root, text="Ganancias",background="goldenrod")
+        self.TransferGraphsFrame= LabelFrame(master=self.root, text="Ganancias",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.TransferGraphsFrame.pack(side="right",fill=BOTH,expand=True)
 
         #Seccion con la etapa seleccionada
-        self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Etapa seleccionada",background="goldenrod")
+        self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Etapa seleccionada",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.StageGraphFrame.pack(side="right",fill=BOTH,expand=True)
         self.CurrentStageFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
         self.CurrentStageCanvas = FigureCanvasTkAgg(self.CurrentStageFig,master=self.StageGraphFrame)
@@ -612,36 +626,36 @@ class ApGUI(object):
         self.SelStagetoolbar = NavigationToolbar2Tk(self.CurrentStageCanvas, self.SelStagetoolbarFrame)
         self.SelStagetoolbar.pack(fill=BOTH,expand=True)
         #Parametros de interes de la etapa seleccionada
-        self.StageParamsFrame= LabelFrame(self.StageGraphFrame,text="Parametros de interes",background="goldenrod")
+        self.StageParamsFrame= LabelFrame(self.StageGraphFrame,text="Parametros de interes",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.StageParamsFrame.pack(side="top",fill=BOTH,expand=True)
         #fz
-        self.TransfwzLabel= Label(master=self.StageParamsFrame,text="fz(Hz)",background="light goldenrod")
+        self.TransfwzLabel= Label(master=self.StageParamsFrame,text="fz(Hz)",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.TransfwzLabel.pack(fill=BOTH,expand=True)
         self.entry_Transfwz=Entry(master=self.StageParamsFrame,textvariable=self.fzString)
         self.entry_Transfwz.pack(anchor=NE,fill=BOTH,expand=True)
         #fp
-        self.TransfwpLabel= Label(master=self.StageParamsFrame,text="fp(Hz)",background="light goldenrod")
+        self.TransfwpLabel= Label(master=self.StageParamsFrame,text="fp(Hz)",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.TransfwpLabel.pack(fill=BOTH,expand=True)
         self.entry_Transfwz=Entry(master=self.StageParamsFrame,textvariable=self.fpString)
         self.entry_Transfwz.pack(anchor=NE,fill=BOTH,expand=True)
         #H(0)
-        self.G0Label= Label(master=self.StageParamsFrame,text="H(0)(dB)",background="light goldenrod")
+        self.G0Label= Label(master=self.StageParamsFrame,text="H(0)(dB)",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.G0Label.pack(fill=BOTH,expand=True)
         self.entry_G0=Entry(master=self.StageParamsFrame,textvariable=self.G0String)
         self.entry_G0.pack(anchor=NE,fill=BOTH,expand=True)
         #Qp
-        self.QpLabel= Label(master=self.StageParamsFrame,text="Qp",background="light goldenrod")
+        self.QpLabel= Label(master=self.StageParamsFrame,text="Qp",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.QpLabel.pack(fill=BOTH,expand=True)
         self.entry_Qp=Entry(master=self.StageParamsFrame,textvariable=self.QpString)
         self.entry_Qp.pack(anchor=NE,fill=BOTH,expand=True)
         #Qz
-        self.QzLabel= Label(master=self.StageParamsFrame,text="Qz",background="light goldenrod")
+        self.QzLabel= Label(master=self.StageParamsFrame,text="Qz",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.QzLabel.pack(fill=BOTH,expand=True)
         self.entry_Qz=Entry(master=self.StageParamsFrame,textvariable=self.QzString)
         self.entry_Qz.pack(anchor=NE,fill=BOTH,expand=True)
 
         #Seccion con la ganancia de todas las etapas en cascada
-        self.CascadeGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Ganancia total(cascada)",background="goldenrod")
+        self.CascadeGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Ganancia total(cascada)",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.CascadeGraphFrame.pack(side="left",fill=BOTH,expand=True)
         self.TransfTotalFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
         self.TransfTotalCanvas = FigureCanvasTkAgg(self.TransfTotalFig,master=self.CascadeGraphFrame)
@@ -654,9 +668,9 @@ class ApGUI(object):
         self.TransfTotToolbar.pack(fill=BOTH,expand=True)
 
     def PlaceStagesMenu(self):
-        self.StagesMenuFrame= LabelFrame(self.root, text="Etapas",background="goldenrod")
+        self.StagesMenuFrame= LabelFrame(self.root, text="Etapas",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.StagesMenuFrame.pack(side="bottom",fill=BOTH,expand=True)
-        self.etapa1button= Button(master=self.StagesMenuFrame,text="Etapa1",background="light goldenrod")
+        self.etapa1button= Button(master=self.StagesMenuFrame,text="Etapa1",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.etapa1button.pack(side="left",fill=BOTH,expand=True)
     #Callbacks de la segunda etapa
     def prev_call(self):
