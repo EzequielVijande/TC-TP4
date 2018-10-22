@@ -55,11 +55,11 @@ RETARDO=5
 IMPULSE=6
 STEP=7
 #Colores principales
-FRAME_COLOR= "navajo white"
+FRAME_COLOR= "goldenrod"
 FRAME_TEXT_COLOR="black"
-BUTTON_COLOR= "peach puff"
+BUTTON_COLOR= "light goldenrod"
 BUTTON_FONT_COLOR="black"
-GRAPH_BUTTON_COLOR="orchid1"
+GRAPH_BUTTON_COLOR="cyan2"
 GRAPH_BUTTON_TEXT_COLOR="black"
 #Colores de las graficas
 AXIS_COLOR= "black"

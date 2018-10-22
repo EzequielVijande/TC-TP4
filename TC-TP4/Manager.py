@@ -147,6 +147,7 @@ class Manager(object):
         self.data.setAs(As)
         filt= self.GUI.filter.get()
         self.data.setFilter(filt)
+        self.data.NormRange= (self.GUI.SlideNorm.get())/100
 
         if(filt==ap.LP or filt==ap.HP):
             ws= float(self.GUI.wsString.get())
