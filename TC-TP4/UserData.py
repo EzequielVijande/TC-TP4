@@ -33,6 +33,24 @@ class UserData(object):
 
     def setws(self,ws):
         self.ws=ws
+    #Datos para graficar
+    def setMag(self,mag):
+        self.mag=mag
+
+    def setPhase(self,phase):
+        self.phase=phase
+    def setwVector(self,w):
+        self.w = w
+    def setImpData(self,time,h):
+        self.ImpTime=time
+        self.ImpResp= h
+    def setStepData(self,time,u):
+        self.StepTime=time
+        self.StepResp=u
+    def GetPhaseMax(self):
+        return self.phase.max()
+    def GetPhaseMin(self):
+        return self.phase.min()
     #Para BP Y BR
     def setwo(self,wo):
         self.wo=wo

@@ -24,6 +24,7 @@
     <Compile Include="ApGUI.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="aproximacionesFuncs.py" />
     <Compile Include="Manager.py">
       <SubType>Code</SubType>
     </Compile>

@@ -1,7 +1,7 @@
 
 import UserData
 import ApGUI as ap
-
+import aproximacionesFuncs as a
 import numpy as np
 
 #Estados
@@ -13,6 +13,7 @@ ETAPA2=2
 class Manager(object):
     """Clase que se ocupa de vincular la logica con la GUI"""
     def __init__(self, data,GUI):
+        self.Aproximator= a.AproxAnalysis()
         self.data=data
         self.GUI=GUI
         self.estado= ETAPA1
@@ -118,19 +119,18 @@ class Manager(object):
         WantsTempl= self.GUI.PutTemplate.get()
         self.SetUserData()
         
-        X = np.linspace(0, 2 * np.pi, 50)
-        Y = np.sin(X)
-        Z= np.tan(X)
+        self.CalculateGraphs()
         #Actualizo todas las graficas
+        att=-self.data.mag
         self.GUI.Axes_Stage1.cla()
-        self.GUI.plotAtte(X,Y)
-        self.GUI.plotAtteNorm(X,Z)
-        self.GUI.plotPhase(X,Y)
+        self.GUI.plotAtte((self.data.w),att)
+        self.GUI.plotAtteNorm(self.data.w,self.data.mag)
+        self.GUI.plotPhase(self.data.w,self.data.phase)
         #self.GUI.plotQ(Y)
-        self.GUI.plotStep(X,Y)
-        self.GUI.plotImpulse(X,Z)
-        self.GUI.plotZeros(X,Y)
-        self.GUI.PlotGroupDelay(X,Z)
+        self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
+        self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
+        self.GUI.plotZeros(self.data.w,self.data.mag)
+        self.GUI.PlotGroupDelay(self.data.w,self.data.mag)
         
         self.DisplaySelectedGraph()
         if(WantsTempl and sel== ap.ATT):
@@ -146,8 +146,10 @@ class Manager(object):
         self.data.setAp(Ap)
         self.data.setAs(As)
         filt= self.GUI.filter.get()
+        aprox= self.GUI.selected_aprox.get()
         self.data.setFilter(filt)
         self.data.NormRange= (self.GUI.SlideNorm.get())/100
+        self.data.Aproximation= aprox
 
         if(filt==ap.LP or filt==ap.HP):
             ws= float(self.GUI.wsString.get())
@@ -208,10 +210,10 @@ class Manager(object):
                     return wsSTR
             
                 elif(fil==ap.LP): #Si es un LP el wp debe ser menor al ws
-                    if(ws<=wp):
+                    if(float(ws)<=float(wp)):
                         return "wp debe ser menor que ws"
                 else: #Si es un HP el wp debe ser mayor al ws
-                    if(ws>=wp):
+                    if(float(ws)>=float(wp)):
                         return "ws debe ser menor que wp"
 
             elif( (fil==ap.BP) or (fil==ap.BR)):
@@ -292,44 +294,138 @@ class Manager(object):
     def ObtainScaleLimits(self):
         filt=self.data.GetFilter()
         selected= self.GUI.SelectedGraph.get()
-        if(filt == ap.LP):
-            if(selected != ap.ATT_N):
-                xleft= (self.data.wp)/100
-                xright= (self.data.ws)*100
-                ybot=0
-                ytop=(self.data.As)*1.5
-                return xleft, xright,ybot,ytop
-            else:
-                return 0, ((self.data.ws)/(self.data.wp)),0,((self.data.As)*1.5)
+        if(selected==ap.ATT or selected==ap.ATT_N):
 
-        elif(filt == ap.HP):
-            if(selected != ap.ATT_N):
-                xleft= (self.data.ws)/100
-                xright= (self.data.wp)*100
-                ybot=0
-                ytop=(self.data.As)*1.5
-                return xleft, xright,ybot,ytop
-            else:
-                return 0, ((self.data.wp)/(self.data.ws)),0,((self.data.As)*1.5)
-        elif(filt == ap.BP):
-            if(selected != ap.ATT_N):
-                xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δws.get())))
-                xright= (self.data.wo)+(20*(float(self.GUI.entry_Δws.get())))
-                ybot=0
-                ytop=(self.data.As)*1.5
-                return xleft, xright,ybot,ytop
-            else:
-                return 0, ((float(self.GUI.entry_Δws.get()))/(float(self.GUI.entry_Δwp.get()))),0,((self.data.As)*1.5)
+            if(filt == ap.LP):
+                if(selected != ap.ATT_N):
+                    xleft= (self.data.wp)/100
+                    xright= (self.data.ws)*100
+                    ybot=0
+                    ytop=(self.data.As)*1.5
+                    return xleft, xright,ybot,ytop
+                else:
+                    return 0, ((self.data.ws)/(self.data.wp)),0,((self.data.As)*1.5)
 
-        elif(filt == ap.BR):
-            if(selected != ap.ATT_N):
-                xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δwp.get())))
-                xright= (self.data.wo)+(20*(float(self.GUI.entry_Δwp.get())))
-                ybot=0
-                ytop=(self.data.As)*1.5
-                return xleft, xright,ybot,ytop
-            else:
-                return 0, (float(self.GUI.entry_Δwp.get()))/float((self.GUI.entry_Δwp.get())),0,((self.data.As)*1.5)
+            elif(filt == ap.HP):
+                if(selected != ap.ATT_N):
+                    xleft= (self.data.ws)/100
+                    xright= (self.data.wp)*100
+                    ybot=0
+                    ytop=(self.data.As)*1.5
+                    return xleft, xright,ybot,ytop
+                else:
+                    return 0, ((self.data.wp)/(self.data.ws)),0,((self.data.As)*1.5)
+            elif(filt == ap.BP):
+                if(selected != ap.ATT_N):
+                    xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δws.get())))
+                    xright= (self.data.wo)+(20*(float(self.GUI.entry_Δws.get())))
+                    ybot=0
+                    ytop=(self.data.As)*1.5
+                    return xleft, xright,ybot,ytop
+                else:
+                    return 0, ((float(self.GUI.entry_Δws.get()))/(float(self.GUI.entry_Δwp.get()))),0,((self.data.As)*1.5)
+
+            elif(filt == ap.BR):
+                if(selected != ap.ATT_N):
+                    xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δwp.get())))
+                    xright= (self.data.wo)+(20*(float(self.GUI.entry_Δwp.get())))
+                    ybot=0
+                    ytop=(self.data.As)*1.5
+                    return xleft, xright,ybot,ytop
+                else:
+                    return 0, (float(self.GUI.entry_Δwp.get()))/float((self.GUI.entry_Δwp.get())),0,((self.data.As)*1.5)
+        elif(selected ==ap.FASE): #Limites de escala para el grafico de fase
+            ymax= self.data.GetPhaseMax()
+            ymin= self.data.GetPhaseMin()
+            if(filt == ap.LP):
+                    xleft= (self.data.wp)/100
+                    xright= (self.data.ws)*100
+                    ybot=0
+                    ybot=ymin
+                    ytop=ymax
+                    return xleft, xright,ybot,ytop
+
+            elif(filt == ap.HP):
+                    xleft= (self.data.ws)/100
+                    xright= (self.data.wp)*100
+                    ybot=ymin
+                    ytop=ymax
+                    return xleft, xright,ybot,ytop
+            elif(filt == ap.BP):
+                    xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δws.get())))
+                    xright= (self.data.wo)+(20*(float(self.GUI.entry_Δws.get())))
+                    ybot=ymin
+                    ytop=ymax
+                    return xleft, xright,ybot,ytop
+
+            elif(filt == ap.BR):
+                    xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δwp.get())))
+                    xright= (self.data.wo)+(20*(float(self.GUI.entry_Δwp.get())))
+                    ybot=ymin
+                    ytop=ymax
+                    return xleft, xright,ybot,ytop
+        elif(selected == ap.STEP):
+            ymax=self.data.StepResp.max()
+            ymin=self.data.StepResp.min()
+            xmax=self.data.StepTime.max()
+            xmin=self.data.StepTime.min()
+            return xmin,xmax,ymin,ymax
+        elif(selected == ap.IMPULSE):
+            ymax=self.data.ImpResp.max()
+            ymin=self.data.ImpResp.min()
+            xmax=self.data.ImpTime.max()
+            xmin=self.data.ImpTime.min()
+            return xmin,xmax,ymin,ymax
+
+
+    def CalculateGraphs(self):
+        As=self.data.As
+        Ap=self.data.Ap
+        wp=self.data.wp
+        ws=self.data.ws
+        wpMinus=self.data.wpMinus
+        wpPlus=self.data.wpPlus
+        wsMinus=self.data.wsMinus
+        wsPlus=self.data.wsPlus
+        type= self.GetTypeString()
+        a=self.data.NormRange
+
+        self.Aproximator.SetParams(As,Ap,wp,ws,wpMinus,wpPlus,wsMinus,wsPlus,type,a)
+        aprox= self.data.GetAprox()
+        if(aprox == ap.APROXIMACIONES[0]):
+            self.Aproximator.butterworthAnalysis()
+        elif(aprox == ap.APROXIMACIONES[1]):
+            self.Aproximator.chebyshevAnalysis()
+        elif(aprox == ap.APROXIMACIONES[2]):
+            self.Aproximator.chebyshevInverseAnalysis()
+        elif(aprox == ap.APROXIMACIONES[3]):
+            self.Aproximator.besselAnalysis()
+        finalFunc = self.Aproximator.getFunction()
+        #Datos para la atenuacion y la fase
+        w = np.logspace(-2, 10, 50000, endpoint=True)
+        w, mag, phase = self.Aproximator.CalcBodePlot(w,finalFunc)
+        self.data.setwVector(w)
+        self.data.setMag(mag)
+        self.data.setPhase(phase)
+        #Respuest al impulso
+        t_imp,h=(self.Aproximator.getFunction()).impulse()
+        h=h.real
+        self.data.setImpData(t_imp,h)
+        t_step,u=(self.Aproximator.getFunction()).step()
+        u=u.real
+        self.data.setStepData(t_step,u)
+    def GetTypeString(self):
+        filt=self.data.GetFilter()
+        if(filt==ap.LP):
+            return "LP"
+        elif(filt==ap.HP):
+            return "HP"
+        elif(filt==ap.BP):
+            return "BP"
+        elif(filt==ap.BR):
+            return "BR"
+        elif(filt==ap.GR):
+            return "GR"
     #Funciones que manejan eventos de la segunda etapa
 
     def OnPrevEv(self):
