@@ -1,4 +1,5 @@
 import matplotlib
+import matplotlib.patches as patches
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.backend_bases import key_press_handler
@@ -59,6 +60,8 @@ STEP=7
 class ApGUI(object):
     """Clase que se encarga de crear,posicionar y actualizar botones y graficas"""
     def __init__(self):
+        self.Graph_enable=False
+        self.TemplateOn=False
         self.Ev=NO_EV
         self.root = Tk()
         self.root.geometry('1620x780')
@@ -223,31 +226,8 @@ class ApGUI(object):
         self.SlideNorm.pack(fill=BOTH,expand=True)
     def InitializeAxes(self):
         #Atenuacion
-        self.Att_axes= self.fig.add_subplot(111,xlabel="f(Hz)",ylabel="|A(f)|(dB)")
-        #Atenuacion normalizada
-        self.AttN_axes= self.fig.add_subplot(111,xlabel="fN(Hz)",ylabel="|A(fN)|(dB)")
-        #Diagrama de polos y ceros
-        self.PZ_axes= self.fig.add_subplot(111,xlabel="Re(s)",ylabel="Im(s)")
-        #Fase
-        self.Fase_axes= self.fig.add_subplot(111,xlabel="f(Hz)",ylabel="fase de H(deg)")
-        #Q
-        self.Q_axes= self.fig.add_subplot(111,xlabel="Numero de curva",ylabel="Qmaximo")
-        #Rechaza Banda
-        self.RG_axes= self.fig.add_subplot(111,xlabel="f(Hz)",ylabel="τ(seg)")
-        #Respuesta al impulso
-        self.Imp_axes= self.fig.add_subplot(111,xlabel="t(seg)",ylabel="h(t)")
-        #Respuesta al escalon
-        self.Step_axes= self.fig.add_subplot(111,xlabel="t(seg)",ylabel="u(t)")
-
-        self.Att_axes.set_axis_off()
-        self.AttN_axes.set_axis_off()
-        self.PZ_axes.set_axis_off()
-        self.Fase_axes.set_axis_off()
-        self.Q_axes.set_axis_off()
-        self.RG_axes.set_axis_off()
-        self.Imp_axes.set_axis_off()
-        self.Step_axes.set_axis_off()
-
+        self.Axes_Stage1= self.fig.add_subplot(111)
+        self.Axes_Stage1.set_axis_off()
     #Getters
     def GetEvent(self):
         return self.Ev
@@ -299,70 +279,164 @@ class ApGUI(object):
             
     #Funciones relacionadas a graficas
     def plotPhase(self, w,fase):
-        self.Fase_axes.cla()
-        self.Fase_lines=self.Fase_axes.plot(w,fase)
+        self.Fase_lines, =self.Axes_Stage1.semilogx(w,fase)
 
-    def plotAtteNorm(self, w,attN):
-        self.AttN_axes.cla()
-        self.AttN_lines=self.AttN_axes.plot(w,attN)
+    def plotAtteNorm(self, fn,attN):
+        self.AttN_lines, =self.Axes_Stage1.semilogx(fn,attN)
 
-    def plotAtte(self, w,att):
-        self.Att_axes.cla()
-        self.Att_lines=self.Att_axes.plot(w,att)
+    def plotAtte(self, f,att):
+        self.Att_lines, =self.Axes_Stage1.semilogx(f,att)
 
     def plotQ(self,qs):
-        self.Q_axes.cla()
-        self.q_lines=self.Q_axes.stem(qs)
+        self.q_lines, =self.Axes_Stage1.stem(qs)
 
-    def DisplayGraph(self,axis):
-        self.TurnOffAxes()
-        axis.grid(b=True,axis='both')
-        axis.set_axis_on()
-        self.Graph.draw()
+    def DisplayGraph(self,Xmin,Xmax,Ymin,Ymax):
+        type_of_graph= self.SelectedGraph.get()
+        self.HideAllLines()
+        self.Axes_Stage1.grid(b=True,axis='both')
+        self.Axes_Stage1.set_axis_on()
+        self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
+        self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
+        if(type_of_graph == ATT):
+            self.Axes_Stage1.set_xlabel("f(Hz)")
+            self.Axes_Stage1.set_ylabel("|A(f)| (dB)")
+            self.Axes_Stage1.set_title("Atenuacion")
+            self.Att_lines.set_visible(True)
+        elif(type_of_graph == ATT_N):
+            self.Axes_Stage1.set_xlabel("fN(Hz)")
+            self.Axes_Stage1.set_ylabel("|A(fN)| (dB)")
+            self.Axes_Stage1.set_title("Atenuacion Normalizada")
+            self.AttN_lines.set_visible(True)
+        elif(type_of_graph == FASE):
+            self.Axes_Stage1.set_xlabel("f(Hz)")
+            self.Axes_Stage1.set_ylabel("fase (deg)")
+            self.Axes_Stage1.set_title("Fase de H(f)")
+            self.Fase_lines.set_visible(True)
+        elif(type_of_graph == CEROS):
+            self.Axes_Stage1.set_xlabel("Re(s)")
+            self.Axes_Stage1.set_ylabel("Im(s)")
+            self.Axes_Stage1.set_title("Diagrama de polos y ceros")
+            self.PZ_lines.set_visible(True)
+        elif(type_of_graph == RETARDO):
+            self.Axes_Stage1.set_xlabel("f(Hz)")
+            self.Axes_Stage1.set_ylabel("τ (seg)")
+            self.Axes_Stage1.set_title("Retardo")
+            self.RG_lines.set_visible(True)  
+        elif(type_of_graph == IMPULSE):
+            self.Axes_Stage1.set_xlabel("t(seg)")
+            self.Axes_Stage1.set_ylabel("h(t)")
+            self.Axes_Stage1.set_title("Respuesta al impulso")
+            self.Imp_lines.set_visible(True) 
+        elif(type_of_graph == STEP):
+            self.Axes_Stage1.set_xlabel("t(seg)")
+            self.Axes_Stage1.set_ylabel("u(t)")
+            self.Axes_Stage1.set_title("Respuesta al escalon")
+            self.Step_lines.set_visible(True)
+
 
     def placeTemplate(self,Ap,As,wp,ws,wo,Q,wpMinus,wpPlus,wsMinus,wsPlus):
         fil= self.filter.get()
         if(fil==LP):
             self.NumRect=2
+            x0=0
+            y0=Ap #Vertice izquierdo inferior
+            ymin,ymax= self.Axes_Stage1.get_ylim()
+            width1,height1= wp,(ymax-Ap)
+            self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.first_rect)
 
-            x0,y0= self.TransformToCanvasCoords(100*ws,2*As,0,2*As) #Vertice izquierdo superior
-            x1,y1= self.TransformToCanvasCoords(100*ws,2*As,wp,Ap) #Vertice derecho inferior
-            self.first_rect= self.Graph.create_rectangle(x0, y0,x1, y1, fill="firebrick")
-
-            x2,y2= self.TransformToCanvasCoords(100*ws,2*As,ws,As) #Vertice izquierdo superior
-            x3,y3= self.TransformToCanvasCoords(100*ws,2*As,100*ws,0) #Vertice derecho inferior
-            self.second_rect= self.Graph.create_rectangle(x0, y0,x1, y1, fill="firebrick")
+            x2,y2= ws,0  #Vertice izquierdo inferior del segundo rectangulo
+            xmin,xmax=self.Axes_Stage1.get_xlim()
+            width2= xmax-ws
+            height2= As
+            self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.second_rect)
+            self.TemplateOn= True
         elif(fil==HP):
             self.NumRect=2
-            x0,y0= self.TransformToCanvasCoords(100*wp,2*As,0,As) #Vertice izquierdo superior
-            x1,y1= self.TransformToCanvasCoords(100*wp,2*As,ws,0) #Vertice derecho inferior
-            self.first_rect= self.Graph.create_rectangle(x0, y0,x1, y1, fill="firebrick")
+            x0=0
+            y0=0 #Vertice izquierdo inferior
+            width1,height1= ws,(As)
+            self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.first_rect)
 
-            x2,y2= self.TransformToCanvasCoords(100*wp,2*As,wp,2*As) #Vertice izquierdo superior
-            x3,y3= self.TransformToCanvasCoords(100*wp,2*As,100*wp,Ap) #Vertice derecho inferior
-            self.second_rect= self.Graph.create_rectangle(x0, y0,x1, y1, fill="firebrick")
+            x2,y2= wp,Ap  #Vertice izquierdo inferior del segundo rectangulo
+            xmin,xmax=self.Axes_Stage1.get_xlim()
+            ymin,ymax= self.Axes_Stage1.get_ylim()
+            width2= xmax-wp
+            height2= ymax
+            self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.second_rect)
+            self.TemplateOn= True
+        elif(fil==BP):
+            self.NumRect=3
+            xmin,xmax=self.Axes_Stage1.get_xlim()
+            ymin,ymax= self.Axes_Stage1.get_ylim()
+            x0=0
+            y0=0 #Vertice izquierdo inferior
+            width1,height1= wsMinus,(As)
+            self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.first_rect)
+
+            x2,y2= wpMinus,Ap  #Vertice izquierdo inferior del segundo rectangulo
+            width2= wpPlus-wpMinus
+            height2= ymax-Ap
+            self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.second_rect)
+
+            x3,y3= wsPlus,0  #Vertice izquierdo inferior del segundo rectangulo
+            width3= xmax-wsPlus
+            height3= As
+            self.third_rect= patches.Rectangle((x3,y3),width3,height3,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.third_rect)
+            self.TemplateOn= True
+        elif(fil==BR):
+            self.NumRect=3
+            xmin,xmax=self.Axes_Stage1.get_xlim()
+            ymin,ymax= self.Axes_Stage1.get_ylim()
+            x0=0
+            y0=Ap #Vertice izquierdo inferior
+            width1,height1= wpMinus,(ymax-Ap)
+            self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.first_rect)
+
+            x2,y2= wsMinus,0  #Vertice izquierdo inferior del segundo rectangulo
+            width2= wsPlus-wsMinus
+            height2= As
+            self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.second_rect)
+
+            x3,y3= wpPlus,Ap  #Vertice izquierdo inferior del segundo rectangulo
+            width3= xmax-wpPlus
+            height3= ymax-Ap
+            self.third_rect= patches.Rectangle((x3,y3),width3,height3,linewidth=1,edgecolor='crimson',facecolor='tomato')
+            self.Axes_Stage1.add_patch(self.third_rect)
+            self.TemplateOn= True
+        
 
     def destroyTemplate(self):
         if(self.NumRect==2):
-            self.Graph.delete(self.first_rect)
-            self.Graph.delete(self.second_rect)
+            self.first_rect.remove()
+            self.second_rect.remove()
+            self.TemplateOn=False
+        elif(self.NumRect==3):
+            self.first_rect.remove()
+            self.second_rect.remove()
+            self.third_rect.remove()
+            self.TemplateOn=False
 
             
     def plotZeros(self,sigma,w):
-        self.PZ_axes.cla()
-        self.PZ_lines=self.PZ_axes.plot(sigma,w)
+        self.PZ_lines, =self.Axes_Stage1.plot(sigma,w)
 
     def plotImpulse(self,t,y):
-        self.Imp_axes.cla()
-        self.Imp_lines=self.Imp_axes.plot(t,y)
+        self.Imp_lines, =self.Axes_Stage1.plot(t,y)
 
     def plotStep(self,t,y):
-        self.Step_axes.cla()
-        self.Step_lines=self.Step_axes.plot(t,y)
+        self.Step_lines, =self.Axes_Stage1.plot(t,y)
 
     def PlotGroupDelay(self,f,t):
-        self.RG_axes.cla()
-        self.RG_lines= self.RG_axes.plot(f,t)
+        self.RG_lines, = self.Axes_Stage1.plot(f,t)
 
     #Funciones que cambian las especificaciones
     def PlaceLP_HP_Specs(self):
@@ -450,24 +524,22 @@ class ApGUI(object):
     def CloseGUI(self):
         self.root.destroy()
     def Update(self):
+        self.Graph.draw()
         self.root.update()
     def EventSolved(self):
         self.Ev = NO_EV
     def DisplayError(self,result_str):
         messagebox.showinfo("Error en las especificaciones", result_str)
-    def TransformToCanvasCoords(self,max_X,max_Y,x,y):
-        y_out=GRAPH_HEIGHT-( (y*GRAPH_HEIGHT)/max_Y)
-        x_out=((x*GRAPH_WIDTH)/max_X)
-        return (x_out,y_out)
-    def TurnOffAxes(self):
-        self.Att_axes.set_axis_off()
-        self.AttN_axes.set_axis_off()
-        self.PZ_axes.set_axis_off()
-        self.Fase_axes.set_axis_off()
-        self.Q_axes.set_axis_off()
-        self.RG_axes.set_axis_off()
-        self.Imp_axes.set_axis_off()
-        self.Step_axes.set_axis_off()
+
+    def HideAllLines(self):
+        self.Att_lines.set_visible(False)
+        self.AttN_lines.set_visible(False)
+        self.Fase_lines.set_visible(False)
+        self.Imp_lines.set_visible(False)
+        self.PZ_lines.set_visible(False)
+       # self.q_lines.set_visible(False)
+        self.Step_lines.set_visible(False)
+        self.RG_lines.set_visible(False)
     
 
     #Funciones de la segunda etapa
@@ -539,7 +611,6 @@ class ApGUI(object):
         self.SelStagetoolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
         self.SelStagetoolbar = NavigationToolbar2Tk(self.CurrentStageCanvas, self.SelStagetoolbarFrame)
         self.SelStagetoolbar.pack(fill=BOTH,expand=True)
-        self.CurrentStageCanvas.draw()
         #Parametros de interes de la etapa seleccionada
         self.StageParamsFrame= LabelFrame(self.StageGraphFrame,text="Parametros de interes",background="goldenrod")
         self.StageParamsFrame.pack(side="top",fill=BOTH,expand=True)
@@ -581,7 +652,6 @@ class ApGUI(object):
         self.TransfTotToolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
         self.TransfTotToolbar = NavigationToolbar2Tk(self.TransfTotalCanvas, self.TransfTotToolbarFrame)
         self.TransfTotToolbar.pack(fill=BOTH,expand=True)
-        self.TransfTotalCanvas.draw()
 
     def PlaceStagesMenu(self):
         self.StagesMenuFrame= LabelFrame(self.root, text="Etapas",background="goldenrod")

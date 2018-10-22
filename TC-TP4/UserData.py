@@ -28,9 +28,6 @@ class UserData(object):
     def setAs(self,As):
         self.As=As
 
-    def setAp(self,wo):
-        self.wo=wo
-
     def setwp(self,wp):
         self.wp=wp
 

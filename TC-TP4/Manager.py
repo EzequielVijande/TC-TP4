@@ -64,6 +64,7 @@ class Manager(object):
         if(result_str!="Ok"):
             self.GUI.DisplayError(result_str)
         else:
+          self.GUI.Graph_enable=True
           self.ShowGraph()
 
     def OnQuitEv(self):
@@ -84,11 +85,18 @@ class Manager(object):
 
     def OnChangeGraphEv(self):
         self.DisplaySelectedGraph()
+        WantsTempl= self.GUI.PutTemplate.get()
+        sel= self.GUI.SelectedGraph.get()
+        if(WantsTempl and sel== ap.ATT):
+           self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
+                                      self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+        elif(self.GUI.TemplateOn):
+            self.GUI.destroyTemplate()
 
     def OnPutTemplate(self):
         WantsTempl= self.GUI.PutTemplate.get()
         sel_graph= self.GUI.SelectedGraph.get()
-        if(sel_graph==ap.ATT or sel_graph==ap.ATT_N):
+        if(sel_graph==ap.ATT):
             
             if(WantsTempl):
                 result_str= self.ValidateInputs()
@@ -106,25 +114,30 @@ class Manager(object):
         return
     #Funciones auxiliares
     def ShowGraph(self):
+        sel= self.GUI.SelectedGraph.get()
         WantsTempl= self.GUI.PutTemplate.get()
         self.SetUserData()
-        if(WantsTempl):
-           self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
-                                      self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
         
         X = np.linspace(0, 2 * np.pi, 50)
         Y = np.sin(X)
+        Z= np.tan(X)
         #Actualizo todas las graficas
+        self.GUI.Axes_Stage1.cla()
         self.GUI.plotAtte(X,Y)
-        self.GUI.plotAtteNorm(X,Y)
+        self.GUI.plotAtteNorm(X,Z)
         self.GUI.plotPhase(X,Y)
-        self.GUI.plotQ(Y)
+        #self.GUI.plotQ(Y)
         self.GUI.plotStep(X,Y)
-        self.GUI.plotImpulse(X,Y)
+        self.GUI.plotImpulse(X,Z)
         self.GUI.plotZeros(X,Y)
-        self.GUI.PlotGroupDelay(X,Y)
+        self.GUI.PlotGroupDelay(X,Z)
         
         self.DisplaySelectedGraph()
+        if(WantsTempl and sel== ap.ATT):
+           self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
+                                      self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+        elif(self.GUI.TemplateOn):
+            self.GUI.destroyTemplate()
 
     def SetUserData(self):
         As= float(self.GUI.AsString.get())
@@ -271,22 +284,51 @@ class Manager(object):
         return "Ok" #El numero parece ser valido
 
     def DisplaySelectedGraph(self):
-        type_of_graph= self.GUI.SelectedGraph.get()
-        if(type_of_graph == ap.ATT):
-            self.GUI.DisplayGraph(self.GUI.Att_axes)
-        elif(type_of_graph == ap.ATT_N):
-            self.GUI.DisplayGraph(self.GUI.AttN_axes)
-        elif(type_of_graph == ap.FASE):
-            self.GUI.DisplayGraph(self.GUI.Fase_axes)
-        elif(type_of_graph == ap.CEROS):
-            self.GUI.DisplayGraph(self.GUI.PZ_axes)
-        elif(type_of_graph == ap.RETARDO):
-            self.GUI.DisplayGraph(self.GUI.RG_axes)
-        elif(type_of_graph == ap.IMPULSE):
-            self.GUI.DisplayGraph(self.GUI.Imp_axes)
-        elif(type_of_graph == ap.STEP):
-            self.GUI.DisplayGraph(self.GUI.Step_axes)
+        if(self.GUI.Graph_enable):
+            Xmin,Xmax,Ymin,Ymax= self.ObtainScaleLimits()
+            self.GUI.DisplayGraph(Xmin,Xmax,Ymin,Ymax)
 
+    def ObtainScaleLimits(self):
+        filt=self.data.GetFilter()
+        selected= self.GUI.SelectedGraph.get()
+        if(filt == ap.LP):
+            if(selected != ap.ATT_N):
+                xleft= (self.data.wp)/100
+                xright= (self.data.ws)*100
+                ybot=0
+                ytop=(self.data.As)*1.5
+                return xleft, xright,ybot,ytop
+            else:
+                return 0, ((self.data.ws)/(self.data.wp)),0,((self.data.As)*1.5)
+
+        elif(filt == ap.HP):
+            if(selected != ap.ATT_N):
+                xleft= (self.data.ws)/100
+                xright= (self.data.wp)*100
+                ybot=0
+                ytop=(self.data.As)*1.5
+                return xleft, xright,ybot,ytop
+            else:
+                return 0, ((self.data.wp)/(self.data.ws)),0,((self.data.As)*1.5)
+        elif(filt == ap.BP):
+            if(selected != ap.ATT_N):
+                xleft= (self.data.wo)-(10*(float(self.GUI.entry_Δws.get())))
+                xright= (self.data.wo)+(10*(float(self.GUI.entry_Δws.get())))
+                ybot=0
+                ytop=(self.data.As)*1.5
+                return xleft, xright,ybot,ytop
+            else:
+                return 0, ((float(self.GUI.entry_Δws.get()))/(float(self.GUI.entry_Δwp.get()))),0,((self.data.As)*1.5)
+
+        elif(filt == ap.BR):
+            if(selected != ap.ATT_N):
+                xleft= (self.data.wo)-(10*(float(self.GUI.entry_Δwp.get())))
+                xright= (self.data.wo)+(10*(float(self.GUI.entry_Δwp.get())))
+                ybot=0
+                ytop=(self.data.As)*1.5
+                return xleft, xright,ybot,ytop
+            else:
+                return 0, (float(self.GUI.entry_Δwp.get()))/float((self.GUI.entry_Δwp.get())),0,((self.data.As)*1.5)
     #Funciones que manejan eventos de la segunda etapa
 
     def OnPrevEv(self):
