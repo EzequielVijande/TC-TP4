@@ -126,7 +126,7 @@ class Manager(object):
         self.GUI.plotAtte((self.data.w),att)
         self.GUI.plotAtteNorm(self.data.w,self.data.mag)
         self.GUI.plotPhase(self.data.w,self.data.phase)
-        #self.GUI.plotQ(Y)
+        self.GUI.plotQ(self.data.qs)
         self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
         self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
         self.GUI.plotZeros(self.data.zeroes_real,self.data.zeroes_imag,self.data.poles_real,self.data.poles_imag)
@@ -289,7 +289,7 @@ class Manager(object):
     def DisplaySelectedGraph(self):
         if(self.GUI.Graph_enable):
             Xmin,Xmax,Ymin,Ymax= self.ObtainScaleLimits()
-            self.GUI.DisplayGraph(Xmin,Xmax,Ymin,Ymax)
+            self.GUI.DisplayGraph(Xmin,Xmax,Ymin,Ymax,self.data.qs)
 
     def ObtainScaleLimits(self):
         filt=self.data.GetFilter()
@@ -378,7 +378,7 @@ class Manager(object):
             return xmin,xmax,ymin,ymax
         elif(selected == ap.CEROS):
             #Limites de y
-            if(self.data.zeroes_imag):
+            if(self.data.zeroes_imag.size != 0):
                 if(self.data.zeroes_imag.max()>=self.data.poles_imag.max()):
                     ymax=1.1*(self.data.zeroes_imag.max())
                 else:
@@ -391,7 +391,7 @@ class Manager(object):
                 ymax=1.1*(self.data.poles_imag.max())
                 ymin=self.data.poles_imag.min()
             #Limites de x
-            if(self.data.zeroes_real):
+            if(self.data.zeroes_real.size != 0):
                 if(self.data.zeroes_real.max()>=self.data.poles_real.max()):
                     xmax= 1.1*(self.data.zeroes_real.max())
                 else:
@@ -405,7 +405,15 @@ class Manager(object):
             else:
                 xmax= 1.1*(self.data.poles_real.max())
                 xmin= self.data.poles_real.min()
+
             return xmin,xmax,ymin,ymax
+        else:
+            xmin=0
+            xmax=(self.data.qs.size)+1
+            ymin=0
+            ymax=self.data.qs.max()
+            return xmin,xmax,ymin,ymax
+
 
     def CalculateGraphs(self):
         As=self.data.As
@@ -445,10 +453,16 @@ class Manager(object):
         t_step,u=(self.Aproximator.getFunction()).step()
         u=u.real
         self.data.setStepData(t_step,u)
-        #Poloss y ceros
+        #Polos y ceros
         zeros = finalFunc.zeros
         poles = finalFunc.poles
         self.data.SetZeroesAndPoles(zeros,poles)
+        #Grafica de qs
+        parte_real= poles.real
+        parte_imag= poles.imag
+        qs=parte_imag/parte_real
+        self.data.SetQValues(qs)
+
     def GetTypeString(self):
         filt=self.data.GetFilter()
         if(filt==ap.LP):

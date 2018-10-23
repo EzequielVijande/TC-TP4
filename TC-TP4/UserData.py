@@ -56,6 +56,9 @@ class UserData(object):
         self.zeroes_imag=zeroes.imag
         self.poles_real= poles.real
         self.poles_imag=poles.imag
+    def SetQValues(self,q):
+        self.qs = q
+        self.qs[(self.qs)<0]=0
     #Para BP Y BR
     def setwo(self,wo):
         self.wo=wo

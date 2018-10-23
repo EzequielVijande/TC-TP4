@@ -54,6 +54,7 @@ CEROS=4
 RETARDO=5
 IMPULSE=6
 STEP=7
+Q_GRAPH=8
 #Colores principales
 FRAME_COLOR= "peach puff"
 FRAME_TEXT_COLOR="black"
@@ -211,6 +212,9 @@ class ApGUI(object):
         self.ZeroesRButton =Radiobutton(master=self.GraphicsFrame,text="Polos y ceros",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=CEROS,command=self.change_graph_button_call)
         self.ZeroesRButton.pack(side=LEFT,fill=BOTH,expand=True)
+        self.QGraphButton =Radiobutton(master=self.GraphicsFrame,text="Q",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
+                                     indicatoron=False,variable=self.SelectedGraph,value=Q_GRAPH,command=self.change_graph_button_call)
+        self.QGraphButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.ImpulseRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al impulso",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=IMPULSE,command=self.change_graph_button_call)
         self.ImpulseRButton.pack(side=LEFT,fill=BOTH,expand=True)
@@ -302,9 +306,10 @@ class ApGUI(object):
         self.Att_lines, =self.Axes_Stage1.semilogx(f,att)
 
     def plotQ(self,qs):
-        self.q_lines, =self.Axes_Stage1.stem(qs)
+        self.q_container =self.Axes_Stage1.stem(qs,basefmt=''
+                                                )
 
-    def DisplayGraph(self,Xmin,Xmax,Ymin,Ymax):
+    def DisplayGraph(self,Xmin,Xmax,Ymin,Ymax,q):
         type_of_graph= self.SelectedGraph.get()
         self.HideAllLines()
         self.Axes_Stage1.grid(b=True,axis='both')
@@ -367,6 +372,14 @@ class ApGUI(object):
             self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
             self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
             self.Step_lines.set_visible(True)
+        elif(type_of_graph == Q_GRAPH):
+            self.Axes_Stage1.set_xscale("linear")
+            self.Axes_Stage1.set_xlabel("Numero de polo")
+            self.Axes_Stage1.set_ylabel("Q")
+            self.Axes_Stage1.set_title("Grafica del factor de calidad")
+            self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
+            self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
+            self.plotQ(q)
 
 
     def placeTemplate(self,Ap,As,wp,ws,wo,Q,wpMinus,wpPlus,wsMinus,wsPlus):
@@ -574,7 +587,6 @@ class ApGUI(object):
         self.Imp_lines.set_visible(False)
         self.zeros_path.set_visible(False)
         self.poles_path.set_visible(False)
-       # self.q_lines.set_visible(False)
         self.Step_lines.set_visible(False)
         self.RG_lines.set_visible(False)
     
