@@ -129,7 +129,7 @@ class Manager(object):
         #self.GUI.plotQ(Y)
         self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
         self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
-        self.GUI.plotZeros(self.data.w,self.data.mag)
+        self.GUI.plotZeros(self.data.zeroes_real,self.data.zeroes_imag,self.data.poles_real,self.data.poles_imag)
         self.GUI.PlotGroupDelay(self.data.w,self.data.mag)
         
         self.DisplaySelectedGraph()
@@ -376,7 +376,36 @@ class Manager(object):
             xmax=self.data.ImpTime.max()
             xmin=self.data.ImpTime.min()
             return xmin,xmax,ymin,ymax
-
+        elif(selected == ap.CEROS):
+            #Limites de y
+            if(self.data.zeroes_imag):
+                if(self.data.zeroes_imag.max()>=self.data.poles_imag.max()):
+                    ymax=1.1*(self.data.zeroes_imag.max())
+                else:
+                    ymax=1.1*(self.data.poles_imag.max())
+                if(self.data.zeroes_imag.min()>=self.data.poles_imag.min()):
+                    ymin=self.data.poles_imag.min()
+                else:
+                    ymin=self.data.zeroes_imag.min()
+            else:
+                ymax=1.1*(self.data.poles_imag.max())
+                ymin=self.data.poles_imag.min()
+            #Limites de x
+            if(self.data.zeroes_real):
+                if(self.data.zeroes_real.max()>=self.data.poles_real.max()):
+                    xmax= 1.1*(self.data.zeroes_real.max())
+                else:
+                    xmax= 1.1*(self.data.poles_real.max())
+                #Valores minimos
+           
+                if(self.data.zeroes_real.min()>=self.data.poles_real.min()):
+                    xmin= (self.data.poles_real.min())
+                else:
+                    xmin= (self.data.zeroes_real.min())
+            else:
+                xmax= 1.1*(self.data.poles_real.max())
+                xmin= self.data.poles_real.min()
+            return xmin,xmax,ymin,ymax
 
     def CalculateGraphs(self):
         As=self.data.As
@@ -387,6 +416,7 @@ class Manager(object):
         wpPlus=self.data.wpPlus
         wsMinus=self.data.wsMinus
         wsPlus=self.data.wsPlus
+        wo=self.data.wo
         type= self.GetTypeString()
         a=self.data.NormRange
 
@@ -407,13 +437,18 @@ class Manager(object):
         self.data.setwVector(w)
         self.data.setMag(mag)
         self.data.setPhase(phase)
-        #Respuest al impulso
+        #Respuesta al impulso
         t_imp,h=(self.Aproximator.getFunction()).impulse()
         h=h.real
         self.data.setImpData(t_imp,h)
+        #Respuesta al escalon
         t_step,u=(self.Aproximator.getFunction()).step()
         u=u.real
         self.data.setStepData(t_step,u)
+        #Poloss y ceros
+        zeros = finalFunc.zeros
+        poles = finalFunc.poles
+        self.data.SetZeroesAndPoles(zeros,poles)
     def GetTypeString(self):
         filt=self.data.GetFilter()
         if(filt==ap.LP):

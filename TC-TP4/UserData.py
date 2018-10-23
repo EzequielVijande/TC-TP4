@@ -51,6 +51,11 @@ class UserData(object):
         return self.phase.max()
     def GetPhaseMin(self):
         return self.phase.min()
+    def SetZeroesAndPoles(self,zeroes,poles):
+        self.zeroes_real=zeroes.real
+        self.zeroes_imag=zeroes.imag
+        self.poles_real= poles.real
+        self.poles_imag=poles.imag
     #Para BP Y BR
     def setwo(self,wo):
         self.wo=wo

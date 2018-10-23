@@ -312,36 +312,44 @@ class ApGUI(object):
         self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
         self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
         if(type_of_graph == ATT):
+            self.Axes_Stage1.set_xscale("log")
             self.Axes_Stage1.set_xlabel("f(Hz)")
             self.Axes_Stage1.set_ylabel("|A(f)| (dB)")
             self.Axes_Stage1.set_title("Atenuacion")
             self.Att_lines.set_visible(True)
         elif(type_of_graph == ATT_N):
+            self.Axes_Stage1.set_xscale("log")
             self.Axes_Stage1.set_xlabel("fN(Hz)")
             self.Axes_Stage1.set_ylabel("|A(fN)| (dB)")
             self.Axes_Stage1.set_title("Atenuacion Normalizada")
             self.AttN_lines.set_visible(True)
         elif(type_of_graph == FASE):
+            self.Axes_Stage1.set_xscale("log")
             self.Axes_Stage1.set_xlabel("f(Hz)")
             self.Axes_Stage1.set_ylabel("fase (deg)")
             self.Axes_Stage1.set_title("Fase de H(f)")
             self.Fase_lines.set_visible(True)
         elif(type_of_graph == CEROS):
+            self.Axes_Stage1.set_xscale("linear")
             self.Axes_Stage1.set_xlabel("Re(s)")
             self.Axes_Stage1.set_ylabel("Im(s)")
             self.Axes_Stage1.set_title("Diagrama de polos y ceros")
-            self.PZ_lines.set_visible(True)
+            self.zeros_path.set_visible(True)
+            self.poles_path.set_visible(True)
         elif(type_of_graph == RETARDO):
+            self.Axes_Stage1.set_xscale("log")
             self.Axes_Stage1.set_xlabel("f(Hz)")
             self.Axes_Stage1.set_ylabel("τ (seg)")
             self.Axes_Stage1.set_title("Retardo")
             self.RG_lines.set_visible(True)  
         elif(type_of_graph == IMPULSE):
+            self.Axes_Stage1.set_xscale("linear")
             self.Axes_Stage1.set_xlabel("t(seg)")
             self.Axes_Stage1.set_ylabel("h(t)")
             self.Axes_Stage1.set_title("Respuesta al impulso")
             self.Imp_lines.set_visible(True) 
         elif(type_of_graph == STEP):
+            self.Axes_Stage1.set_xscale("linear")
             self.Axes_Stage1.set_xlabel("t(seg)")
             self.Axes_Stage1.set_ylabel("u(t)")
             self.Axes_Stage1.set_title("Respuesta al escalon")
@@ -440,8 +448,9 @@ class ApGUI(object):
             self.TemplateOn=False
 
             
-    def plotZeros(self,sigma,w):
-        self.PZ_lines, =self.Axes_Stage1.plot(sigma,w)
+    def plotZeros(self,zeroes_r,zeroes_im,poles_r,poles_im):
+        self.zeros_path=self.Axes_Stage1.scatter(zeroes_r,zeroes_im,marker="o")
+        self.poles_path=self.Axes_Stage1.scatter(poles_r,poles_im,marker="x")
 
     def plotImpulse(self,t,y):
         self.Imp_lines, =self.Axes_Stage1.plot(t,y)
@@ -550,7 +559,8 @@ class ApGUI(object):
         self.AttN_lines.set_visible(False)
         self.Fase_lines.set_visible(False)
         self.Imp_lines.set_visible(False)
-        self.PZ_lines.set_visible(False)
+        self.zeros_path.set_visible(False)
+        self.poles_path.set_visible(False)
        # self.q_lines.set_visible(False)
         self.Step_lines.set_visible(False)
         self.RG_lines.set_visible(False)
