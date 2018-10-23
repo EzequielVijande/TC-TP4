@@ -294,6 +294,8 @@ class ApGUI(object):
             elif(fil==GR):
                 self.PlaceGR_Specs()
         self.PrevState=fil
+    def validate_save_call(self):
+        return
             
     #Funciones relacionadas a graficas
     def plotPhase(self, w,fase):
@@ -568,6 +570,21 @@ class ApGUI(object):
         self.entry_wrg.pack_forget()
         self.YLabel.pack_forget()
         self.entry_Y.pack_forget()
+    #Ventana de save
+    def CreateFileEntryWindow(self):
+        self.SaveFileName= StringVar()
+        self.SaveWindow = Toplevel()
+        self.SaveWindow.title("Save Window")
+        self.SaveWindow.config(bg=BUTTON_COLOR)
+        NombreLabel = Label(master=self.SaveWindow,text="Nombre:")
+        NombreLabel.pack(side="left")
+        entry = Entry(master=self.SaveWindow,textvariable=self.SaveFileName,state='disabled')
+        entry.pack(side="right")
+        EnterButton= Button(master=self.SaveWindow,text="Enter",command=self.validate_save_call
+                                ,background=GRAPH_BUTTON_COLOR)
+        EnterButton.pack(side="bottom",fill=BOTH,expand=True)
+        self.root.wait_window(self.SaveWindow)
+        return
 
     #Extras
     def CloseGUI(self):

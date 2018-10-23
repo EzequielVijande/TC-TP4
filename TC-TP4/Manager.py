@@ -74,7 +74,9 @@ class Manager(object):
         return
 
     def OnSaveEv(self):
-        return
+        self.GUI.CreateFileEntryWindow()
+        name="output"
+        self.SaveData(name)
 
     def OnLoadEv(self):
         return
@@ -475,6 +477,21 @@ class Manager(object):
             return "BR"
         elif(filt==ap.GR):
             return "GR"
+    #Funcion de Save y Load
+    def SaveData(self,name):
+        file_name= name+".txt"
+        f= open(file_name,"w+")
+        f.write("Filtro:  %s\n" % (self.data.Aproximation))
+        f.write("Aproximacion:  %s\n" % (self.data.Aproximation))
+        f.write("Ap:  %d\n" % (self.data.Ap))
+        f.write("As:  %d\n" % (self.data.As))
+        f.write("wp:  %d\n" % (self.data.wp))
+        f.write("ws:  %d\n" % (self.data.ws))
+        f.write("wo:  %d\n" % (self.data.wo))
+        f.write("Δwp:  %d\n" % (self.data.Δwp))
+        f.write("Δws:  %d\n" % (self.data.Δws))
+        f.write("Qmax:  %d\n" % (self.data.Q))
+        f.write("RangNorm:  %d\n" % (self.data.NormRange))
     #Funciones que manejan eventos de la segunda etapa
 
     def OnPrevEv(self):
