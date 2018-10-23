@@ -126,7 +126,7 @@ class Manager(object):
         self.GUI.plotAtte((self.data.w),att)
         self.GUI.plotAtteNorm(self.data.w,self.data.mag)
         self.GUI.plotPhase(self.data.w,self.data.phase)
-        self.GUI.plotQ(self.data.qs)
+        #self.GUI.plotQ(self.data.qs)
         self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
         self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
         self.GUI.plotZeros(self.data.zeroes_real,self.data.zeroes_imag,self.data.poles_real,self.data.poles_imag)

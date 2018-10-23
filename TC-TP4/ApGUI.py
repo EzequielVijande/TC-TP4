@@ -379,7 +379,7 @@ class ApGUI(object):
             self.Axes_Stage1.set_title("Grafica del factor de calidad")
             self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
             self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
-            self.plotQ(q)
+            #self.plotQ(q)
 
 
     def placeTemplate(self,Ap,As,wp,ws,wo,Q,wpMinus,wpPlus,wsMinus,wsPlus):
