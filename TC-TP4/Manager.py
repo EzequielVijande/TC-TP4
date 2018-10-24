@@ -105,6 +105,7 @@ class Manager(object):
         #self.IsNextValid()
         self.estado=ETAPA2
         self.GUI.Change_to_stage2()
+        self.SeparateStages()
 
     def OnChangeGraphEv(self):
         self.DisplaySelectedGraph()
@@ -616,6 +617,12 @@ class Manager(object):
         self.data.t0=float((lines[13].split(' ', 1))[1])
         self.data.wrg=float((lines[14].split(' ', 1))[1])
         self.data.Y=float((lines[15].split(' ', 1))[1])
+
+    def SeparateStages(self):
+        self.GatherPolesAndZeroes()
+        self.DefineCascadeOrder()
+        self.ObtainStagesGains()
+
 
     #Funciones que manejan eventos de la segunda etapa
 

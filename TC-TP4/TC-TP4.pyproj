@@ -28,6 +28,9 @@
     <Compile Include="Manager.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="StagesCalculator.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TC_TP4.py" />
     <Compile Include="UserData.py">
       <SubType>Code</SubType>
