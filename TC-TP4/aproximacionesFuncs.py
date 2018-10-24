@@ -293,3 +293,7 @@ class AproxAnalysis(object):
     def CalcBodePlot(self,w,func):
         wFinal, magFinal, phaseFinal = signal.bode(func,w)
         return wFinal,magFinal,phaseFinal
+
+    def CalcGroupDelay(self,w,func):
+        wFinal, gdFinal = signal.group_delay(func,w)
+        return wFinal, gdFinal
