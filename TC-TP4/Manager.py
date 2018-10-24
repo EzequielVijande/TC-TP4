@@ -454,11 +454,11 @@ class Manager(object):
         self.data.setMag(mag)
         self.data.setPhase(phase)
         #Respuesta al impulso
-        t_imp,h=(self.Aproximator.getFunction()).impulse()
+        t_imp,h=(self.Aproximator.getFunction()).impulse(N=8000)
         h=h.real
         self.data.setImpData(t_imp,h)
         #Respuesta al escalon
-        t_step,u=(self.Aproximator.getFunction()).step()
+        t_step,u=(self.Aproximator.getFunction()).step(N=8000)
         u=u.real
         self.data.setStepData(t_step,u)
         #Polos y ceros
