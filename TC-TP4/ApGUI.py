@@ -296,9 +296,9 @@ class ApGUI(object):
         self.PrevState=fil
     def validate_save_call(self):
         file_string = self.SaveFileName.get() +".txt"
-        file = Path("/"+file_string)
+        file = Path(file_string)
         if file.is_file():
-            messagebox.showinfo("El archivo seleccionado ya existe")
+            messagebox.showinfo("","El archivo seleccionado ya existe")
         else:
             self.SaveWindowReturn="Ok"
             self.SaveWindow.destroy()
@@ -594,7 +594,7 @@ class ApGUI(object):
         entry = Entry(master=self.SaveWindowFrame,textvariable=self.SaveFileName,state='normal')
         entry.pack(side="right")
         self.root.wait_window(self.SaveWindow)
-        return
+        return self.SaveWindowReturn
 
     #Extras
     def CloseGUI(self):
@@ -608,7 +608,7 @@ class ApGUI(object):
         messagebox.showinfo("Error en las especificaciones", result_str)
 
     def ShowMessage(self,string):
-         messagebox.showinfo(string)
+         messagebox.showinfo("",string)
 
     def HideAllLines(self):
         self.Att_lines.set_visible(False)

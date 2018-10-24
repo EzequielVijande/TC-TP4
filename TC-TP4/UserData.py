@@ -15,6 +15,9 @@ class UserData(object):
         self.wsPlus=0
         self.Q=0
         self.NormRange=0 #Rango de desnormalizacion
+        self.t0=0
+        self.wrg=0
+        self.Y=0
     #Setters
     def setFilter(self,filter):
         self.type_of_filter=filter
@@ -33,6 +36,12 @@ class UserData(object):
 
     def setws(self,ws):
         self.ws=ws
+    def sett0(self,t0):
+        self.sett0=t0
+    def setwrg(self,wrg):
+        self.wrg=wrg
+    def setY(self,Y):
+        self.Y=Y
     #Datos para graficar
     def setMag(self,mag):
         self.mag=mag

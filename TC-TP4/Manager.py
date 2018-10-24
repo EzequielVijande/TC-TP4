@@ -77,7 +77,7 @@ class Manager(object):
         result= self.GUI.CreateFileEntryWindow()
         if(result=="Ok"):
             if(self.GUI.Graph_enable):
-                self.SaveData(self.GUI.SaveFileName)
+                self.SaveData(self.GUI.SaveFileName.get())
             else:
                 self.GUI.ShowMessage("No information to save")
 
@@ -486,17 +486,20 @@ class Manager(object):
         delta_ws= (self.data.wsPlus)-(self.data.wsMinus)
         file_name= name+".txt"
         f= open(file_name,"w+")
-        f.write("Filtro:  %s\n" % (self.data.Aproximation))
+        f.write("Filtro:  %d\n" % (self.data.type_of_filter))
         f.write("Aproximacion:  %s\n" % (self.data.Aproximation))
         f.write("Ap:  %d\n" % (self.data.Ap))
         f.write("As:  %d\n" % (self.data.As))
         f.write("wp:  %d\n" % (self.data.wp))
         f.write("ws:  %d\n" % (self.data.ws))
         f.write("wo:  %d\n" % (self.data.wo))
-        f.write("Δwp:  %d\n" % (delta_wp))
-        f.write("Δws:  %d\n" % (delta_ws))
+        f.write("delta_wp:  %d\n" % (delta_wp))
+        f.write("delta_ws:  %d\n" % (delta_ws))
         f.write("Qmax:  %d\n" % (self.data.Q))
         f.write("RangNorm:  %d\n" % (self.data.NormRange))
+        f.write("t0: %d\n" % (self.data.t0))
+        f.write("wrg: %d\n" % (self.data.wrg))
+        f.write("t0: %d\n" % (self.data.Y))
     #Funciones que manejan eventos de la segunda etapa
 
     def OnPrevEv(self):

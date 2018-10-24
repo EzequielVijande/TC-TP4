@@ -1,0 +1,14 @@
+Filtro:  Butterworth
+Aproximacion:  Butterworth
+Ap:  1
+As:  3
+wp:  3
+ws:  6
+wo:  0
+delta_wp:  0
+delta_ws:  0
+Qmax:  0
+RangNorm:  0
+t0: 0
+wrg: 0
+t0: 0
