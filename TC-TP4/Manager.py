@@ -319,6 +319,8 @@ class Manager(object):
     def ObtainScaleLimits(self):
         filt=self.data.GetFilter()
         selected= self.GUI.SelectedGraph.get()
+        Δfs= (self.data.wsPlus -self.data.wsMinus)/(2*math.pi)
+        Δfp= (self.data.wpPlus -self.data.wpMinus)/(2*math.pi)
         if(selected==ap.ATT or selected==ap.ATT_N):
 
             if(filt == ap.LP):
@@ -342,23 +344,23 @@ class Manager(object):
                     return 0, ((self.data.wp/(2*math.pi))/(self.data.ws/(2*math.pi))),0,((self.data.As)*1.5)
             elif(filt == ap.BP):
                 if(selected != ap.ATT_N):
-                    xleft= (self.data.wo/(2*math.pi))-(2*(float(self.GUI.entry_Δws.get())))
-                    xright= (self.data.wo/(2*math.pi))+(20*(float(self.GUI.entry_Δws.get())))
+                    xleft= (self.data.wo/(2*math.pi))-(2*Δfs)
+                    xright= (self.data.wo/(2*math.pi))+(2*Δfs)
                     ybot=0
                     ytop=(self.data.As)*1.5
                     return xleft, xright,ybot,ytop
                 else:
-                    return 0, ((float(self.GUI.entry_Δws.get()))/(float(self.GUI.entry_Δwp.get()))),0,((self.data.As)*1.5)
+                    return 0, (Δfs/Δfp),0,((self.data.As)*1.5)
 
             elif(filt == ap.BR):
                 if(selected != ap.ATT_N):
-                    xleft= (self.data.wo/(2*math.pi))-(2*(float(self.GUI.entry_Δwp.get())))
-                    xright= (self.data.wo/(2*math.pi))+(20*(float(self.GUI.entry_Δwp.get())))
+                    xleft= (self.data.wo/(2*math.pi))-(2*Δfp)
+                    xright= (self.data.wo/(2*math.pi))+(2*Δfp)
                     ybot=0
                     ytop=(self.data.As)*1.5
                     return xleft, xright,ybot,ytop
                 else:
-                    return 0, (float(self.GUI.entry_Δwp.get()))/float((self.GUI.entry_Δwp.get())),0,((self.data.As)*1.5)
+                    return 0, (Δfp/Δfs),0,((self.data.As)*1.5)
         elif(selected ==ap.FASE): #Limites de escala para el grafico de fase
             ymax= self.data.GetPhaseMax()
             ymin= self.data.GetPhaseMin()
@@ -377,15 +379,15 @@ class Manager(object):
                     ytop=ymax
                     return xleft, xright,ybot,ytop
             elif(filt == ap.BP):
-                    xleft= (self.data.wo/(2*math.pi))-(2*(float(self.GUI.entry_Δws.get())))
-                    xright= (self.data.wo/(2*math.pi))+(20*(float(self.GUI.entry_Δws.get())))
+                    xleft= (self.data.wo/(2*math.pi))-(2*Δfs)
+                    xright= (self.data.wo/(2*math.pi))+(2*Δfs)
                     ybot=ymin
                     ytop=ymax
                     return xleft, xright,ybot,ytop
 
             elif(filt == ap.BR):
-                    xleft= (self.data.wo/(2*math.pi))-(2*(float(self.GUI.entry_Δwp.get())))
-                    xright= (self.data.wo/(2*math.pi))+(20*(float(self.GUI.entry_Δwp.get())))
+                    xleft= (self.data.wo/(2*math.pi))-(2*Δfp)
+                    xright= (self.data.wo/(2*math.pi))+(2*Δfp)
                     ybot=ymin
                     ytop=ymax
                     return xleft, xright,ybot,ytop
