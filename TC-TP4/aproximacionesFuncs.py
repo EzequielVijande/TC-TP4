@@ -7,7 +7,8 @@ class AproxAnalysis(object):
 
     def __init__(self, As=0, Ap=0, wp=0, ws=0, wpMinus=0, wpPlus=0, wsMinus=0, wsPlus=0, type="LP", a=0):
         
-        return;
+        return
+
     def SetParams(self,As=0, Ap=0, wp=0, ws=0, wpMinus=0, wpPlus=0, wsMinus=0, wsPlus=0, type="LP", a=0):
         self.As = As
         self.Ap = Ap
@@ -23,6 +24,7 @@ class AproxAnalysis(object):
         self.n = 0
         self.b = 0 # bandwidth
         self.a = a # porcentaje de desnormalizacion [0-1]
+        self.filterType = 'butterworth'
         self.poles = []
         self.zeros = []
         self.function = 0
@@ -44,27 +46,80 @@ class AproxAnalysis(object):
             self.wsn = (self.wpPlus-self.wpMinus)/(self.wsPlus-self.wsMinus)
         else:
             self.wsn = math.nan
-        return;
+        return
+
+    def woCalc(self):
+        if self.filterType == 'butterworth':
+            if (self.type == 'LP'):
+                wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*self.ws
+                wpf = self.wp
+                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+            elif self.type == 'HP':
+                wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*self.ws
+                wpf = self.wp
+                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+            elif self.type == 'BP':
+                # calculo de B!!!
+                wo= (self.wpPlus*self.wpMinus)**(1/2)
+            elif self.type == 'BR':
+                # calculo de B!!!
+                wo= (self.wpPlus*self.wpMinus)**(1/2)
+        elif self.filterType == 'chebyshev':
+            if (self.type == 'LP'): # HACER CALCULOS BIEN
+                wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*self.ws
+                wpf = self.wp
+                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+            elif self.type == 'HP':
+                wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*self.ws
+                wpf = self.wp
+                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+            elif self.type == 'BP':
+                # calculo de B!!!
+                wo= (self.wpPlus*self.wpMinus)**(1/2)
+            elif self.type == 'BR':
+                # calculo de B!!!
+                wo= (self.wpPlus*self.wpMinus)**(1/2)
+        elif self.filterType == 'inverseChebyshev':
+            if (self.type == 'LP'): # HACER CALCULOS BIEN
+                wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*self.ws
+                wpf = self.wp
+                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+            elif self.type == 'HP':
+                wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*self.ws
+                wpf = self.wp
+                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+            elif self.type == 'BP':
+                # calculo de B!!!
+                wo= (self.wpPlus*self.wpMinus)**(1/2)
+            elif self.type == 'BR':
+                # calculo de B!!!
+                wo= (self.wpPlus*self.wpMinus)**(1/2)
+        return wo
+
+    def kCalc(self,den,num):
+        if self.filterType == 'butterworth':
+            if den[len(den)-1] == 0 or num[len(num)-1] == 0:
+                k=1
+            else:
+                k=den[len(den)-1]/num[len(num)-1]
+        elif self.filterType == 'chebyshev':
+            multiplier = (1 if (self.n%2==0) else 0)
+            if den[len(den)-1] == 0 or num[len(num)-1] == 0:
+                k=(10**(-self.Ap/20))**multiplier
+            else:
+                k=((10**(-self.Ap/20))**multiplier)*den[len(den)-1]/num[len(num)-1]
+        elif self.filterType == 'inverseChebyshev':
+            multiplier = (1 if (self.n%2==0) else 0)
+            if den[len(den)-1] == 0 or num[len(num)-1] == 0:
+                k=(10**(-self.Ap/20))**multiplier
+            else:
+                k=((10**(-self.Ap/20))**multiplier)*den[len(den)-1]/num[len(num)-1]
+        return k
+
 
     def createFunction(self):
 
-        if (self.type == 'LP'):
-            wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*self.ws
-            wpf = self.wp
-            wo = (wsf**(self.a))*(wpf**(1-(self.a)))
-        elif (self.type == 'HP'):
-            wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*self.ws
-            wpf = self.wp
-            wo = (wsf**(self.a))*(wpf**(1-(self.a)))
-        elif (self.type == 'BP'):
-            wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*(self.wsPlus-self.wsMinus)
-            wpf = self.wpPlus-self.wpMinus
-            wo= (self.wpPlus*self.wpMinus)**(1/2)
-        elif (self.type == 'BR'):
-            wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*(self.wsPlus-self.wsMinus)
-            wpf = self.wpPlus-self.wpMinus
-            wo= (self.wpPlus*self.wpMinus)**(1/2)
-
+        wo = self.woCalc() #calculo wo para desnormalizacion
         pzFunction = signal.ZerosPolesGain(self.zeros,self.poles,1)
         coefFunction = pzFunction.to_tf() # num/den
         den = coefFunction.den
@@ -73,17 +128,8 @@ class AproxAnalysis(object):
             den[i] = den[i].real
         for i in range(0, len(num)):
             num[i] = num[i].real
-
-        #calculo constante
-        if den[len(den)-1] == 0:
-            k=1
-        elif num[len(num)-1] == 0:
-            k=1
-        else:
-            k=den[len(den)-1]/num[len(num)-1]
-
-        self.normFunction = signal.ZerosPolesGain(self.zeros,self.poles,k)
-
+        k = self.kCalc(den,num) #calculo constante
+        self.normFunction = signal.ZerosPolesGain(self.zeros,self.poles,k) #guardo funcion normalizada
 
         # desnormalizo segun tipo de filtro
         if self.type == 'LP':
@@ -103,28 +149,29 @@ class AproxAnalysis(object):
             ft = ft*aux
         #creo funcion final
         self.function = signal.TransferFunction(k*ft.num[0][0],ft.den[0][0])
-        return;
+        return
 
     # BUTTERWORTH
 
     def butterworthAnalysis(self):
+        self.filterType = 'butterworth'
         self.poles = []
         self.zeros = []
         self.epsilonButterworth()
         self.nButterworth()
         self.polesButterworth()
         self.createFunction()
-        return;
+        return
 
     def epsilonButterworth(self):
         self.epsilon = math.sqrt(math.pow(10,self.Ap/10)-1)
-        return;
+        return
 
     def nButterworth(self):
         log1 = math.log10((math.pow(10,self.As/10)-1)/(math.pow(self.epsilon,2)))
         log2 = math.log10(self.wsn)
         self.n = math.ceil(log1/(2*log2))
-        return;
+        return
 
     def polesButterworth(self):
         if (self.n%2) == 0:
@@ -138,44 +185,46 @@ class AproxAnalysis(object):
             auxPole = complex(auxRe,auxIm)
             if (auxPole.real<0):
                 self.poles.append(auxPole)
-        return;
+        return
 
     # CHEBYSHEV
 
     def chebyshevAnalysis(self):
+        self.filterType = 'chebyshev'
         self.poles = []
         self.zeros = []
         self.epsilonChebyshev()
         self.nChebyshev()
         self.polesChebyshev()
         self.createFunction()
-        return;
+        return
 
     def epsilonChebyshev(self):
         self.epsilon = math.sqrt(math.pow(10,self.Ap/10)-1)
-        return;
+        return
 
     def nChebyshev(self):
         arcosh1 = math.acosh(math.sqrt(math.pow(10,self.As/10)-1)/self.epsilon)
         arcosh2 = math.acosh(self.wsn)
         self.n = math.ceil(arcosh1/arcosh2)
-        return;
+        return
 
     def polesChebyshev(self):
         for i in range(1, self.n+1):
-            auxRe = math.sin(math.pi*((2*i-1)/(2*self.n)))*math.sinh(math.acosh(1/self.epsilon)/self.n)
-            auxIm = math.cos(math.pi*((2*i-1)/(2*self.n)))*math.cosh(math.acosh(1/self.epsilon)/self.n)
+            auxRe = math.sin(math.pi*((2*i-1)/(2*self.n)))*math.sinh(math.asinh(1/self.epsilon)/self.n)
+            auxIm = math.cos(math.pi*((2*i-1)/(2*self.n)))*math.cosh(math.asinh(1/self.epsilon)/self.n)
             auxPole1 = complex(auxRe,auxIm)
             auxPole2 = complex(-auxRe,auxIm)
             if (auxPole1.real<0):
                 self.poles.append(auxPole1)
             if (auxPole2.real<0):
                 self.poles.append(auxPole2)
-        return;
+        return
 
     # CHEBYSHEV INVERSE
 
     def chebyshevInverseAnalysis(self):
+        self.filterType = 'inverseChebyshev'
         self.poles = []
         self.zeros = []
         self.epsilonChebyshevInverse()
@@ -183,17 +232,17 @@ class AproxAnalysis(object):
         self.polesChebyshevInverse()
         self.zerosChebyshevInverse()
         self.createFunction()
-        return;
+        return
 
     def epsilonChebyshevInverse(self):
         self.epsilon = 1/math.sqrt(math.pow(10,self.As/10)-1)
-        return;
+        return
 
     def nChebyshevInverse(self):
         arcosh1 = math.acosh(1/(self.epsilon*(math.sqrt(math.pow(10,self.Ap/10)-1))))
         arcosh2 = math.acosh(self.wsn)
         self.n = math.ceil(arcosh1/arcosh2)
-        return;
+        return
 
     def polesChebyshevInverse(self):
         beta = math.asinh(1/self.epsilon)/self.n
@@ -204,7 +253,7 @@ class AproxAnalysis(object):
             auxPole = complex(auxRe,auxIm)
             if (auxPole.real<0):
                 self.poles.append(auxPole)
-        return;
+        return
 
     def zerosChebyshevInverse(self):
         for i in range(1, 2*self.n+1):
@@ -212,7 +261,7 @@ class AproxAnalysis(object):
             auxIm = self.wsn/math.cos(alpha)
             auxZero = complex(0,auxIm)
             self.zeros.append(auxZero) # VER CUAL DEL PAR AGARRAR
-        return;
+        return
 
     # BESSEL
 
@@ -223,19 +272,19 @@ class AproxAnalysis(object):
         self.nBessel()
         self.polesBessel()
         self.createFunction()
-        return;
+        return
 
     def epsilonBessel(self):
         self.epsilon = math.sqrt(math.pow(10,self.Ap/10)-1)
-        return;
+        return
 
     def nBessel(self):
         # por iteracion (wat)
-        return;
+        return
 
     def polesBessel(self):
         # hacer
-        return;
+        return
 
     # Getters
 
@@ -244,5 +293,5 @@ class AproxAnalysis(object):
 
     #Extras
     def CalcBodePlot(self,w,func):
-        w_r, mag_r, phase_r = signal.bode(func,w)
-        return w_r,mag_r,phase_r
+        wFinal, magFinal, phaseFinal = signal.bode(func,w)
+        return wFinal,magFinal,phaseFinal
