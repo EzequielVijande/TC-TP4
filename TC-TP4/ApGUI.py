@@ -228,7 +228,12 @@ class ApGUI(object):
         self.StepRButton = Radiobutton(master=self.GraphicsFrame,text="Resp al Escalon",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
                                      indicatoron=False,variable=self.SelectedGraph,value=STEP,command=self.change_graph_button_call)
         self.StepRButton.pack(side=LEFT,fill=BOTH,expand=True)
+       
+        self.GroupDelayButton = Radiobutton(master=self.GraphicsFrame,text="Retardo",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR,
+                                     indicatoron=False,variable=self.SelectedGraph,value=RETARDO,command=self.change_graph_button_call)
+        self.GroupDelayButton.pack(side=LEFT,fill=BOTH,expand=True)
         self.AttRButton.select() #por default empieza seleccionado el grafico de atenuacion
+
 
         #Boton que superpone plantilla
         self.PutTemplate= IntVar()

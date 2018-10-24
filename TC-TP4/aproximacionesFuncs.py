@@ -298,5 +298,7 @@ class AproxAnalysis(object):
         return wFinal,magFinal,phaseFinal
 
     def CalcGroupDelay(self,w,func):
-        wFinal, gdFinal = signal.group_delay(func,w)
+        b=func.num
+        a=func.den
+        wFinal, gdFinal = signal.group_delay((b,a),w)
         return wFinal, gdFinal

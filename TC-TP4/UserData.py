@@ -68,6 +68,9 @@ class UserData(object):
     def SetQValues(self,q):
         self.qs = q
         self.qs[(self.qs)<0]=0
+    def SetGroupDelay(self,gd):
+        self.gd= gd
+
     #Para BP Y BR
     def setwo(self,wo):
         self.wo=wo

@@ -154,7 +154,7 @@ class Manager(object):
         self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
         self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
         self.GUI.plotZeros(self.data.zeroes_real,self.data.zeroes_imag,self.data.poles_real,self.data.poles_imag)
-        self.GUI.PlotGroupDelay(self.data.f,self.data.mag)
+        self.GUI.PlotGroupDelay(self.data.f,self.data.gd)
         
         self.DisplaySelectedGraph()
         if(WantsTempl and sel== ap.ATT):
@@ -165,35 +165,41 @@ class Manager(object):
             self.GUI.destroyTemplate()
 
     def SetUserData(self):
-        As= float(self.GUI.AsString.get())
-        Ap= float(self.GUI.ApString.get())
-
-        self.data.setAp(Ap)
-        self.data.setAs(As)
         filt= self.GUI.filter.get()
-        aprox= self.GUI.selected_aprox.get()
         self.data.setFilter(filt)
-        self.data.NormRange= (self.GUI.SlideNorm.get())/100
-        self.data.Aproximation= aprox
+        if(filt != ap.GR):
+            As= float(self.GUI.AsString.get())
+            Ap= float(self.GUI.ApString.get())
 
-        if(filt==ap.LP or filt==ap.HP):
-            ws= (float(self.GUI.wsString.get()))*2*(math.pi)
-            wp= float(self.GUI.wpString.get())*2*(math.pi)
-            self.data.setws(ws)
-            self.data.setwp(wp)
-        elif(filt==ap.BP or filt==ap.BR):
-            wo= float(self.GUI.w0String.get())*2*(math.pi)
-            Q= float(self.GUI.qString.get())
-            Δwp= float(self.GUI.ΔwpString.get())*2*(math.pi)
-            Δws= float(self.GUI.ΔwsString.get())*2*(math.pi)
+            self.data.setAp(Ap)
+            self.data.setAs(As)
+            aprox= self.GUI.selected_aprox.get()
+            self.data.NormRange= (self.GUI.SlideNorm.get())/100
+            self.data.Aproximation= aprox
 
-            (wpMinus,wpPlus,wsMinus,wsPlus)=  self.calculate_w(wo,Δwp,Δws)
-            self.data.setwpMinus(wpMinus) #setteo userData
-            self.data.setwpPlus(wpPlus)
-            self.data.setwsMinus(wsMinus)
-            self.data.setwsPlus(wsPlus)
-            self.data.setwo(wo)
-            self.data.setQ(Q)
+            if(filt==ap.LP or filt==ap.HP):
+                ws= (float(self.GUI.wsString.get()))*2*(math.pi)
+                wp= float(self.GUI.wpString.get())*2*(math.pi)
+                self.data.setws(ws)
+                self.data.setwp(wp)
+            elif(filt==ap.BP or filt==ap.BR):
+                wo= float(self.GUI.w0String.get())*2*(math.pi)
+                Q= float(self.GUI.qString.get())
+                Δwp= float(self.GUI.ΔwpString.get())*2*(math.pi)
+                Δws= float(self.GUI.ΔwsString.get())*2*(math.pi)
+
+                (wpMinus,wpPlus,wsMinus,wsPlus)=  self.calculate_w(wo,Δwp,Δws)
+                self.data.setwpMinus(wpMinus) #setteo userData
+                self.data.setwpPlus(wpPlus)
+                self.data.setwsMinus(wsMinus)
+                self.data.setwsPlus(wsPlus)
+                self.data.setwo(wo)
+                self.data.setQ(Q)
+
+        elif(filt == ap.GR):
+            self.data.t0 = float(self.GUI.τ0String.get())
+            self.data.wrg = float(self.GUI.wrgString.get()) *2*(math.pi)
+            self.data.Y = float(self.GUI.YString.get())
 
     def calculate_w(self,wo,Δwp,Δws):
         wpMinus=(-Δwp+(( (Δwp**2)+(4*(wo**2)))**0.5))/2
@@ -321,125 +327,156 @@ class Manager(object):
         selected= self.GUI.SelectedGraph.get()
         Δfs= (self.data.wsPlus -self.data.wsMinus)/(2*math.pi)
         Δfp= (self.data.wpPlus -self.data.wpMinus)/(2*math.pi)
-        if(selected==ap.ATT or selected==ap.ATT_N):
+        if(filt != ap.GR):
+            if(selected==ap.ATT or selected==ap.ATT_N):
 
-            if(filt == ap.LP):
-                if(selected != ap.ATT_N):
-                    xleft= (self.data.wp/(2*math.pi))/100
-                    xright= (self.data.ws/(2*math.pi))*100
-                    ybot=0
-                    ytop=(self.data.As)*1.5
-                    return xleft, xright,ybot,ytop
-                else:
-                    return 0, ((self.data.ws/(2*math.pi))/(self.data.wp/(2*math.pi))),0,((self.data.As)*1.5)
+                if(filt == ap.LP):
+                    if(selected != ap.ATT_N):
+                        xleft= (self.data.wp/(2*math.pi))/100
+                        xright= (self.data.ws/(2*math.pi))*100
+                        ybot=0
+                        ytop=(self.data.As)*1.5
+                        return xleft, xright,ybot,ytop
+                    else:
+                        return 0, ((self.data.ws/(2*math.pi))/(self.data.wp/(2*math.pi))),0,((self.data.As)*1.5)
 
-            elif(filt == ap.HP):
-                if(selected != ap.ATT_N):
-                    xleft= (self.data.ws/(2*math.pi))/100
-                    xright= (self.data.wp/(2*math.pi))*100
-                    ybot=0
-                    ytop=(self.data.As)*1.5
-                    return xleft, xright,ybot,ytop
-                else:
-                    return 0, ((self.data.wp/(2*math.pi))/(self.data.ws/(2*math.pi))),0,((self.data.As)*1.5)
-            elif(filt == ap.BP):
-                if(selected != ap.ATT_N):
-                    xleft= (self.data.wo/(2*math.pi))-(2*Δfs)
-                    xright= (self.data.wo/(2*math.pi))+(2*Δfs)
-                    ybot=0
-                    ytop=(self.data.As)*1.5
-                    return xleft, xright,ybot,ytop
-                else:
-                    return 0, (Δfs/Δfp),0,((self.data.As)*1.5)
+                elif(filt == ap.HP):
+                    if(selected != ap.ATT_N):
+                        xleft= (self.data.ws/(2*math.pi))/100
+                        xright= (self.data.wp/(2*math.pi))*100
+                        ybot=0
+                        ytop=(self.data.As)*1.5
+                        return xleft, xright,ybot,ytop
+                    else:
+                        return 0, ((self.data.wp/(2*math.pi))/(self.data.ws/(2*math.pi))),0,((self.data.As)*1.5)
+                elif(filt == ap.BP):
+                    if(selected != ap.ATT_N):
+                        xleft= (self.data.wo/(2*math.pi))-(2*Δfs)
+                        xright= (self.data.wo/(2*math.pi))+(2*Δfs)
+                        ybot=0
+                        ytop=(self.data.As)*1.5
+                        return xleft, xright,ybot,ytop
+                    else:
+                        return 0, (Δfs/Δfp),0,((self.data.As)*1.5)
 
-            elif(filt == ap.BR):
-                if(selected != ap.ATT_N):
-                    xleft= (self.data.wo/(2*math.pi))-(2*Δfp)
-                    xright= (self.data.wo/(2*math.pi))+(2*Δfp)
-                    ybot=0
-                    ytop=(self.data.As)*1.5
-                    return xleft, xright,ybot,ytop
-                else:
-                    return 0, (Δfp/Δfs),0,((self.data.As)*1.5)
-        elif(selected ==ap.FASE): #Limites de escala para el grafico de fase
-            ymax= self.data.GetPhaseMax()
-            ymin= self.data.GetPhaseMin()
-            if(filt == ap.LP):
-                    xleft= (self.data.wp/(2*math.pi))/100
-                    xright= (self.data.ws/(2*math.pi))*100
-                    ybot=0
-                    ybot=ymin
-                    ytop=ymax
-                    return xleft, xright,ybot,ytop
+                elif(filt == ap.BR):
+                    if(selected != ap.ATT_N):
+                        xleft= (self.data.wo/(2*math.pi))-(2*Δfp)
+                        xright= (self.data.wo/(2*math.pi))+(2*Δfp)
+                        ybot=0
+                        ytop=(self.data.As)*1.5
+                        return xleft, xright,ybot,ytop
+                    else:
+                        return 0, (Δfp/Δfs),0,((self.data.As)*1.5)
+            elif(selected == ap.RETARDO):
+                y_max= self.data.gd.max()
+                if(filt == ap.LP):
+                        xleft= (self.data.wp/(2*math.pi))/100
+                        xright= (self.data.ws/(2*math.pi))*100
+                        ybot=0
+                        ytop=(y_max)*1.1
+                        return xleft, xright,ybot,ytop
 
-            elif(filt == ap.HP):
-                    xleft= (self.data.ws/(2*math.pi))/100
-                    xright= (self.data.wp/(2*math.pi))*100
-                    ybot=ymin
-                    ytop=ymax
-                    return xleft, xright,ybot,ytop
-            elif(filt == ap.BP):
-                    xleft= (self.data.wo/(2*math.pi))-(2*Δfs)
-                    xright= (self.data.wo/(2*math.pi))+(2*Δfs)
-                    ybot=ymin
-                    ytop=ymax
-                    return xleft, xright,ybot,ytop
+                elif(filt == ap.HP):
+                        xleft= (self.data.ws/(2*math.pi))/100
+                        xright= (self.data.wp/(2*math.pi))*100
+                        ybot=0
+                        ytop=(y_max)*1.1
+                        return xleft, xright,ybot,ytop
 
-            elif(filt == ap.BR):
-                    xleft= (self.data.wo/(2*math.pi))-(2*Δfp)
-                    xright= (self.data.wo/(2*math.pi))+(2*Δfp)
-                    ybot=ymin
-                    ytop=ymax
-                    return xleft, xright,ybot,ytop
-        elif(selected == ap.STEP):
-            ymax=self.data.StepResp.max()
-            ymin=self.data.StepResp.min()
-            xmax=self.data.StepTime.max()
-            xmin=self.data.StepTime.min()
-            return xmin,xmax,ymin,ymax
-        elif(selected == ap.IMPULSE):
-            ymax=self.data.ImpResp.max()
-            ymin=self.data.ImpResp.min()
-            xmax=self.data.ImpTime.max()
-            xmin=self.data.ImpTime.min()
-            return xmin,xmax,ymin,ymax
-        elif(selected == ap.CEROS):
-            #Limites de y
-            if(self.data.zeroes_imag.size != 0):
-                if(self.data.zeroes_imag.max()>=self.data.poles_imag.max()):
-                    ymax=1.1*(self.data.zeroes_imag.max())
+                elif(filt == ap.BP):
+                        xleft= (self.data.wo/(2*math.pi))-(2*Δfs)
+                        xright= (self.data.wo/(2*math.pi))+(2*Δfs)
+                        ybot=0
+                        ytop=(y_max)*1.1
+                        return xleft, xright,ybot,ytop
+
+                elif(filt == ap.BR):
+                        xleft= (self.data.wo/(2*math.pi))-(2*Δfp)
+                        xright= (self.data.wo/(2*math.pi))+(2*Δfp)
+                        ybot=0
+                        ytop=(y_max)*1.1
+                        return xleft, xright,ybot,ytop
+
+            elif(selected ==ap.FASE): #Limites de escala para el grafico de fase
+                ymax= self.data.GetPhaseMax()
+                ymin= self.data.GetPhaseMin()
+                if(filt == ap.LP):
+                        xleft= (self.data.wp/(2*math.pi))/100
+                        xright= (self.data.ws/(2*math.pi))*100
+                        ybot=0
+                        ybot=ymin
+                        ytop=ymax
+                        return xleft, xright,ybot,ytop
+
+                elif(filt == ap.HP):
+                        xleft= (self.data.ws/(2*math.pi))/100
+                        xright= (self.data.wp/(2*math.pi))*100
+                        ybot=ymin
+                        ytop=ymax
+                        return xleft, xright,ybot,ytop
+                elif(filt == ap.BP):
+                        xleft= (self.data.wo/(2*math.pi))-(2*Δfs)
+                        xright= (self.data.wo/(2*math.pi))+(2*Δfs)
+                        ybot=ymin
+                        ytop=ymax
+                        return xleft, xright,ybot,ytop
+
+                elif(filt == ap.BR):
+                        xleft= (self.data.wo/(2*math.pi))-(2*Δfp)
+                        xright= (self.data.wo/(2*math.pi))+(2*Δfp)
+                        ybot=ymin
+                        ytop=ymax
+                        return xleft, xright,ybot,ytop
+            elif(selected == ap.STEP):
+                ymax=self.data.StepResp.max()
+                ymin=self.data.StepResp.min()
+                xmax=self.data.StepTime.max()
+                xmin=self.data.StepTime.min()
+                return xmin,xmax,ymin,ymax
+            elif(selected == ap.IMPULSE):
+                ymax=self.data.ImpResp.max()
+                ymin=self.data.ImpResp.min()
+                xmax=self.data.ImpTime.max()
+                xmin=self.data.ImpTime.min()
+                return xmin,xmax,ymin,ymax
+            elif(selected == ap.CEROS):
+                #Limites de y
+                if(self.data.zeroes_imag.size != 0):
+                    if(self.data.zeroes_imag.max()>=self.data.poles_imag.max()):
+                        ymax=1.1*(self.data.zeroes_imag.max())
+                    else:
+                        ymax=1.1*(self.data.poles_imag.max())
+                    if(self.data.zeroes_imag.min()>=self.data.poles_imag.min()):
+                        ymin=self.data.poles_imag.min()
+                    else:
+                        ymin=self.data.zeroes_imag.min()
                 else:
                     ymax=1.1*(self.data.poles_imag.max())
-                if(self.data.zeroes_imag.min()>=self.data.poles_imag.min()):
                     ymin=self.data.poles_imag.min()
-                else:
-                    ymin=self.data.zeroes_imag.min()
-            else:
-                ymax=1.1*(self.data.poles_imag.max())
-                ymin=self.data.poles_imag.min()
-            #Limites de x
-            if(self.data.zeroes_real.size != 0):
-                if(self.data.zeroes_real.max()>=self.data.poles_real.max()):
-                    xmax= 1.1*(self.data.zeroes_real.max())
+                #Limites de x
+                if(self.data.zeroes_real.size != 0):
+                    if(self.data.zeroes_real.max()>=self.data.poles_real.max()):
+                        xmax= 1.1*(self.data.zeroes_real.max())
+                    else:
+                        xmax= 1.1*(self.data.poles_real.max())
+                    #Valores minimos
+           
+                    if(self.data.zeroes_real.min()>=self.data.poles_real.min()):
+                        xmin= (self.data.poles_real.min())
+                    else:
+                        xmin= (self.data.zeroes_real.min())
                 else:
                     xmax= 1.1*(self.data.poles_real.max())
-                #Valores minimos
-           
-                if(self.data.zeroes_real.min()>=self.data.poles_real.min()):
-                    xmin= (self.data.poles_real.min())
-                else:
-                    xmin= (self.data.zeroes_real.min())
-            else:
-                xmax= 1.1*(self.data.poles_real.max())
-                xmin= self.data.poles_real.min()
+                    xmin= self.data.poles_real.min()
 
-            return xmin,xmax,ymin,ymax
-        else:
-            xmin=0
-            xmax=(self.data.qs.size)+1
-            ymin=0
-            ymax=self.data.qs.max()
-            return xmin,xmax,ymin,ymax
+                return xmin,xmax,ymin,ymax
+            else:
+                xmin=0
+                xmax=(self.data.qs.size)+1
+                ymin=0
+                ymax=self.data.qs.max()
+                return xmin,xmax,ymin,ymax
 
 
     def CalculateGraphs(self):
@@ -497,7 +534,8 @@ class Manager(object):
         auxString= "N = "
         self.GUI.NString_Graph.set(auxString+str(n))
         #calculo del retardo de grupo
-        self.Aproximator.CalcGroupDelay(w,finalFunc)
+        w, gd = self.Aproximator.CalcGroupDelay(w,finalFunc)
+        self.data.SetGroupDelay(gd)
 
     def GetTypeString(self):
         filt=self.data.GetFilter()
