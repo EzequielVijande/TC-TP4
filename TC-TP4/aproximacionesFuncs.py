@@ -97,18 +97,12 @@ class AproxAnalysis(object):
         return wo
 
     def kCalc(self,den,num):
-        if self.filterType == 'butterworth':
+        if self.filterType == 'butterworth' or self.filterType == 'inverseChebyshev':
             if den[len(den)-1] == 0 or num[len(num)-1] == 0:
                 k=1
             else:
                 k=den[len(den)-1]/num[len(num)-1]
         elif self.filterType == 'chebyshev':
-            multiplier = (1 if (self.n%2==0) else 0)
-            if den[len(den)-1] == 0 or num[len(num)-1] == 0:
-                k=(10**(-self.Ap/20))**multiplier
-            else:
-                k=((10**(-self.Ap/20))**multiplier)*den[len(den)-1]/num[len(num)-1]
-        elif self.filterType == 'inverseChebyshev':
             multiplier = (1 if (self.n%2==0) else 0)
             if den[len(den)-1] == 0 or num[len(num)-1] == 0:
                 k=(10**(-self.Ap/20))**multiplier
@@ -130,7 +124,6 @@ class AproxAnalysis(object):
             num[i] = num[i].real
         k = self.kCalc(den,num) #calculo constante
         self.normFunction = signal.ZerosPolesGain(self.zeros,self.poles,k) #guardo funcion normalizada
-
         # desnormalizo segun tipo de filtro
         if self.type == 'LP':
             s = c.tf([1,0],[wo])
@@ -149,6 +142,10 @@ class AproxAnalysis(object):
             ft = ft*aux
         #creo funcion final
         self.function = signal.TransferFunction(k*ft.num[0][0],ft.den[0][0])
+        return
+
+    def createGroupDelayFunction():
+        1
         return
 
     # BUTTERWORTH
@@ -256,11 +253,12 @@ class AproxAnalysis(object):
         return
 
     def zerosChebyshevInverse(self):
-        for i in range(1, 2*self.n+1):
+        for i in range(1, self.n+1):
             alpha = math.pi*((2*i-1)/(2*self.n))
             auxIm = self.wsn/math.cos(alpha)
             auxZero = complex(0,auxIm)
-            self.zeros.append(auxZero) # VER CUAL DEL PAR AGARRAR
+            if auxIm < 10**10:
+                self.zeros.append(auxZero)
         return
 
     # BESSEL
@@ -271,7 +269,7 @@ class AproxAnalysis(object):
         self.epsilonBessel()
         self.nBessel()
         self.polesBessel()
-        self.createFunction()
+        self.createGroupDelayFunction()
         return
 
     def epsilonBessel(self):
