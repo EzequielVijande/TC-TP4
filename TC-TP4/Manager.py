@@ -551,10 +551,12 @@ class Manager(object):
         #Grafica de qs
         parte_real= poles.real
         parte_imag= poles.imag
-        qs=parte_imag/parte_real
-        self.data.SetQValues(qs)
+        modulo= abs(poles)
+        qs= -(modulo/(2*parte_real))
+        qs= np.asarray(list(set(qs)))
+        self.data.SetQValues(qs) #Paso a lista y de nuevo a arreglo para sacar los elementos repetidos
         #Actualizo el n
-        n=  finalFunc.den.size
+        n=  (finalFunc.den.size)-1
         auxString= "N = "
         self.GUI.NString_Graph.set(auxString+str(n))
         #calculo del retardo de grupo
