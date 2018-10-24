@@ -111,36 +111,37 @@ class Manager(object):
         self.DisplaySelectedGraph()
         WantsTempl= self.GUI.PutTemplate.get()
         sel= self.GUI.SelectedGraph.get()
-        if(WantsTempl and sel== ap.ATT):
+        if(WantsTempl):
            self.GUI.placeTemplate(self.data.Ap,self.data.As,(self.data.wp)/(2*math.pi),self.data.ws/(2*math.pi),self.data.wo/(2*math.pi)
                                   ,self.data.Q,self.data.wpMinus/(2*math.pi),self.data.wpPlus/(2*math.pi),self.data.wsMinus/(2*math.pi)
-                                  ,self.data.wsPlus/(2*math.pi))
+                                  ,self.data.wsPlus/(2*math.pi),self.data.type_of_filter,self.data.Aproximation,self.data.t0,
+                                  self.data.wrg/(2*math.pi),self.data.Y)
         elif(self.GUI.TemplateOn):
             self.GUI.destroyTemplate()
 
     def OnPutTemplate(self):
         WantsTempl= self.GUI.PutTemplate.get()
         sel_graph= self.GUI.SelectedGraph.get()
-        if(sel_graph==ap.ATT):
-            
-            if(WantsTempl):
-                result_str= self.ValidateInputs()
-                if(result_str!="Ok"):
-                    self.GUI.TemplateButton.deselect()
-                    self.GUI.DisplayError(result_str)
-                else:
-                    self.SetUserData()
-                    self.GUI.placeTemplate(self.data.Ap,self.data.As,(self.data.wp)/(2*math.pi),self.data.ws/(2*math.pi),self.data.wo/(2*math.pi)
-                                  ,self.data.Q,self.data.wpMinus/(2*math.pi),self.data.wpPlus/(2*math.pi),self.data.wsMinus/(2*math.pi)
-                                  ,self.data.wsPlus/(2*math.pi))
+        if(WantsTempl):
+            result_str= self.ValidateInputs()
+            if(result_str!="Ok"):
+                self.GUI.TemplateButton.deselect()
+                self.GUI.DisplayError(result_str)
             else:
-                self.GUI.destroyTemplate()
+                self.SetUserData()
+                self.GUI.placeTemplate(self.data.Ap,self.data.As,(self.data.wp)/(2*math.pi),self.data.ws/(2*math.pi),self.data.wo/(2*math.pi)
+                                  ,self.data.Q,self.data.wpMinus/(2*math.pi),self.data.wpPlus/(2*math.pi),self.data.wsMinus/(2*math.pi)
+                                  ,self.data.wsPlus/(2*math.pi),self.data.type_of_filter,self.data.Aproximation,self.data.t0,
+                                  self.data.wrg/(2*math.pi),self.data.Y)
+        elif(self.GUI.TemplateOn):
+             self.GUI.destroyTemplate()
         
     def Error(self):
         return
     #Funciones auxiliares
     def ShowGraph(self):
         sel= self.GUI.SelectedGraph.get()
+        filt= self.GUI.filter.get()
         WantsTempl= self.GUI.PutTemplate.get()
         self.SetUserData()
         
@@ -158,10 +159,11 @@ class Manager(object):
         self.GUI.PlotGroupDelay(self.data.f,self.data.gd)
         
         self.DisplaySelectedGraph()
-        if(WantsTempl and sel== ap.ATT):
+        if(WantsTempl):
            self.GUI.placeTemplate(self.data.Ap,self.data.As,(self.data.wp)/(2*math.pi),self.data.ws/(2*math.pi),self.data.wo/(2*math.pi)
                                   ,self.data.Q,self.data.wpMinus/(2*math.pi),self.data.wpPlus/(2*math.pi),self.data.wsMinus/(2*math.pi)
-                                  ,self.data.wsPlus/(2*math.pi))
+                                  ,self.data.wsPlus/(2*math.pi),filt,self.GUI.selected_aprox.get(),self.data.t0,
+                                  self.data.wrg/(2*math.pi),self.data.Y)
         elif(self.GUI.TemplateOn):
             self.GUI.destroyTemplate()
 
