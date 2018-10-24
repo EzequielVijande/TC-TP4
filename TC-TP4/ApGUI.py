@@ -4,7 +4,7 @@ matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
-
+from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
@@ -56,11 +56,11 @@ IMPULSE=6
 STEP=7
 Q_GRAPH=8
 #Colores principales
-FRAME_COLOR= "peach puff"
+FRAME_COLOR= "goldenrod"
 FRAME_TEXT_COLOR="black"
-BUTTON_COLOR= "navajo white"
+BUTTON_COLOR= "light goldenrod"
 BUTTON_FONT_COLOR="black"
-GRAPH_BUTTON_COLOR="CadetBlue1"
+GRAPH_BUTTON_COLOR="Cyan1"
 GRAPH_BUTTON_TEXT_COLOR="black"
 #Colores de las graficas
 AXIS_COLOR= "black"
@@ -295,7 +295,14 @@ class ApGUI(object):
                 self.PlaceGR_Specs()
         self.PrevState=fil
     def validate_save_call(self):
-        return
+        file_string = self.SaveFileName.get() +".txt"
+        file = Path("/"+file_string)
+        if file.is_file():
+            messagebox.showinfo("El archivo seleccionado ya existe")
+        else:
+            self.SaveWindowReturn="Ok"
+            self.SaveWindow.destroy()
+            
             
     #Funciones relacionadas a graficas
     def plotPhase(self, w,fase):
@@ -573,16 +580,19 @@ class ApGUI(object):
     #Ventana de save
     def CreateFileEntryWindow(self):
         self.SaveFileName= StringVar()
+        self.SaveWindowReturn="Error"
         self.SaveWindow = Toplevel()
         self.SaveWindow.title("Save Window")
         self.SaveWindow.config(bg=BUTTON_COLOR)
-        NombreLabel = Label(master=self.SaveWindow,text="Nombre:")
-        NombreLabel.pack(side="left")
-        entry = Entry(master=self.SaveWindow,textvariable=self.SaveFileName,state='disabled')
-        entry.pack(side="right")
-        EnterButton= Button(master=self.SaveWindow,text="Enter",command=self.validate_save_call
+        self.SaveWindowFrame= Frame(master=self.SaveWindow,bg=FRAME_COLOR)
+        self.SaveWindowFrame.pack(fill=BOTH,expand=True)
+        EnterButton= Button(master=self.SaveWindowFrame,text="Enter",command=self.validate_save_call
                                 ,background=GRAPH_BUTTON_COLOR)
         EnterButton.pack(side="bottom",fill=BOTH,expand=True)
+        NombreLabel = Label(master=self.SaveWindowFrame,text="Nombre:")
+        NombreLabel.pack(side="left")
+        entry = Entry(master=self.SaveWindowFrame,textvariable=self.SaveFileName,state='normal')
+        entry.pack(side="right")
         self.root.wait_window(self.SaveWindow)
         return
 
@@ -596,6 +606,9 @@ class ApGUI(object):
         self.Ev = NO_EV
     def DisplayError(self,result_str):
         messagebox.showinfo("Error en las especificaciones", result_str)
+
+    def ShowMessage(self,string):
+         messagebox.showinfo(string)
 
     def HideAllLines(self):
         self.Att_lines.set_visible(False)

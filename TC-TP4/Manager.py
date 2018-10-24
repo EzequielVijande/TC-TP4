@@ -74,9 +74,12 @@ class Manager(object):
         return
 
     def OnSaveEv(self):
-        self.GUI.CreateFileEntryWindow()
-        name="output"
-        self.SaveData(name)
+        result= self.GUI.CreateFileEntryWindow()
+        if(result=="Ok"):
+            if(self.GUI.Graph_enable):
+                self.SaveData(self.GUI.SaveFileName)
+            else:
+                self.GUI.ShowMessage("No information to save")
 
     def OnLoadEv(self):
         return
@@ -479,6 +482,8 @@ class Manager(object):
             return "GR"
     #Funcion de Save y Load
     def SaveData(self,name):
+        delta_wp= (self.data.wpPlus)-(self.data.wpMinus)
+        delta_ws= (self.data.wsPlus)-(self.data.wsMinus)
         file_name= name+".txt"
         f= open(file_name,"w+")
         f.write("Filtro:  %s\n" % (self.data.Aproximation))
@@ -488,8 +493,8 @@ class Manager(object):
         f.write("wp:  %d\n" % (self.data.wp))
         f.write("ws:  %d\n" % (self.data.ws))
         f.write("wo:  %d\n" % (self.data.wo))
-        f.write("Δwp:  %d\n" % (self.data.Δwp))
-        f.write("Δws:  %d\n" % (self.data.Δws))
+        f.write("Δwp:  %d\n" % (delta_wp))
+        f.write("Δws:  %d\n" % (delta_ws))
         f.write("Qmax:  %d\n" % (self.data.Q))
         f.write("RangNorm:  %d\n" % (self.data.NormRange))
     #Funciones que manejan eventos de la segunda etapa
