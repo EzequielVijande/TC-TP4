@@ -1,6 +1,6 @@
 from scipy import signal
 import math
-import numpy
+import numpy as np
 import control as c
 
 class AproxAnalysis(object):
@@ -270,14 +270,19 @@ class AproxAnalysis(object):
 
     def createGroupDelayFunction(self):
         self.n = 1
-        condtion = False
+        condition = False
         wrgn= self.wrg*self.tauZero
         while condition == False:
-            AkArray = calcAkArray()
+            AkArray = self.calcAkArray()
             #ahora creo funcion normalizada
             self.normFunction = signal.TransferFunction([1],AkArray)
             #calculo retardo de grupo y evaluo en wrgn
-            wrgn , tauWrgn = signal.group_delay(([1],AkArray),[wrgn])
+            w, h = signal.freqs([1], AkArray)
+            groupDelay = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
+            diff = abs(w - wrgn)
+            diff = list(diff)
+            index = diff.index(min(diff))
+            tauWrgn = groupDelay[index]
             if tauWrgn >= 1-self.gamma:
                 condition = True
             else:
@@ -288,11 +293,11 @@ class AproxAnalysis(object):
         self.function = signal.TransferFunction([1],AkArray)
         return
 
-    def calcAkA(self):
+    def calcAkArray(self):
         AkArray = [1]
         for i in range(1,self.n+1):
             Ak = (math.factorial(2*self.n-i)/(math.factorial(i)*math.factorial(self.n-i)*(2**(self.n-i))))*(((2**self.n)*(math.factorial(self.n)))/math.factorial(2*self.n))
-            AkArray.insert(Ak)
+            AkArray.insert(0,Ak)
         return AkArray
 
     # Getters
@@ -309,5 +314,7 @@ class AproxAnalysis(object):
         return wFinal,magFinal,phaseFinal
 
     def CalcGroupDelay(self,w,func):
-        wFinal, gdFinal = signal.group_delay((func.num,func.den),w)
-        return wFinal, gdFinal
+        w, h = signal.freqs(func.num, func.den,w)
+        gdFinal = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
+        gdFinal = np.append(gdFinal,gdFinal[len(gdFinal)-1])
+        return w, gdFinal
