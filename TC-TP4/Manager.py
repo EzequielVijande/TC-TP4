@@ -484,6 +484,10 @@ class Manager(object):
         parte_imag= poles.imag
         qs=parte_imag/parte_real
         self.data.SetQValues(qs)
+        #Actualizo el n
+        n=  finalFunc.den.size
+        auxString= "N = "
+        self.GUI.NString_Graph.set(auxString+str(n))
 
     def GetTypeString(self):
         filt=self.data.GetFilter()

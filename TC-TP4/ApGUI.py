@@ -186,12 +186,17 @@ class ApGUI(object):
         self.entry_Y=Entry(master=self.SpecsFrame,textvariable=self.YString,state='disabled')
 
     def PlaceGraphic(self):
+        self.NString_Graph= StringVar()
+        self.NString_Graph.set("N =")
         self.GraphicsFrame = LabelFrame(self.root, text="Graficas", labelanchor="n",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.GraphicsFrame.pack(anchor=NE,side=RIGHT,fill=BOTH,expand=True)
         self.fig=Figure(figsize=(1,1), dpi=200,facecolor="lavender",constrained_layout=True)
         self.Graph = FigureCanvasTkAgg(self.fig,master=self.GraphicsFrame)
         self.Graph.get_tk_widget().config( width=GRAPH_WIDTH, height=GRAPH_HEIGHT)
         self.Graph.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
+        self.N_Label= Label(master=self.GraphicsFrame,textvariable=self.NString_Graph,bg=BUTTON_COLOR)
+        self.N_Label.pack(side=TOP,fill=BOTH,expand=True)
+
         #Setteo de los axes
         self.InitializeAxes()
 
