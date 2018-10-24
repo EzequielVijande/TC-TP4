@@ -5,6 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 from pathlib import Path
+from UserData import UserData
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
@@ -303,6 +304,15 @@ class ApGUI(object):
             self.SaveWindowReturn="Ok"
             self.SaveWindow.destroy()
             
+    def validate_load_call(self):
+        file_string = self.LoadFileName.get() +".txt"
+        file = Path(file_string)
+        if file.is_file():
+            self.LoadWindowReturn="Ok"
+            self.LoadWindow.destroy()
+        else:
+            messagebox.showinfo("","El archivo seleccionado no existe")
+
             
     #Funciones relacionadas a graficas
     def plotPhase(self, w,fase):
@@ -577,7 +587,7 @@ class ApGUI(object):
         self.entry_wrg.pack_forget()
         self.YLabel.pack_forget()
         self.entry_Y.pack_forget()
-    #Ventana de save
+    #Ventana de save y load
     def CreateFileEntryWindow(self):
         self.SaveFileName= StringVar()
         self.SaveWindowReturn="Error"
@@ -595,6 +605,41 @@ class ApGUI(object):
         entry.pack(side="right")
         self.root.wait_window(self.SaveWindow)
         return self.SaveWindowReturn
+    def OpenLoadWindow(self):
+        self.LoadFileName= StringVar()
+        self.LoadWindowReturn="Error"
+        self.LoadWindow = Toplevel()
+        self.LoadWindow.title("Load Window")
+        self.LoadWindow.config(bg=BUTTON_COLOR)
+        self.LoadWindowFrame= Frame(master=self.LoadWindow,bg=FRAME_COLOR)
+        self.LoadWindowFrame.pack(fill=BOTH,expand=True)
+        EnterButton= Button(master=self.LoadWindowFrame,text="Enter",command=self.validate_load_call
+                                ,background=GRAPH_BUTTON_COLOR)
+        EnterButton.pack(side="bottom",fill=BOTH,expand=True)
+        NombreLabel = Label(master=self.LoadWindowFrame,text="Nombre:")
+        NombreLabel.pack(side="left")
+        entry = Entry(master=self.LoadWindowFrame,textvariable=self.LoadFileName,state='normal')
+        entry.pack(side="right")
+        self.root.wait_window(self.LoadWindow)
+        return self.LoadWindowReturn
+    def ShowData(self,data):
+        Δwp= (data.wpPlus)-(data.wpMinus)
+        Δws= (data.wsPlus)-(data.wsMinus)
+        self.selected_aprox.set(data.Aproximation)
+        self.filter.set(data.type_of_filter)
+        self.ApString.set(data.Ap)
+        self.AsString.set(data.As)
+        self.wpString.set(data.wp)
+        self.wsString.set(data.ws)
+        self.w0String.set(data.wo)
+        self.ΔwpString.set(Δwp)
+        self.ΔwsString.set(Δws)
+        self.qString.set(data.Q)
+        self.τ0String.set(data.t0)
+        self.YString.set(data.Y)
+        self.wrgString.set(data.wrg)
+        self.SlideNorm.set(data.NormRange)
+
 
     #Extras
     def CloseGUI(self):

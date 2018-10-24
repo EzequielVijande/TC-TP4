@@ -82,7 +82,10 @@ class Manager(object):
                 self.GUI.ShowMessage("No information to save")
 
     def OnLoadEv(self):
-        return
+        result= self.GUI.OpenLoadWindow()
+        if(result =="Ok"):
+            self.LoadData(self.GUI.LoadFileName.get())
+            self.GUI.ShowData(self.data)
 
     def OnNextEv(self):
         #self.IsNextValid()
@@ -482,24 +485,46 @@ class Manager(object):
             return "GR"
     #Funcion de Save y Load
     def SaveData(self,name):
-        delta_wp= (self.data.wpPlus)-(self.data.wpMinus)
-        delta_ws= (self.data.wsPlus)-(self.data.wsMinus)
         file_name= name+".txt"
         f= open(file_name,"w+")
-        f.write("Filtro:  %d\n" % (self.data.type_of_filter))
-        f.write("Aproximacion:  %s\n" % (self.data.Aproximation))
-        f.write("Ap:  %d\n" % (self.data.Ap))
-        f.write("As:  %d\n" % (self.data.As))
-        f.write("wp:  %d\n" % (self.data.wp))
-        f.write("ws:  %d\n" % (self.data.ws))
-        f.write("wo:  %d\n" % (self.data.wo))
-        f.write("delta_wp:  %d\n" % (delta_wp))
-        f.write("delta_ws:  %d\n" % (delta_ws))
-        f.write("Qmax:  %d\n" % (self.data.Q))
-        f.write("RangNorm:  %d\n" % (self.data.NormRange))
+        f.write("Filtro: %d\n" % (self.data.type_of_filter))
+        f.write("Aproximacion: %s\n" % (self.data.Aproximation))
+        f.write("Ap: %d\n" % (self.data.Ap))
+        f.write("As: %d\n" % (self.data.As))
+        f.write("wp: %d\n" % (self.data.wp))
+        f.write("ws: %d\n" % (self.data.ws))
+        f.write("wo: %d\n" % (self.data.wo))
+        f.write("wp_minus: %d\n" % (self.data.wpMinus))
+        f.write("wp_plus: %d\n" % (self.data.wpPlus))
+        f.write("ws_minus: %d\n" % (self.data.wsMinus))
+        f.write("ws_plus: %d\n" % (self.data.wsPlus))
+        f.write("Qmax: %d\n" % (self.data.Q))
+        f.write("RangNorm: %d\n" % (self.data.NormRange))
         f.write("t0: %d\n" % (self.data.t0))
         f.write("wrg: %d\n" % (self.data.wrg))
         f.write("t0: %d\n" % (self.data.Y))
+    def LoadData(self,name):
+        file_name= name+".txt"
+        file = open(file_name,'r')
+        lines= file.readlines()
+        self.data.type_of_filter=float((lines[0].split(' ', 1))[1])
+        self.data.Aproximation=(lines[1].split(' ', 1))[1]
+        self.data.Aproximation= self.data.Aproximation[:-1]
+        self.data.Ap=float((lines[2].split(' ', 1))[1])
+        self.data.As=float((lines[3].split(' ', 1))[1])
+        self.data.wp=float((lines[4].split(' ', 1))[1])
+        self.data.ws=float((lines[5].split(' ', 1))[1])
+        self.data.wo=float((lines[6].split(' ', 1))[1])
+        self.data.wpMinus=float((lines[7].split(' ', 1))[1])
+        self.data.wpPlus=float((lines[8].split(' ', 1))[1])
+        self.data.wsMinus=float((lines[9].split(' ', 1))[1])
+        self.data.wsPlus=float((lines[10].split(' ', 1))[1])
+        self.data.Q=float((lines[11].split(' ', 1))[1])
+        self.data.NormRange=float((lines[12].split(' ', 1))[1])
+        self.data.t0=float((lines[13].split(' ', 1))[1])
+        self.data.wrg=float((lines[14].split(' ', 1))[1])
+        self.data.Y=float((lines[15].split(' ', 1))[1])
+
     #Funciones que manejan eventos de la segunda etapa
 
     def OnPrevEv(self):
