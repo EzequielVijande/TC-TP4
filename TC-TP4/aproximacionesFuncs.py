@@ -22,10 +22,11 @@ class AproxAnalysis(object):
         self.wsn = 0
         self.n = 0
         self.b = 0 # bandwidth
-        self.a = a # porcentaje de desnormalizacion [0-2]
+        self.a = a # porcentaje de desnormalizacion [0-1]
         self.poles = []
         self.zeros = []
         self.function = 0
+        self.normFunction = 0
         if (self.type == 'BP') or (self.type == 'BR'):
             self.b = (self.wpPlus-self.wpMinus)/(math.sqrt(self.wpPlus*self.wpMinus))
         self.wsnCalc()
@@ -46,7 +47,24 @@ class AproxAnalysis(object):
         return;
 
     def createFunction(self):
-        wo = (self.ws**(self.a/2))*(self.wp**(1-(self.a/2)))
+
+        if (self.type == 'LP'):
+            wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*self.ws
+            wpf = self.wp
+            wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+        elif (self.type == 'HP'):
+            wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*self.ws
+            wpf = self.wp
+            wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+        elif (self.type == 'BP'):
+            wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*(self.wsPlus-self.wsMinus)
+            wpf = self.wpPlus-self.wpMinus
+            wo= (self.wpPlus*self.wpMinus)**(1/2)
+        elif (self.type == 'BR'):
+            wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*(self.wsPlus-self.wsMinus)
+            wpf = self.wpPlus-self.wpMinus
+            wo= (self.wpPlus*self.wpMinus)**(1/2)
+
         pzFunction = signal.ZerosPolesGain(self.zeros,self.poles,1)
         coefFunction = pzFunction.to_tf() # num/den
         den = coefFunction.den
@@ -55,6 +73,18 @@ class AproxAnalysis(object):
             den[i] = den[i].real
         for i in range(0, len(num)):
             num[i] = num[i].real
+
+        #calculo constante
+        if den[len(den)-1] == 0:
+            k=1
+        elif num[len(num)-1] == 0:
+            k=1
+        else:
+            k=den[len(den)-1]/num[len(num)-1]
+
+        self.normFunction = signal.ZerosPolesGain(self.zeros,self.poles,k)
+
+
         # desnormalizo segun tipo de filtro
         if self.type == 'LP':
             s = c.tf([1,0],[wo])
@@ -63,7 +93,7 @@ class AproxAnalysis(object):
         elif self.type == 'BP':
             s = c.tf([1,0,wo**2],[1,0])/(wo*self.b)
         elif self.type == 'BR':
-            s = c.tf([0,1],[1,0,wo**2])*wo*self.b
+            s = c.tf([1,0],[1,0,wo**2])*wo*self.b
         ft = c.tf([1],[1])
         for i in range(0, len(self.poles)):
             aux = 1/(s-self.poles[i])
@@ -71,7 +101,8 @@ class AproxAnalysis(object):
         for i in range(0, len(self.zeros)):
             aux = s - self.zeros[i]
             ft = ft*aux
-        self.function = signal.TransferFunction(ft.num[0][0],ft.den[0][0])
+        #creo funcion final
+        self.function = signal.TransferFunction(k*ft.num[0][0],ft.den[0][0])
         return;
 
     # BUTTERWORTH
@@ -210,6 +241,7 @@ class AproxAnalysis(object):
 
     def getFunction(self):
         return self.function
+
     #Extras
     def CalcBodePlot(self,w,func):
         w_r, mag_r, phase_r = signal.bode(func,w)
