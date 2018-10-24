@@ -53,7 +53,21 @@ class Manager(object):
                 self.OnLoad2Ev()
             elif(ev == ap.QUIT_EV):
                 self.OnQuitEv()
-    
+            elif(ev == ap.CREATE_STAGE_EV):
+                self.OnCreateStageEv()
+            elif(ev == ap.DELETE_STAGE_EV):
+                self.OnDeleteStageEv()
+            elif(ev == ap.SELECT_STAGE_EV):
+                self.OnSelectStageEv()
+            elif(ev == ap.CHANGED_V_LIMITS_EV):
+                self.OnChangedV()
+            elif(ev == ap.CHANGED_STAGE_PARAMS):
+                self.OnChangedStageParams()
+            elif(ev == ap.RESET):
+                self.OnResetEv()
+            elif(ev == ap.EXPORT):
+                self.OnExportEv()
+
         self.GUI.EventSolved()    #Settea que ya no hay evento a resolver
 
     #Funciones que manejan eventos de la primera etapa

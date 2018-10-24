@@ -715,6 +715,13 @@ class ApGUI(object):
         self.CreateStageButon= Button(master=self.OptionsFrame,text="Create Stage",command=self.create_stage_call
                                 ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.CreateStageButon.pack(side=BOTTOM,fill=BOTH,expand=True)
+        self.DeleteStageButon= Button(master=self.OptionsFrame,text="Delete Stage",command=self.delete_stage_call
+                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
+        self.DeleteStageButon.pack(side=BOTTOM,fill=BOTH,expand=True)
+        self.ResetStageButon= Button(master=self.OptionsFrame,text="Reset",command=self.reset_stage_call
+                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
+        self.ResetStageButon.pack(side=BOTTOM,fill=BOTH,expand=True)
+        
 
         self.VminLabel= Label(master=self.OptionsFrame,text="Vmin(mV)",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.VminLabel.pack(anchor=SW,fill=BOTH,expand=True)
@@ -802,7 +809,11 @@ class ApGUI(object):
     #Callbacks de la segunda etapa
     def export_call(self):
         self.Ev=EXPORT
-
+    
+    def delete_stage_call(self):
+        self.Ev= DELETE_STAGE_EV
+    def reset_stage_call(self):
+        self.Ev=RESET
     def create_stage_call(self):
         self.Ev=CREATE_STAGE_EV
     def prev_call(self):
