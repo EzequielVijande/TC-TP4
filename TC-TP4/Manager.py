@@ -168,15 +168,15 @@ class Manager(object):
     def SetUserData(self):
         filt= self.GUI.filter.get()
         self.data.setFilter(filt)
+        aprox= self.GUI.selected_aprox.get()
+        self.data.NormRange= (self.GUI.SlideNorm.get())/100
+        self.data.Aproximation= aprox
         if(filt != ap.GR):
             As= float(self.GUI.AsString.get())
             Ap= float(self.GUI.ApString.get())
 
             self.data.setAp(Ap)
             self.data.setAs(As)
-            aprox= self.GUI.selected_aprox.get()
-            self.data.NormRange= (self.GUI.SlideNorm.get())/100
-            self.data.Aproximation= aprox
 
             if(filt==ap.LP or filt==ap.HP):
                 ws= (float(self.GUI.wsString.get()))*2*(math.pi)
