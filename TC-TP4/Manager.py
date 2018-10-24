@@ -2,6 +2,7 @@
 import UserData
 import ApGUI as ap
 import aproximacionesFuncs as a
+import StagesCalculator as St
 import numpy as np
 import math
 #Estados
@@ -102,10 +103,12 @@ class Manager(object):
             self.GUI.ShowData(self.data)
 
     def OnNextEv(self):
-        #self.IsNextValid()
-        self.estado=ETAPA2
-        self.GUI.Change_to_stage2()
-        self.SeparateStages()
+        if(self.GUI.Graph_enable):
+            self.estado=ETAPA2
+            self.GUI.Change_to_stage2()
+            self.SeparateStages()
+        else:
+             self.GUI.ShowMessage("Es necesario especificar una plantilla valida primero")
 
     def OnChangeGraphEv(self):
         self.DisplaySelectedGraph()
@@ -621,9 +624,7 @@ class Manager(object):
         self.data.Y=float((lines[15].split(' ', 1))[1])
 
     def SeparateStages(self):
-        self.GatherPolesAndZeroes()
-        self.DefineCascadeOrder()
-        self.ObtainStagesGains()
+        self.CascadeManager = St.StagesCalculator(self.Aproximator.getFunction())
 
 
     #Funciones que manejan eventos de la segunda etapa
