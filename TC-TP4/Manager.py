@@ -493,6 +493,8 @@ class Manager(object):
         n=  finalFunc.den.size
         auxString= "N = "
         self.GUI.NString_Graph.set(auxString+str(n))
+        #calculo del retardo de grupo
+
 
     def GetTypeString(self):
         filt=self.data.GetFilter()

@@ -408,7 +408,7 @@ class ApGUI(object):
 
 
     def placeTemplate(self,Ap,As,wp,ws,wo,Q,wpMinus,wpPlus,wsMinus,wsPlus):
-        #Aunque dce w, trabaja en hertz
+        #Aunque dice w, trabaja en hertz
         fil= self.filter.get()
         if(fil==LP):
             self.NumRect=2
