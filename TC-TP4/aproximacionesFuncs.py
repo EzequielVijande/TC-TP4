@@ -147,10 +147,6 @@ class AproxAnalysis(object):
         self.function = signal.TransferFunction(k*ft.num[0][0],ft.den[0][0])
         return
 
-    def createGroupDelayFunction():
-        1
-        return
-
     # BUTTERWORTH
 
     def butterworthAnalysis(self):
