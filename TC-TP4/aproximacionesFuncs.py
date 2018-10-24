@@ -269,28 +269,43 @@ class AproxAnalysis(object):
     def besselAnalysis(self):
         self.poles = []
         self.zeros = []
-        self.epsilonBessel()
-        self.nBessel()
-        self.polesBessel()
         self.createGroupDelayFunction()
         return
 
-    def epsilonBessel(self):
-        self.epsilon = math.sqrt(math.pow(10,self.Ap/10)-1)
+    def createGroupDelayFunction(self):
+        self.n = 1
+        condtion = False
+        wrgn= self.wrg*self.tauZero
+        while condition == False:
+            AkArray = calcAkArray()
+            #ahora creo funcion normalizada
+            self.normFunction = signal.TransferFunction([1],AkArray)
+            #calculo retardo de grupo y evaluo en wrgn
+            wrgn , tauWrgn = signal.group_delay(([1],AkArray),[wrgn])
+            if tauWrgn >= 1-self.gamma:
+                condition = True
+            else:
+                self.n = self.n + 1
+        #tengo el n correcto, desnormalizo
+        for i in range(0,len(AkArray)):
+            AkArray[i]=AkArray[i]*(self.tauZero**i)
+        self.function = signal.TransferFunction([1],AkArray)
         return
 
-    def nBessel(self):
-        # por iteracion (wat)
-        return
-
-    def polesBessel(self):
-        # hacer
-        return
+    def calcAkA(self):
+        AkArray = [1]
+        for i in range(1,self.n+1):
+            Ak = (math.factorial(2*self.n-i)/(math.factorial(i)*math.factorial(self.n-i)*(2**(self.n-i))))*(((2**self.n)*(math.factorial(self.n)))/math.factorial(2*self.n))
+            AkArray.insert(Ak)
+        return AkArray
 
     # Getters
 
     def getFunction(self):
         return self.function
+
+    def getNormFunction(self):
+        return self.normFunction
 
     #Extras
     def CalcBodePlot(self,w,func):
@@ -298,7 +313,5 @@ class AproxAnalysis(object):
         return wFinal,magFinal,phaseFinal
 
     def CalcGroupDelay(self,w,func):
-        b=func.num
-        a=func.den
-        wFinal, gdFinal = signal.group_delay((b,a),w)
+        wFinal, gdFinal = signal.group_delay((func.num,func.den),w)
         return wFinal, gdFinal
