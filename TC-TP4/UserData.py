@@ -48,8 +48,8 @@ class UserData(object):
 
     def setPhase(self,phase):
         self.phase=phase
-    def setwVector(self,w):
-        self.w = w
+    def setfVector(self,f):
+        self.f = f
     def setImpData(self,time,h):
         self.ImpTime=time
         self.ImpResp= h

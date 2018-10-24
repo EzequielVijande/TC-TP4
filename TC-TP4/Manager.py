@@ -3,7 +3,7 @@ import UserData
 import ApGUI as ap
 import aproximacionesFuncs as a
 import numpy as np
-
+import math
 #Estados
 EXIT=0
 ETAPA1=1
@@ -111,8 +111,9 @@ class Manager(object):
         WantsTempl= self.GUI.PutTemplate.get()
         sel= self.GUI.SelectedGraph.get()
         if(WantsTempl and sel== ap.ATT):
-           self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
-                                      self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+           self.GUI.placeTemplate(self.data.Ap,self.data.As,(self.data.wp)/(2*math.pi),self.data.ws/(2*math.pi),self.data.wo/(2*math.pi)
+                                  ,self.data.Q,self.data.wpMinus/(2*math.pi),self.data.wpPlus/(2*math.pi),self.data.wsMinus/(2*math.pi)
+                                  ,self.data.wsPlus/(2*math.pi))
         elif(self.GUI.TemplateOn):
             self.GUI.destroyTemplate()
 
@@ -128,8 +129,9 @@ class Manager(object):
                     self.GUI.DisplayError(result_str)
                 else:
                     self.SetUserData()
-                    self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
-                                            self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+                    self.GUI.placeTemplate(self.data.Ap,self.data.As,(self.data.wp)/(2*math.pi),self.data.ws/(2*math.pi),self.data.wo/(2*math.pi)
+                                  ,self.data.Q,self.data.wpMinus/(2*math.pi),self.data.wpPlus/(2*math.pi),self.data.wsMinus/(2*math.pi)
+                                  ,self.data.wsPlus/(2*math.pi))
             else:
                 self.GUI.destroyTemplate()
         
@@ -145,19 +147,20 @@ class Manager(object):
         #Actualizo todas las graficas
         att=-self.data.mag
         self.GUI.Axes_Stage1.cla()
-        self.GUI.plotAtte((self.data.w),att)
-        self.GUI.plotAtteNorm(self.data.w,self.data.mag)
-        self.GUI.plotPhase(self.data.w,self.data.phase)
+        self.GUI.plotAtte((self.data.f),att)
+        self.GUI.plotAtteNorm(self.data.f,self.data.mag)
+        self.GUI.plotPhase(self.data.f,self.data.phase)
         #self.GUI.plotQ(self.data.qs)
         self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
         self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
         self.GUI.plotZeros(self.data.zeroes_real,self.data.zeroes_imag,self.data.poles_real,self.data.poles_imag)
-        self.GUI.PlotGroupDelay(self.data.w,self.data.mag)
+        self.GUI.PlotGroupDelay(self.data.f,self.data.mag)
         
         self.DisplaySelectedGraph()
         if(WantsTempl and sel== ap.ATT):
-           self.GUI.placeTemplate(self.data.Ap,self.data.As,self.data.wp,self.data.ws,self.data.wo,self.data.Q,
-                                      self.data.wpMinus,self.data.wpPlus,self.data.wsMinus,self.data.wsPlus)
+           self.GUI.placeTemplate(self.data.Ap,self.data.As,(self.data.wp)/(2*math.pi),self.data.ws/(2*math.pi),self.data.wo/(2*math.pi)
+                                  ,self.data.Q,self.data.wpMinus/(2*math.pi),self.data.wpPlus/(2*math.pi),self.data.wsMinus/(2*math.pi)
+                                  ,self.data.wsPlus/(2*math.pi))
         elif(self.GUI.TemplateOn):
             self.GUI.destroyTemplate()
 
@@ -174,15 +177,15 @@ class Manager(object):
         self.data.Aproximation= aprox
 
         if(filt==ap.LP or filt==ap.HP):
-            ws= float(self.GUI.wsString.get())
-            wp= float(self.GUI.wpString.get())
+            ws= (float(self.GUI.wsString.get()))*2*(math.pi)
+            wp= float(self.GUI.wpString.get())*2*(math.pi)
             self.data.setws(ws)
             self.data.setwp(wp)
         elif(filt==ap.BP or filt==ap.BR):
-            wo= float(self.GUI.w0String.get())
+            wo= float(self.GUI.w0String.get())*2*(math.pi)
             Q= float(self.GUI.qString.get())
-            Δwp= float(self.GUI.ΔwpString.get())
-            Δws= float(self.GUI.ΔwsString.get())
+            Δwp= float(self.GUI.ΔwpString.get())*2*(math.pi)
+            Δws= float(self.GUI.ΔwsString.get())*2*(math.pi)
 
             (wpMinus,wpPlus,wsMinus,wsPlus)=  self.calculate_w(wo,Δwp,Δws)
             self.data.setwpMinus(wpMinus) #setteo userData
@@ -320,27 +323,27 @@ class Manager(object):
 
             if(filt == ap.LP):
                 if(selected != ap.ATT_N):
-                    xleft= (self.data.wp)/100
-                    xright= (self.data.ws)*100
+                    xleft= (self.data.wp/(2*math.pi))/100
+                    xright= (self.data.ws/(2*math.pi))*100
                     ybot=0
                     ytop=(self.data.As)*1.5
                     return xleft, xright,ybot,ytop
                 else:
-                    return 0, ((self.data.ws)/(self.data.wp)),0,((self.data.As)*1.5)
+                    return 0, ((self.data.ws/(2*math.pi))/(self.data.wp/(2*math.pi))),0,((self.data.As)*1.5)
 
             elif(filt == ap.HP):
                 if(selected != ap.ATT_N):
-                    xleft= (self.data.ws)/100
-                    xright= (self.data.wp)*100
+                    xleft= (self.data.ws/(2*math.pi))/100
+                    xright= (self.data.wp/(2*math.pi))*100
                     ybot=0
                     ytop=(self.data.As)*1.5
                     return xleft, xright,ybot,ytop
                 else:
-                    return 0, ((self.data.wp)/(self.data.ws)),0,((self.data.As)*1.5)
+                    return 0, ((self.data.wp/(2*math.pi))/(self.data.ws/(2*math.pi))),0,((self.data.As)*1.5)
             elif(filt == ap.BP):
                 if(selected != ap.ATT_N):
-                    xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δws.get())))
-                    xright= (self.data.wo)+(20*(float(self.GUI.entry_Δws.get())))
+                    xleft= (self.data.wo/(2*math.pi))-(2*(float(self.GUI.entry_Δws.get())))
+                    xright= (self.data.wo/(2*math.pi))+(20*(float(self.GUI.entry_Δws.get())))
                     ybot=0
                     ytop=(self.data.As)*1.5
                     return xleft, xright,ybot,ytop
@@ -349,8 +352,8 @@ class Manager(object):
 
             elif(filt == ap.BR):
                 if(selected != ap.ATT_N):
-                    xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δwp.get())))
-                    xright= (self.data.wo)+(20*(float(self.GUI.entry_Δwp.get())))
+                    xleft= (self.data.wo/(2*math.pi))-(2*(float(self.GUI.entry_Δwp.get())))
+                    xright= (self.data.wo/(2*math.pi))+(20*(float(self.GUI.entry_Δwp.get())))
                     ybot=0
                     ytop=(self.data.As)*1.5
                     return xleft, xright,ybot,ytop
@@ -360,29 +363,29 @@ class Manager(object):
             ymax= self.data.GetPhaseMax()
             ymin= self.data.GetPhaseMin()
             if(filt == ap.LP):
-                    xleft= (self.data.wp)/100
-                    xright= (self.data.ws)*100
+                    xleft= (self.data.wp/(2*math.pi))/100
+                    xright= (self.data.ws/(2*math.pi))*100
                     ybot=0
                     ybot=ymin
                     ytop=ymax
                     return xleft, xright,ybot,ytop
 
             elif(filt == ap.HP):
-                    xleft= (self.data.ws)/100
-                    xright= (self.data.wp)*100
+                    xleft= (self.data.ws/(2*math.pi))/100
+                    xright= (self.data.wp/(2*math.pi))*100
                     ybot=ymin
                     ytop=ymax
                     return xleft, xright,ybot,ytop
             elif(filt == ap.BP):
-                    xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δws.get())))
-                    xright= (self.data.wo)+(20*(float(self.GUI.entry_Δws.get())))
+                    xleft= (self.data.wo/(2*math.pi))-(2*(float(self.GUI.entry_Δws.get())))
+                    xright= (self.data.wo/(2*math.pi))+(20*(float(self.GUI.entry_Δws.get())))
                     ybot=ymin
                     ytop=ymax
                     return xleft, xright,ybot,ytop
 
             elif(filt == ap.BR):
-                    xleft= (self.data.wo)-(2*(float(self.GUI.entry_Δwp.get())))
-                    xright= (self.data.wo)+(20*(float(self.GUI.entry_Δwp.get())))
+                    xleft= (self.data.wo/(2*math.pi))-(2*(float(self.GUI.entry_Δwp.get())))
+                    xright= (self.data.wo/(2*math.pi))+(20*(float(self.GUI.entry_Δwp.get())))
                     ybot=ymin
                     ytop=ymax
                     return xleft, xright,ybot,ytop
@@ -464,7 +467,7 @@ class Manager(object):
         #Datos para la atenuacion y la fase
         w = np.logspace(-2, 10, 50000, endpoint=True)
         w, mag, phase = self.Aproximator.CalcBodePlot(w,finalFunc)
-        self.data.setwVector(w)
+        self.data.setfVector(w/(2*math.pi))
         self.data.setMag(mag)
         self.data.setPhase(phase)
         #Respuesta al impulso

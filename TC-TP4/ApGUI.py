@@ -154,32 +154,32 @@ class ApGUI(object):
         self.entry_as=Entry(master=self.SpecsFrame,textvariable=self.AsString)
         self.entry_as.pack(anchor=NE,fill=BOTH,expand=True)
         #Entrada de wp
-        self.wpLabel= Label(master=self.SpecsFrame,text="wp(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.wpLabel= Label(master=self.SpecsFrame,text="fp(Hz)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.wpLabel.pack(fill=BOTH,expand=True)
         self.entry_wp=Entry(master=self.SpecsFrame,textvariable=self.wpString)
         self.entry_wp.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de ws
-        self.wsLabel= Label(master=self.SpecsFrame,text="ws(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.wsLabel= Label(master=self.SpecsFrame,text="fs(Hz)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.wsLabel.pack(fill=BOTH,expand=True)
         self.entry_ws=Entry(master=self.SpecsFrame,textvariable=self.wsString)
         self.entry_ws.pack(anchor=NE,fill=BOTH,expand=True)
         #entrada de w0
-        self.w0Label= Label(master=self.SpecsFrame,text="wo(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.w0Label= Label(master=self.SpecsFrame,text="fo(Hz)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_wo=Entry(master=self.SpecsFrame,textvariable=self.w0String,state='disabled')
         #entrada de Q
         self.QLabel= Label(master=self.SpecsFrame,text="Q",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Q=Entry(master=self.SpecsFrame,textvariable=self.qString,state='disabled')
         #entrada de Δwp
-        self.ΔwpLabel= Label(master=self.SpecsFrame,text="Δwp(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.ΔwpLabel= Label(master=self.SpecsFrame,text="Δfp(Hz)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Δwp=Entry(master=self.SpecsFrame,textvariable=self.ΔwpString,state='disabled')
         #entrada de Δws
-        self.ΔwsLabel= Label(master=self.SpecsFrame,text="Δws(rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.ΔwsLabel= Label(master=self.SpecsFrame,text="Δfs(Hz)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Δws=Entry(master=self.SpecsFrame,textvariable=self.ΔwsString,state='disabled')
         #entrada de τ(0)
         self.τ0Label= Label(master=self.SpecsFrame,text="τ(0) (seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_τ0=Entry(master=self.SpecsFrame,textvariable=self.τ0String,state='disabled')
         #Entrada de wrg
-        self.wrgLabel=Label(master=self.SpecsFrame,text="wrg (rad/seg)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.wrgLabel=Label(master=self.SpecsFrame,text="frg (Hz)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_wrg=Entry(master=self.SpecsFrame,textvariable=self.wrgString,state='disabled')
         #Entrada de Y
         self.YLabel=Label(master=self.SpecsFrame,text="Y",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
@@ -321,8 +321,8 @@ class ApGUI(object):
 
             
     #Funciones relacionadas a graficas
-    def plotPhase(self, w,fase):
-        self.Fase_lines, =self.Axes_Stage1.semilogx(w,fase)
+    def plotPhase(self, f,fase):
+        self.Fase_lines, =self.Axes_Stage1.semilogx(f,fase)
 
     def plotAtteNorm(self, fn,attN):
         self.AttN_lines, =self.Axes_Stage1.semilogx(fn,attN)
@@ -408,6 +408,7 @@ class ApGUI(object):
 
 
     def placeTemplate(self,Ap,As,wp,ws,wo,Q,wpMinus,wpPlus,wsMinus,wsPlus):
+        #Aunque dce w, trabaja en hertz
         fil= self.filter.get()
         if(fil==LP):
             self.NumRect=2
