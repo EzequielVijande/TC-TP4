@@ -46,7 +46,8 @@ DELETE_STAGE_EV=10
 SELECT_STAGE_EV=11
 CHANGED_V_LIMITS_EV=12
 CHANGED_STAGE_PARAMS=13
-
+RESET=14
+EXPORT=15
 #Grafica activa
 ATT=1
 ATT_N=2
@@ -665,6 +666,15 @@ class ApGUI(object):
         self.Step_lines.set_visible(False)
         self.RG_lines.set_visible(False)
     
+    #
+    #
+    #
+    #
+    #
+    #
+    #
+    #
+
 
     #Funciones de la segunda etapa
 
@@ -683,8 +693,11 @@ class ApGUI(object):
 
     def PlaceOptions(self):
         self.vMinString= StringVar() #Valor minimo posible a la entrada
+        self.vMinString.set("10")
         self.vMaxString= StringVar() #Valor maximo posible a la salida
+        self.vMaxString.set("14")
         self.RDString= StringVar() #Variable donde se guarda el rango dinamico
+        self.RDString.set("")
         self.OptionsFrame = LabelFrame(self.root, text="Opciones",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.OptionsFrame.pack(side="left",fill=BOTH,expand=True)
         self.PrevButton= Button(master=self.OptionsFrame,text="Previous",command=self.prev_call
@@ -696,9 +709,12 @@ class ApGUI(object):
         self.Load2Button= Button(master=self.OptionsFrame,text="Load",command=self.load_call
                                 ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.Load2Button.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
-        self.ExportButton= Button(master=self.OptionsFrame,text="Export H(s) as txt",command=self.load_call
+        self.ExportButton= Button(master=self.OptionsFrame,text="Export H(s) as txt",command=self.export_call
                                 ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.ExportButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
+        self.CreateStageButon= Button(master=self.OptionsFrame,text="Create Stage",command=self.create_stage_call
+                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
+        self.CreateStageButon.pack(side=BOTTOM,fill=BOTH,expand=True)
 
         self.VminLabel= Label(master=self.OptionsFrame,text="Vmin(mV)",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.VminLabel.pack(anchor=SW,fill=BOTH,expand=True)
@@ -710,7 +726,8 @@ class ApGUI(object):
         self.entry_Vmax=Entry(master=self.OptionsFrame,textvariable=self.vMaxString)
         self.entry_Vmax.pack(anchor=SE,fill=BOTH,expand=True)
 
-        self.RangoDText= Message(master=self.OptionsFrame, text="Rango dinamico(dB)="+self.RDString.get(),textvariable=self.RDString)
+        self.RangoDText= Label(master=self.OptionsFrame, text="RangoDin(dB)="+self.RDString.get(),
+                               bg=BUTTON_COLOR,textvariable=self.RDString,fg=BUTTON_FONT_COLOR)
         self.RangoDText.pack(side="top",fill=BOTH,expand=True)
 
     def PlaceTransferFunctionGraph(self):
@@ -783,6 +800,11 @@ class ApGUI(object):
         self.etapa1button= Button(master=self.StagesMenuFrame,text="Etapa1",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.etapa1button.pack(side="left",fill=BOTH,expand=True)
     #Callbacks de la segunda etapa
+    def export_call(self):
+        self.Ev=EXPORT
+
+    def create_stage_call(self):
+        self.Ev=CREATE_STAGE_EV
     def prev_call(self):
         self.Ev= PREV_EV
     def ShowPrevMessage(self):

@@ -240,7 +240,7 @@ class Manager(object):
 
                 woSTR= self.IsValidNumber(wo,"wo") #valido wo
                 if(woSTR != "Ok"):
-                    return ΔwoSTR
+                    return woSTR
 
                 QSTR= self.IsValidNumber(Q,"Q") #valido Q
                 if(QSTR != "Ok"):
