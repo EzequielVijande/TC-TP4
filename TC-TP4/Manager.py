@@ -453,9 +453,12 @@ class Manager(object):
         wsPlus=self.data.wsPlus
         wo=self.data.wo
         type= self.GetTypeString()
+        tauZero = self.data.t0
+        wrg = self.data.wrg
+        gamma = self.data.Y
         a=self.data.NormRange
 
-        self.Aproximator.SetParams(As,Ap,wp,ws,wpMinus,wpPlus,wsMinus,wsPlus,type,a)
+        self.Aproximator.SetParams(As,Ap,wp,ws,wpMinus,wpPlus,wsMinus,wsPlus,type,a,tauZero,wrg,gamma)
         aprox= self.data.GetAprox()
         if(aprox == ap.APROXIMACIONES[0]):
             self.Aproximator.butterworthAnalysis()
@@ -494,7 +497,7 @@ class Manager(object):
         auxString= "N = "
         self.GUI.NString_Graph.set(auxString+str(n))
         #calculo del retardo de grupo
-
+        self.Aproximator.CalcGroupDelay(w,finalFunc)
 
     def GetTypeString(self):
         filt=self.data.GetFilter()

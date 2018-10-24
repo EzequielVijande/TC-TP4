@@ -5,11 +5,11 @@ import control as c
 
 class AproxAnalysis(object):
 
-    def __init__(self, As=0, Ap=0, wp=0, ws=0, wpMinus=0, wpPlus=0, wsMinus=0, wsPlus=0, type="LP", a=0):
+    def __init__(self, As=0, Ap=0, wp=0, ws=0, wpMinus=0, wpPlus=0, wsMinus=0, wsPlus=0, type="LP", a=0,tauZero=0,wrg=0,gamma=0):
         
         return
 
-    def SetParams(self,As=0, Ap=0, wp=0, ws=0, wpMinus=0, wpPlus=0, wsMinus=0, wsPlus=0, type="LP", a=0):
+    def SetParams(self,As=0, Ap=0, wp=0, ws=0, wpMinus=0, wpPlus=0, wsMinus=0, wsPlus=0, type="LP", a=0,tauZero=0,wrg=0,gamma=0):
         self.As = As
         self.Ap = Ap
         self.wp = wp
@@ -29,6 +29,9 @@ class AproxAnalysis(object):
         self.zeros = []
         self.function = 0
         self.normFunction = 0
+        self.tauZero = tauZero
+        self.wrg = wrg
+        self.gamma = gamma
         if (self.type == 'BP') or (self.type == 'BR'):
             self.b = (self.wpPlus-self.wpMinus)/(math.sqrt(self.wpPlus*self.wpMinus))
         self.wsnCalc()
