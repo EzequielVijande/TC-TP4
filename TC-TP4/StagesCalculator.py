@@ -106,4 +106,18 @@ class StagesCalculator(object):
         w,mag,fase= signal.bode( (self.stages[index]),w)
         return (w/(2*math.pi)),mag
 
+    def UpdateParameters(self,index):
+        transf_act= self.stages[index]
+        poles=transf_act.poles
+        zeros=transf_act.zeros
+        Qp=-(abs(poles[0])/(2*poles[0].real))
+        wp=abs(poles[0])
+        fp= wp/(2*math.pi)
+        num= (transf_act.to_tf()).num
+        den= (transf_act.to_tf()).den
+        k=num[len(num)-1]/den[len(den)-1]
+        return fp,Qp,k
+
+
+
 

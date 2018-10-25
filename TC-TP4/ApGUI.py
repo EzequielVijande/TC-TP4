@@ -867,55 +867,45 @@ class ApGUI(object):
         self.G0String= StringVar()
 
         self.TransferGraphsFrame= LabelFrame(master=self.root, text="Ganancias",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
-        self.TransferGraphsFrame.pack(side="right",fill=BOTH,expand=True)
+        self.TransferGraphsFrame.pack(side="left",fill=BOTH,expand=True)
 
         #Seccion con la etapa seleccionada
         self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Etapa seleccionada",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.StageGraphFrame.pack(side="right",fill=BOTH,expand=True)
-        self.CurrentStageFig=Figure(figsize=(0.01,0.01), dpi=200,facecolor="lavender",constrained_layout=True)
+        self.CurrentStageFig=Figure(figsize=(0.01,0.01), dpi=200,facecolor="lavender")
         self.CurrentStageCanvas = FigureCanvasTkAgg(self.CurrentStageFig,master=self.StageGraphFrame)
         self.CurrentStageCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
-        self.CurrentStageCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
+        self.CurrentStageCanvas.get_tk_widget().pack(side="right",fill=BOTH,expand=True)
         self.AxesSelectedStage = self.CurrentStageFig.add_subplot(111)
 
         #Creo una toolbar para los graficos
         self.SelStagetoolbarFrame = Frame(master=self.StageGraphFrame)
-        self.SelStagetoolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
+        self.SelStagetoolbarFrame.pack(side="bottom")
         self.SelStagetoolbar = NavigationToolbar2Tk(self.CurrentStageCanvas, self.SelStagetoolbarFrame)
-        self.SelStagetoolbar.pack(fill=BOTH,expand=True)
+        self.SelStagetoolbar.pack()
         #Parametros de interes de la etapa seleccionada
         self.StageParamsFrame= LabelFrame(self.StageGraphFrame,text="Parametros de interes",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
-        self.StageParamsFrame.pack(side="top",fill=BOTH,expand=True)
-        #fz
-        self.TransfwzLabel= Label(master=self.StageParamsFrame,text="fz(Hz)",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.TransfwzLabel.pack(fill=BOTH,expand=True)
-        self.entry_Transfwz=Entry(master=self.StageParamsFrame,textvariable=self.fzString)
-        self.entry_Transfwz.pack(anchor=NE,fill=BOTH,expand=True)
+        self.StageParamsFrame.pack(side="left")
         #fp
         self.TransfwpLabel= Label(master=self.StageParamsFrame,text="fp(Hz)",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.TransfwpLabel.pack(fill=BOTH,expand=True)
+        self.TransfwpLabel.pack()
         self.entry_Transfwz=Entry(master=self.StageParamsFrame,textvariable=self.fpString)
-        self.entry_Transfwz.pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_Transfwz.pack()
         #H(0)
         self.G0Label= Label(master=self.StageParamsFrame,text="H(0)(dB)",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.G0Label.pack(fill=BOTH,expand=True)
+        self.G0Label.pack()
         self.entry_G0=Entry(master=self.StageParamsFrame,textvariable=self.G0String)
-        self.entry_G0.pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_G0.pack()
         #Qp
         self.QpLabel= Label(master=self.StageParamsFrame,text="Qp",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.QpLabel.pack(fill=BOTH,expand=True)
+        self.QpLabel.pack()
         self.entry_Qp=Entry(master=self.StageParamsFrame,textvariable=self.QpString)
-        self.entry_Qp.pack(anchor=NE,fill=BOTH,expand=True)
-        #Qz
-        self.QzLabel= Label(master=self.StageParamsFrame,text="Qz",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.QzLabel.pack(fill=BOTH,expand=True)
-        self.entry_Qz=Entry(master=self.StageParamsFrame,textvariable=self.QzString)
-        self.entry_Qz.pack(anchor=NE,fill=BOTH,expand=True)
+        self.entry_Qp.pack()
 
         #Seccion con la ganancia de todas las etapas en cascada
         self.CascadeGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Ganancia total(cascada)",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.CascadeGraphFrame.pack(side="left",fill=BOTH,expand=True)
-        self.TransfTotalFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
+        self.TransfTotalFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender")
         self.TransfTotalCanvas = FigureCanvasTkAgg(self.TransfTotalFig,master=self.CascadeGraphFrame)
         self.TransfTotalCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
         self.TransfTotalCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
@@ -929,9 +919,7 @@ class ApGUI(object):
 
     def PlaceStagesMenu(self):
         self.StagesMenuFrame= LabelFrame(self.root, text="Etapas",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
-        self.StagesMenuFrame.pack(side="bottom",fill=BOTH,expand=True)
-        self.etapa1button= Button(master=self.StagesMenuFrame,text="Etapa1",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.etapa1button.pack(side="left",fill=BOTH,expand=True)
+        self.StagesMenuFrame.pack(side="bottom")
 
     def SetStagesButtons(self,n):
         self.StagesButtons=[]
@@ -995,3 +983,7 @@ class ApGUI(object):
         self.AxesSelectedStage.set_ylim(bottom=ymin,top=ymax)
         self.AxesSelectedStage.semilogx(f,mag)
         self.AxesSelectedStage.grid(b=True,axis='both')
+    def UpdateParameters(self,fp,qp,G0):
+        self.fpString.set(str(int(fp)))
+        self.QpString.set(str(int(qp)))
+        self.G0String.set(str(int(G0)))
