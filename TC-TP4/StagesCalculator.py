@@ -79,7 +79,7 @@ class StagesCalculator(object):
             j=i+1
             while( (j<len(poles)) and (abs(pole_act.real-((poles[j]).real))>0.1) ):
                 j=j+1
-            if(abs(pole_act.imag+(poles[j]).imag)<=0.1):
+            if((j<len(poles)) and abs(pole_act.imag+(poles[j]).imag)<=0.1):
                 poles.pop(j)
             i=i+1
         return poles

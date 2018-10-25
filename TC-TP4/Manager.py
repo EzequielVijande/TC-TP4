@@ -108,6 +108,8 @@ class Manager(object):
             self.SeparateStages()
             self.GUI.Change_to_stage2()
             self.GUI.SetStagesButtons(self.CascadeManager.GetNumberOfStages())
+            xmin,xmax,ymin,ymax = self.GraphLimitsSecondStage()
+            self.GUI.GraphTotalTransference(self.data.f,self.data.mag,xmin,xmax,ymin,ymax)
         else:
              self.GUI.ShowMessage("Es necesario especificar una plantilla valida primero")
 
@@ -679,3 +681,39 @@ class Manager(object):
         return
     def OnLoad2Ev(self):
         return
+    def GraphLimitsSecondStage(self):
+        filt=self.data.GetFilter()
+        Δfs= (self.data.wsPlus -self.data.wsMinus)/(2*math.pi)
+        Δfp= (self.data.wpPlus -self.data.wpMinus)/(2*math.pi)
+        if(filt == ap.LP):
+                xleft= (self.data.wp/(2*math.pi))/100
+                xright= (self.data.ws/(2*math.pi))*100
+                ybot=-(self.data.As)*1.5
+                ytop=0
+                return xleft, xright,ybot,ytop
+
+        elif(filt == ap.HP):
+                xleft= (self.data.ws/(2*math.pi))/100
+                xright= (self.data.wp/(2*math.pi))*100
+                ybot=-(self.data.As)*1.5
+                ytop=0
+                return xleft, xright,ybot,ytop
+        elif(filt == ap.BP):
+                xleft= (self.data.wo/(2*math.pi))-(2*Δfs)
+                xright= (self.data.wo/(2*math.pi))+(2*Δfs)
+                ybot=-(self.data.As)*1.5
+                ytop=0
+                return xleft, xright,ybot,ytop
+
+        elif(filt == ap.BR):
+                xleft= (self.data.wo/(2*math.pi))-(2*Δfp)
+                xright= (self.data.wo/(2*math.pi))+(2*Δfp)
+                ybot=-(self.data.As)*1.5
+                ytop=0
+                return xleft, xright,ybot,ytop
+        elif(filt == ap.GR):
+                xmin=0
+                xmax=(self.data.wrg)*10
+                ymin=-40
+                ymax=0
+                return xmin,xmax,ymin,ymax

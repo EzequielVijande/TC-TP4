@@ -807,6 +807,7 @@ class ApGUI(object):
         self.InitializeSecondStage()
 
     def InitializeSecondStage(self):
+        matplotlib.rcParams.update({'font.size': 8})
         self.PlaceStagesMenu()
         self.PlaceTransferFunctionGraph()
         self.PlaceOptions()
@@ -870,7 +871,7 @@ class ApGUI(object):
         #Seccion con la etapa seleccionada
         self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Etapa seleccionada",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.StageGraphFrame.pack(side="right",fill=BOTH,expand=True)
-        self.CurrentStageFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
+        self.CurrentStageFig=Figure(figsize=(0.01,0.01), dpi=200,facecolor="lavender",constrained_layout=True)
         self.CurrentStageCanvas = FigureCanvasTkAgg(self.CurrentStageFig,master=self.StageGraphFrame)
         self.CurrentStageCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
         self.CurrentStageCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
@@ -917,8 +918,7 @@ class ApGUI(object):
         self.TransfTotalCanvas = FigureCanvasTkAgg(self.TransfTotalFig,master=self.CascadeGraphFrame)
         self.TransfTotalCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
         self.TransfTotalCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
-        self.AxesTotalTransf = self.CurrentStageFig.add_subplot(111)
-        self.GraphTotalTransference()
+        self.AxesTotalTransf = self.TransfTotalFig.add_subplot(111)
         
         #Creo una toolbar para la grafica de cascada
         self.TransfTotToolbarFrame = Frame(master=self.CascadeGraphFrame)
@@ -968,5 +968,13 @@ class ApGUI(object):
         self.AproxButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.SliderFrame.pack(side=LEFT,anchor=NW,fill=BOTH,expand=True)
-    def GraphTotalTransference(f,att):
+    def GraphTotalTransference(self,f,mag,xmin,xmax,ymin,ymax):
         self.AxesTotalTransf.cla()
+        self.AxesTotalTransf.set_xscale("log")
+        self.AxesTotalTransf.set_title("Ganancia en cascada")
+        self.AxesTotalTransf.set_xlabel("f(Hz)")
+        self.AxesTotalTransf.set_ylabel("|H(f)|(dB)")
+        self.AxesTotalTransf.set_xlim(left=xmin,right=xmax)
+        self.AxesTotalTransf.set_ylim(bottom=ymin,top=ymax)
+        self.AxesTotalTransf.semilogx(f,mag)
+        self.AxesTotalTransf.grid(b=True,axis='both')
