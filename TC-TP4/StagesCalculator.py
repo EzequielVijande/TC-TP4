@@ -11,7 +11,7 @@ class StagesCalculator(object):
         self.stages=[]
         self.GatherPolesAndZeroes() #junto los polos con sus ceros mas cercanos
         self.DefineCascadeOrder() #ordeno de menor q a mayor q
-        self.ObtainStagesGains(self) #encuentro las constantes de cada etapa para maximizar rango dinamico
+        self.ObtainStagesGains() #encuentro las constantes de cada etapa para maximizar rango dinamico
 
     def GatherPolesAndZeroes(self):
         #Funcion que junta los polos y ceros cercanos en una misma transferencia
@@ -28,6 +28,7 @@ class StagesCalculator(object):
             pair=(zero_act,poles.pop(min_index))
             self.pairs.append(pair)
             dist.clear()
+        #Junto los polos que me quedan en otras funciones transferencia
 
         return
     def DefineCascadeOrder(self):
@@ -43,6 +44,7 @@ class StagesCalculator(object):
         delta_y= abs(y1-y2)
         distance= ((delta_x**2)+(delta_y**2))**(0.5)
         return distance
+    #def RemovePoleFromCOn
 
 
 

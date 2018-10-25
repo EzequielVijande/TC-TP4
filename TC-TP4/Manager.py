@@ -156,8 +156,8 @@ class Manager(object):
         self.GUI.plotAtteNorm(self.data.f,self.data.mag)
         self.GUI.plotPhase(self.data.f,self.data.phase)
         #self.GUI.plotQ(self.data.qs)
-        self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
-        self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
+        #self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
+        #self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
         self.GUI.plotZeros(self.data.zeroes_real,self.data.zeroes_imag,self.data.poles_real,self.data.poles_imag)
         self.GUI.PlotGroupDelay(self.data.f,self.data.gd)
         
@@ -545,13 +545,13 @@ class Manager(object):
         self.data.setMag(mag)
         self.data.setPhase(phase)
         #Respuesta al impulso
-        t_imp,h=(self.Aproximator.getFunction()).impulse(N=8000)
-        h=h.real
-        self.data.setImpData(t_imp,h)
+        #t_imp,h=(self.Aproximator.getFunction()).impulse(N=8000)
+        #h=h.real
+        #self.data.setImpData(t_imp,h)
         #Respuesta al escalon
-        t_step,u=(self.Aproximator.getFunction()).step(N=8000)
-        u=u.real
-        self.data.setStepData(t_step,u)
+        #t_step,u=(self.Aproximator.getFunction()).step(N=8000)
+        #u=u.real
+        #self.data.setStepData(t_step,u)
         #Polos y ceros
         zeros = finalFunc.zeros
         poles = finalFunc.poles

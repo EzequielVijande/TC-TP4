@@ -729,7 +729,7 @@ class ApGUI(object):
         self.vMaxString= StringVar() #Valor maximo posible a la salida
         self.vMaxString.set("14")
         self.RDString= StringVar() #Variable donde se guarda el rango dinamico
-        self.RDString.set("")
+        self.RDString.set("Rango dinamico = ")
         self.OptionsFrame = LabelFrame(self.root, text="Opciones",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.OptionsFrame.pack(side="left",fill=BOTH,expand=True)
         self.PrevButton= Button(master=self.OptionsFrame,text="Previous",command=self.prev_call
@@ -765,8 +765,8 @@ class ApGUI(object):
         self.entry_Vmax=Entry(master=self.OptionsFrame,textvariable=self.vMaxString)
         self.entry_Vmax.pack(anchor=SE,fill=BOTH,expand=True)
 
-        self.RangoDText= Label(master=self.OptionsFrame, text="RangoDin(dB)="+self.RDString.get(),
-                               bg=BUTTON_COLOR,textvariable=self.RDString,fg=BUTTON_FONT_COLOR)
+        self.RangoDText= Label(master=self.OptionsFrame,bg=BUTTON_COLOR,textvariable=self.RDString,
+                               fg=BUTTON_FONT_COLOR)
         self.RangoDText.pack(side="top",fill=BOTH,expand=True)
 
     def PlaceTransferFunctionGraph(self):
