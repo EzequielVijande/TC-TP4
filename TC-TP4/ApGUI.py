@@ -416,97 +416,99 @@ class ApGUI(object):
         #Aunque dice w, trabaja en hertz
         fil= filt
         selected= self.SelectedGraph.get()
-        if((aprox!= APROXIMACIONES[3]) and (aprox!= APROXIMACIONES[4]) and selected == ATT):
-            if(fil==LP):
-                self.NumRect=2
-                x0=0
-                y0=Ap #Vertice izquierdo inferior
-                ymin,ymax= self.Axes_Stage1.get_ylim()
-                width1,height1= wp,(ymax-Ap)
-                self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.first_rect)
+        if(self.TemplateOn == False):
+            if((aprox!= APROXIMACIONES[3]) and (aprox!= APROXIMACIONES[4]) and selected == ATT):
+                if(fil==LP):
+                    self.NumRect=2
+                    x0=0
+                    y0=Ap #Vertice izquierdo inferior
+                    ymin,ymax= self.Axes_Stage1.get_ylim()
+                    width1,height1= wp,(ymax-Ap)
+                    self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.first_rect)
 
-                x2,y2= ws,0  #Vertice izquierdo inferior del segundo rectangulo
-                xmin,xmax=self.Axes_Stage1.get_xlim()
-                width2= xmax-ws
-                height2= As
-                self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.second_rect)
-                self.TemplateOn= True
-            elif(fil==HP):
-                self.NumRect=2
-                x0=0
-                y0=0 #Vertice izquierdo inferior
-                width1,height1= ws,(As)
-                self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.first_rect)
+                    x2,y2= ws,0  #Vertice izquierdo inferior del segundo rectangulo
+                    xmin,xmax=self.Axes_Stage1.get_xlim()
+                    width2= xmax-ws
+                    height2= As
+                    self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.second_rect)
+                    self.TemplateOn= True
+                elif(fil==HP):
+                    self.NumRect=2
+                    x0=0
+                    y0=0 #Vertice izquierdo inferior
+                    width1,height1= ws,(As)
+                    self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.first_rect)
 
-                x2,y2= wp,Ap  #Vertice izquierdo inferior del segundo rectangulo
-                xmin,xmax=self.Axes_Stage1.get_xlim()
-                ymin,ymax= self.Axes_Stage1.get_ylim()
-                width2= xmax-wp
-                height2= ymax
-                self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.second_rect)
-                self.TemplateOn= True
-            elif(fil==BP):
-                self.NumRect=3
-                xmin,xmax=self.Axes_Stage1.get_xlim()
-                ymin,ymax= self.Axes_Stage1.get_ylim()
-                x0=0
-                y0=0 #Vertice izquierdo inferior
-                width1,height1= wsMinus,(As)
-                self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.first_rect)
+                    x2,y2= wp,Ap  #Vertice izquierdo inferior del segundo rectangulo
+                    xmin,xmax=self.Axes_Stage1.get_xlim()
+                    ymin,ymax= self.Axes_Stage1.get_ylim()
+                    width2= xmax-wp
+                    height2= ymax
+                    self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.second_rect)
+                    self.TemplateOn= True
+                elif(fil==BP):
+                    self.NumRect=3
+                    xmin,xmax=self.Axes_Stage1.get_xlim()
+                    ymin,ymax= self.Axes_Stage1.get_ylim()
+                    x0=0
+                    y0=0 #Vertice izquierdo inferior
+                    width1,height1= wsMinus,(As)
+                    self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.first_rect)
 
-                x2,y2= wpMinus,Ap  #Vertice izquierdo inferior del segundo rectangulo
-                width2= wpPlus-wpMinus
-                height2= ymax-Ap
-                self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.second_rect)
+                    x2,y2= wpMinus,Ap  #Vertice izquierdo inferior del segundo rectangulo
+                    width2= wpPlus-wpMinus
+                    height2= ymax-Ap
+                    self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.second_rect)
 
-                x3,y3= wsPlus,0  #Vertice izquierdo inferior del segundo rectangulo
-                width3= xmax-wsPlus
-                height3= As
-                self.third_rect= patches.Rectangle((x3,y3),width3,height3,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.third_rect)
-                self.TemplateOn= True
-            elif(fil==BR):
-                self.NumRect=3
-                xmin,xmax=self.Axes_Stage1.get_xlim()
-                ymin,ymax= self.Axes_Stage1.get_ylim()
-                x0=0
-                y0=Ap #Vertice izquierdo inferior
-                width1,height1= wpMinus,(ymax-Ap)
-                self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.first_rect)
+                    x3,y3= wsPlus,0  #Vertice izquierdo inferior del segundo rectangulo
+                    width3= xmax-wsPlus
+                    height3= As
+                    self.third_rect= patches.Rectangle((x3,y3),width3,height3,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.third_rect)
+                    self.TemplateOn= True
+                elif(fil==BR):
+                    self.NumRect=3
+                    xmin,xmax=self.Axes_Stage1.get_xlim()
+                    ymin,ymax= self.Axes_Stage1.get_ylim()
+                    x0=0
+                    y0=Ap #Vertice izquierdo inferior
+                    width1,height1= wpMinus,(ymax-Ap)
+                    self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.first_rect)
 
-                x2,y2= wsMinus,0  #Vertice izquierdo inferior del segundo rectangulo
-                width2= wsPlus-wsMinus
-                height2= As
-                self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.second_rect)
+                    x2,y2= wsMinus,0  #Vertice izquierdo inferior del segundo rectangulo
+                    width2= wsPlus-wsMinus
+                    height2= As
+                    self.second_rect= patches.Rectangle((x2,y2),width2,height2,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.second_rect)
 
-                x3,y3= wpPlus,Ap  #Vertice izquierdo inferior del segundo rectangulo
-                width3= xmax-wpPlus
-                height3= ymax-Ap
-                self.third_rect= patches.Rectangle((x3,y3),width3,height3,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.Axes_Stage1.add_patch(self.third_rect)
-                self.TemplateOn= True
-        elif((aprox== APROXIMACIONES[3]) or (aprox== APROXIMACIONES[4])):
-            if(fil == GR):
-                self.NumRect=1
-                xmin,xmax=self.Axes_Stage1.get_xlim()
-                ymin,ymax= self.Axes_Stage1.get_ylim()
-                x0=0
-                y0=0
-                width1=frg
-                height1=(1-Y)*t0
-                self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
-                self.TemplateOn= True
+                    x3,y3= wpPlus,Ap  #Vertice izquierdo inferior del segundo rectangulo
+                    width3= xmax-wpPlus
+                    height3= ymax-Ap
+                    self.third_rect= patches.Rectangle((x3,y3),width3,height3,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.third_rect)
+                    self.TemplateOn= True
+            elif((aprox== APROXIMACIONES[3]) or (aprox== APROXIMACIONES[4])):
+                if(fil == GR):
+                    self.NumRect=1
+                    xmin,xmax=self.Axes_Stage1.get_xlim()
+                    ymin,ymax= self.Axes_Stage1.get_ylim()
+                    x0=0
+                    y0=0
+                    width1=frg
+                    height1=(1-Y)*t0
+                    self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
+                    self.Axes_Stage1.add_patch(self.first_rect)
+                    self.TemplateOn= True
 
-        elif(self.TemplateOn):
-            self.destroyTemplate()
+            elif(self.TemplateOn):
+                self.destroyTemplate()
         
 
     def destroyTemplate(self):

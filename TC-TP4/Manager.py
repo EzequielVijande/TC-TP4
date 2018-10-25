@@ -535,6 +535,8 @@ class Manager(object):
             self.Aproximator.chebyshevInverseAnalysis()
         elif(aprox == ap.APROXIMACIONES[3]):
             self.Aproximator.besselAnalysis()
+        elif(aprox == ap.APROXIMACIONES[4]):
+            self.Aproximator.gaussAnalysis()
         finalFunc = self.Aproximator.getFunction()
         #Datos para la atenuacion y la fase
         w = np.logspace(-2, 10, 50000, endpoint=True)
