@@ -57,6 +57,10 @@ RETARDO=5
 IMPULSE=6
 STEP=7
 Q_GRAPH=8
+#Check_BUTTONS
+Q_CHECK=1
+N_CHECK=2
+N_RANGE_CHECK=3
 #Colores principales
 FRAME_COLOR= "goldenrod"
 FRAME_TEXT_COLOR="black"
@@ -135,11 +139,17 @@ class ApGUI(object):
         self.wsString= StringVar()
         self.w0String= StringVar()
         self.qString= StringVar()
+        self.nString= StringVar()
+        self.nMinString= StringVar()
+        self.nMaxString= StringVar()
         self.ΔwpString= StringVar()
         self.ΔwsString= StringVar()
         self.τ0String= StringVar()
         self.wrgString= StringVar()
         self.YString= StringVar()
+        #Variables de los checkbuttons
+        self.SelectedCheck = IntVar()
+
 
         self.SpecsFrame = LabelFrame(self.root, text="Especificaciones", labelanchor="n",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
@@ -166,9 +176,6 @@ class ApGUI(object):
         #entrada de w0
         self.w0Label= Label(master=self.SpecsFrame,text="fo(Hz)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_wo=Entry(master=self.SpecsFrame,textvariable=self.w0String,state='disabled')
-        #entrada de Q
-        self.QLabel= Label(master=self.SpecsFrame,text="Q",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.entry_Q=Entry(master=self.SpecsFrame,textvariable=self.qString,state='disabled')
         #entrada de Δwp
         self.ΔwpLabel= Label(master=self.SpecsFrame,text="Δfp(Hz)",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Δwp=Entry(master=self.SpecsFrame,textvariable=self.ΔwpString,state='disabled')
@@ -184,6 +191,53 @@ class ApGUI(object):
         #Entrada de Y
         self.YLabel=Label(master=self.SpecsFrame,text="Y",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Y=Entry(master=self.SpecsFrame,textvariable=self.YString,state='disabled')
+        #Alternativas de calculo
+        #Q
+        self.QFrame= Frame(master=self.SpecsFrame,background=FRAME_COLOR)
+        self.QFrame.pack(side="top",fill=BOTH,expand=True)
+        self.QCheck= Radiobutton(master=self.QFrame,text="Habilitar",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR,
+                                     indicatoron=False,variable=self.SelectedCheck,value=Q_CHECK,command=self.check_button_call)
+        self.QCheck.pack(side="left",fill=BOTH,expand=True)
+        self.QLabel= Label(master=self.QFrame,text="Q",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.QLabel.pack(side="left",fill=BOTH,expand=True)
+        self.entry_Q=Entry(master=self.QFrame,textvariable=self.qString,state='disabled')
+        self.entry_Q.pack(side="left",fill=BOTH,expand=True)
+        #N fijo
+        self.NFrame= Frame(master=self.SpecsFrame,background=FRAME_COLOR)
+        self.NFrame.pack(side="top",fill=BOTH,expand=True)
+        self.NCheck= Radiobutton(master=self.NFrame,text="Habilitar",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR,
+                                     indicatoron=False,variable=self.SelectedCheck,value=N_CHECK,command=self.check_button_call)
+        self.NCheck.pack(side="left",fill=BOTH,expand=True)
+        self.NLabel= Label(master=self.NFrame,text="N",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.NLabel.pack(side="left",fill=BOTH,expand=True)
+        self.entry_N=Entry(master=self.NFrame,textvariable=self.nString,state='disabled')
+        self.entry_N.pack(side="left",fill=BOTH,expand=True)
+        #Rango de n
+        self.N_rangeFrame= Frame(master=self.SpecsFrame,background=FRAME_COLOR)
+        self.N_rangeFrame.pack(side="top",fill=BOTH,expand=True)
+        self.N_rangeCheck= Radiobutton(master=self.NFrame,text="Habilitar",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR,
+                                     indicatoron=False,variable=self.SelectedCheck,value=N_RANGE_CHECK,command=self.check_button_call)
+        self.N_rangeCheck.pack(side="left",fill=BOTH,expand=True)
+        #Hago otro frame para las entries de n
+        self.N_entriesFrame= Frame(master=self.N_rangeFrame,background=BUTTON_COLOR)
+        self.N_entriesFrame.pack(side="top",fill=BOTH,expand=True)
+
+        N_maxFrame =Frame(master=self.N_entriesFrame,background=BUTTON_COLOR)
+        N_maxFrame.pack(side="top",fill=BOTH,expand=True)
+        self.N_maxLabel= Label(master=N_maxFrame,text="N max",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.N_maxLabel.pack(side="left",fill=BOTH,expand=True)
+        self.entry_N_max=Entry(master=N_maxFrame,textvariable=self.nMaxString,state='disabled')
+        self.entry_N_max.pack(side="right",fill=BOTH,expand=True)
+
+        N_minFrame =Frame(master=self.N_entriesFrame,background=BUTTON_COLOR)
+        N_minFrame.pack(side="top",fill=BOTH,expand=True)
+        self.N_minLabel= Label(master=N_minFrame,text="N min",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
+        self.N_minLabel.pack(side="left",fill=BOTH,expand=True)
+        self.entry_N_min=Entry(master=N_minFrame,textvariable=self.nMinString,state='disabled')
+        self.entry_N_min.pack(side="right",fill=BOTH,expand=True)
+
+
+    
 
     def PlaceGraphic(self):
         self.NString_Graph= StringVar()
@@ -290,6 +344,36 @@ class ApGUI(object):
 
     def put_template_call(self):
         self.Ev=PUT_TEMPLATE_EV
+    def check_button_call(self):
+        if(self.SelectedCheck.get() == Q_CHECK):
+            self.entry_Q.config(state="normal")
+            self.entry_N.config(state="disabled")
+            self.entry_N_max.config(state="disabled")
+            self.entry_N_min.config(state="disabled")
+        elif(self.SelectedCheck.get() == N_CHECK):
+            self.entry_Q.config(state="disabled")
+            self.entry_N.config(state="normal")
+            self.entry_N_max.config(state="disabled")
+            self.entry_N_min.config(state="disabled")
+        elif(self.SelectedCheck.get() == N_RANGE_CHECK):
+            self.entry_Q.config(state="disabled")
+            self.entry_N.config(state="disabled")
+            self.entry_N_max.config(state="normal")
+            self.entry_N_min.config(state="normal")
+        #N
+        if(self.NCheckVar):
+            self.entry_N.config(state="normal")
+        else:
+            self.entry_N.config(state="disbaled")
+        #N_range
+        if(self.N_rangeCheck):
+            self.entry_N_max.config(state="normal")
+            self.entry_N_min.config(state="normal")
+        else:
+            self.entry_N_max.config(state="disabled")
+            self.entry_N_min.config(state="disabled")
+
+
     def filter_call(self):
         fil=self.filter.get()
         if(self.PrevState!=fil):
