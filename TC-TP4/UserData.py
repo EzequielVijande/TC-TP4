@@ -18,6 +18,10 @@ class UserData(object):
         self.t0=0
         self.wrg=0
         self.Y=0
+        self.StepTime=[0]
+        self.StepResp=[0]
+        self.ImpResp=[0]
+        self.ImpTime=[0]
     #Setters
     def setFilter(self,filter):
         self.type_of_filter=filter
