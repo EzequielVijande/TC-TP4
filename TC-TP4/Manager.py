@@ -219,8 +219,43 @@ class Manager(object):
 
     def ValidateInputs(self):
         fil=self.GUI.filter.get()
-        if(fil!= ap.GR):
+        #valido los opcionales
+        if(self.GUI.SelectedCheck.get() == ap.Q_CHECK):
+            Qmax=self.GUI.qString.get()
+            QmaxSTR= self.IsValidNumber(Qmax,"Q")
+            if(QmaxSTR!="Ok"):
+                return QmaxSTR
+        elif(self.GUI.SelectedCheck.get() == ap.N_CHECK):
+            N=self.GUI.nString.get()
+            nSTR= self.IsValidNumber(N,"N")
+            if(nSTR!="Ok"):
+                return nSTR
+            N_float=float(N)
+            if(N_float>20):
+                return "El valor de N debe ser menor a 20"
+        elif(self.GUI.SelectedCheck.get() == ap.N_RANGE_CHECK):
+            Nmax=self.GUI.nMaxString.get()
+            nmaxSTR= self.IsValidNumber(Nmax,"Nmax")
+            if(nmaxSTR!="Ok"):
+                return nmaxSTR
+            Nmin=self.GUI.nMinString.get()
+            nminSTR= self.IsValidNumber(Nmin,"Nmin")
+            if(nminSTR!="Ok"):
+                return nminSTR
+            nminfloat= float(Nmin)
+            nmaxfloat= float(Nmax)
+            if(nmaxfloat<=nminfloat):
+                return "Nmin debe ser menor que Nmax"
 
+
+
+        elif(self.GUI.SelectedCheck.get() == ap.Q_CHECK):
+            Qmax=self.GUI.qString.get()
+            QmaxSTR= self.IsValidNumber(Qmax,"Q")
+            if(QmaxSTR!="Ok"):
+                return QmaxSTR
+
+        if(fil!= ap.GR):
             As= self.GUI.AsString.get()
             Ap= self.GUI.ApString.get()
 
@@ -510,6 +545,20 @@ class Manager(object):
 
 
     def CalculateGraphs(self):
+        check_option= self.GUI.SelectedCheck.get()
+        mode="normal"
+        if(check_option == ap.Q_CHECK):
+            mode="normal"
+        elif(check_option == ap.N_CHECK):
+            n=float(self.GUI.nString.get())
+            self.Aproximator.setnFixed(n)
+            mode="fixed"
+        elif(check_option == ap.N_RANGE_CHECK):
+            nmax=float(self.GUI.nMaxString.get())
+            nmin=float(self.GUI.nMinString.get())
+            mode="range"
+            self.Aproximator.setnRange(nmin,nmax)
+
         As=self.data.As
         Ap=self.data.Ap
         wp=self.data.wp
@@ -526,17 +575,18 @@ class Manager(object):
         a=self.data.NormRange
 
         self.Aproximator.SetParams(As,Ap,wp,ws,wpMinus,wpPlus,wsMinus,wsPlus,type,a,tauZero,wrg,gamma)
+
         aprox= self.data.GetAprox()
         if(aprox == ap.APROXIMACIONES[0]):
-            self.Aproximator.butterworthAnalysis()
+            self.Aproximator.butterworthAnalysis(mode)
         elif(aprox == ap.APROXIMACIONES[1]):
-            self.Aproximator.chebyshevAnalysis()
+            self.Aproximator.chebyshevAnalysis(mode)
         elif(aprox == ap.APROXIMACIONES[2]):
-            self.Aproximator.chebyshevInverseAnalysis()
+            self.Aproximator.chebyshevInverseAnalysis(mode)
         elif(aprox == ap.APROXIMACIONES[3]):
-            self.Aproximator.besselAnalysis()
+            self.Aproximator.besselAnalysis(mode)
         elif(aprox == ap.APROXIMACIONES[4]):
-            self.Aproximator.gaussAnalysis()
+            self.Aproximator.gaussAnalysis(mode)
         finalFunc = self.Aproximator.getFunction()
         #Datos para la atenuacion y la fase
         w = np.logspace(-2, 10, 50000, endpoint=True)

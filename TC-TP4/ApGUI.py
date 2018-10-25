@@ -637,6 +637,10 @@ class ApGUI(object):
         #entrada de ws
         self.wsLabel.pack(fill=BOTH,expand=True)
         self.entry_ws.pack(fill=BOTH,expand=True)
+        #checks
+        self.QFrame.pack(fill=BOTH,expand=True)
+        self.NFrame.pack(fill=BOTH,expand=True)
+        self.N_rangeFrame.pack(fill=BOTH,expand=True)
 
     def PlaceBP_BR_Specs(self):
         #Entrada de Ap
@@ -661,6 +665,10 @@ class ApGUI(object):
         self.ΔwsLabel.pack(fill=BOTH, expand=True)
         self.entry_Δws.config(state='normal')
         self.entry_Δws.pack(fill=BOTH,expand=True)
+        #checks
+        self.QFrame.pack(fill=BOTH,expand=True)
+        self.NFrame.pack(fill=BOTH,expand=True)
+        self.N_rangeFrame.pack(fill=BOTH,expand=True)
 
     def PlaceGR_Specs(self):
         self.τ0Label.pack(fill=BOTH,expand=True)
@@ -672,6 +680,9 @@ class ApGUI(object):
         self.YLabel.pack(fill=BOTH,expand=True)
         self.entry_Y.config(state="normal")
         self.entry_Y.pack(fill=BOTH,expand=True)
+        #checks
+        self.NFrame.pack(fill=BOTH,expand=True)
+        self.N_rangeFrame.pack(fill=BOTH,expand=True)
 
     def DestroyLP_HP_Specs(self):
         self.ApLabel.pack_forget()
@@ -682,6 +693,10 @@ class ApGUI(object):
         self.entry_wp.pack_forget()
         self.wsLabel.pack_forget()
         self.entry_ws.pack_forget()
+        #checks
+        self.QFrame.pack_forget()
+        self.NFrame.pack_forget()
+        self.N_rangeFrame.pack_forget()
 
     def DestroyBP_BR_Specs(self):
         self.ApLabel.pack_forget()
@@ -696,6 +711,11 @@ class ApGUI(object):
         self.entry_Δwp.pack_forget()
         self.ΔwsLabel.pack_forget()
         self.entry_Δws.pack_forget()
+        #checks
+        self.QFrame.pack_forget()
+        self.NFrame.pack_forget()
+        self.N_rangeFrame.pack_forget()
+
 
     def DestroyGR_Specs(self):
         self.τ0Label.pack_forget()
@@ -704,6 +724,12 @@ class ApGUI(object):
         self.entry_wrg.pack_forget()
         self.YLabel.pack_forget()
         self.entry_Y.pack_forget()
+        #checks
+        self.QFrame.pack_forget()
+        self.NFrame.pack_forget()
+        self.N_rangeFrame.pack_forget()
+
+
     #Ventana de save y load
     def CreateFileEntryWindow(self):
         self.SaveFileName= StringVar()
