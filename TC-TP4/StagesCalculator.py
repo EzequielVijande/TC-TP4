@@ -10,7 +10,7 @@ class StagesCalculator(object):
         self.total_transf= func
         self.stages=[]
         self.GatherPolesAndZeroes() #junto los polos con sus ceros mas cercanos
-        #self.DefineCascadeOrder() #ordeno de menor q a mayor q
+        self.DefineCascadeOrder() #ordeno de menor q a mayor q
         self.ObtainStagesGains() #encuentro las constantes de cada etapa para maximizar rango dinamico
 
     def GatherPolesAndZeroes(self):
