@@ -82,7 +82,9 @@ class ApGUI(object):
     """Clase que se encarga de crear,posicionar y actualizar botones y graficas"""
     def __init__(self):
         self.Graph_enable=False
+        self.q_is_in_plot=False
         self.TemplateOn=False
+        self.q_container=[]
         self.Ev=NO_EV
         self.root = Tk()
         self.root.geometry('1620x780')
@@ -415,8 +417,8 @@ class ApGUI(object):
         self.Att_lines, =self.Axes_Stage1.semilogx(f,att)
 
     def plotQ(self,qs):
-        self.q_container =self.Axes_Stage1.stem(qs,basefmt=''
-                                                )
+        self.q_container =self.Axes_Stage1.stem(qs,basefmt='')
+        self.q_is_in_plot=True
 
     def DisplayGraph(self,Xmin,Xmax,Ymin,Ymax,q):
         type_of_graph= self.SelectedGraph.get()
@@ -471,24 +473,39 @@ class ApGUI(object):
             self.Axes_Stage1.set_ylabel("h(t)")
             self.Axes_Stage1.set_title("Respuesta al impulso")
             self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
-            self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
-            self.Imp_lines.set_visible(True) 
+            if(Ymax ==float('NaN') or Ymax == float('inf') or Ymin ==float('NaN') or Ymin == float('inf')):
+                self.Axes_Stage1.set_ylim(bottom=-100,top=100)
+            else:
+                self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
+                self.Imp_lines.set_visible(True) 
         elif(type_of_graph == STEP):
             self.Axes_Stage1.set_xscale("linear")
             self.Axes_Stage1.set_xlabel("t(seg)")
             self.Axes_Stage1.set_ylabel("u(t)")
             self.Axes_Stage1.set_title("Respuesta al escalon")
             self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
-            self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
-            self.Step_lines.set_visible(True)
+            if(Ymax ==float('NaN') or Ymax == float('inf') or Ymin ==float('NaN') or Ymin == float('inf')):
+                self.Axes_Stage1.set_ylim(bottom=-100,top=100)
+            else:
+                self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
+                self.Step_lines.set_visible(True)
+
         elif(type_of_graph == Q_GRAPH):
+            if(Ymax ==float('NaN') or Ymax == float('inf')):
+                self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
+                self.Axes_Stage1.set_ylim(bottom=-100,top=100)
+                return
+            else:
+                self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
+                self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
             self.Axes_Stage1.set_xscale("linear")
             self.Axes_Stage1.set_xlabel("Numero de polo")
             self.Axes_Stage1.set_ylabel("Q")
             self.Axes_Stage1.set_title("Grafica del factor de calidad")
             self.Axes_Stage1.set_xlim(left=Xmin,right=Xmax)
             self.Axes_Stage1.set_ylim(bottom=Ymin,top=Ymax)
-            #self.plotQ(q)
+            self.plotQ(q)
+            
 
 
     def placeTemplate(self,Ap,As,wp,ws,wo,Q,wpMinus,wpPlus,wsMinus,wsPlus,filt,aprox,t0,frg,Y):
@@ -785,7 +802,12 @@ class ApGUI(object):
         self.poles_path.set_visible(False)
         self.Step_lines.set_visible(False)
         self.RG_lines.set_visible(False)
-    
+        if(self.q_is_in_plot):
+            self.q_container.remove()
+            self.q_is_in_plot=False
+        #if(self.q_container):
+          #      del self.q_container
+            #    self.q_container=[]
     #
     #
     #

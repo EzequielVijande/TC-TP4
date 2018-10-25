@@ -155,7 +155,7 @@ class Manager(object):
         self.GUI.plotAtte((self.data.f),att)
         self.GUI.plotAtteNorm(self.data.fn,self.data.Attn)
         self.GUI.plotPhase(self.data.f,self.data.phase)
-        #self.GUI.plotQ(self.data.qs)
+        self.GUI.plotQ(self.data.qs)
         self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
         self.GUI.plotImpulse(self.data.ImpTime,self.data.ImpResp)
         self.GUI.plotZeros(self.data.zeroes_real,self.data.zeroes_imag,self.data.poles_real,self.data.poles_imag)
@@ -584,13 +584,13 @@ class Manager(object):
         self.data.SetfnVector(wn/(2*math.pi))
         self.data.SetAttnVector(attn)
         #Respuesta al impulso
-        #t_imp,h=(self.Aproximator.getFunction()).impulse(N=8000)
-        #h=h.real
-        #self.data.setImpData(t_imp,h)
+        t_imp,h=(self.Aproximator.getFunction()).impulse(N=8000)
+        h=h.real
+        self.data.setImpData(t_imp,h)
         #Respuesta al escalon
-        #t_step,u=(self.Aproximator.getFunction()).step(N=8000)
-        #u=u.real
-        #self.data.setStepData(t_step,u)
+        t_step,u=(self.Aproximator.getFunction()).step(N=8000)
+        u=u.real
+        self.data.setStepData(t_step,u)
         #Polos y ceros
         zeros = finalFunc.zeros
         poles = finalFunc.poles
