@@ -10,7 +10,7 @@ class StagesCalculator(object):
         self.total_transf= func
         self.stages=[]
         self.GatherPolesAndZeroes() #junto los polos con sus ceros mas cercanos
-        self.DefineCascadeOrder() #ordeno de menor q a mayor q
+        #self.DefineCascadeOrder() #ordeno de menor q a mayor q
         self.ObtainStagesGains() #encuentro las constantes de cada etapa para maximizar rango dinamico
 
     def GatherPolesAndZeroes(self):
@@ -19,6 +19,7 @@ class StagesCalculator(object):
         dist= list()
         zeros= list(self.total_transf.zeros)
         poles= list(self.total_transf.poles)
+        poles= self.RemovePoleFromComplexPair(poles)
         for j in range(0, len(zeros)):
             zero_act= zeros[j]
             for i in range(0, len(poles)):
@@ -29,7 +30,8 @@ class StagesCalculator(object):
             self.pairs.append(pair)
             dist.clear()
         #Junto los polos que me quedan en otras funciones transferencia
-
+        self.remainingPoles= poles
+        self.GetStagesTransferFunctions()
         return
     def DefineCascadeOrder(self):
         return
@@ -44,7 +46,30 @@ class StagesCalculator(object):
         delta_y= abs(y1-y2)
         distance= ((delta_x**2)+(delta_y**2))**(0.5)
         return distance
-    #def RemovePoleFromCOn
+    def RemovePoleFromComplexPair(self,poles):
+        i=0
+        while (i<(len(poles))):
+            pole_act= poles[i]
+            j=i+1
+            while( (j<len(poles)) and (abs(pole_act.real-((poles[j]).real))>0.1) ):
+                j=j+1
+            if(abs(pole_act.imag+(poles[j]).imag)<=0.1):
+                poles.pop(j)
+            i=i+1
+        return poles
 
+    def GetStagesTransferFunctions(self):
+        funcs=[]
+        for i in range(0,len(self.pairs)):
+            zero,pole1=self.pairs[i]
+            pole2= complex(pole1.real,-(pole1.imag))
+            aux= signal.ZerosPolesGain(zero,[pole1,pole2],1)
+            funcs.append(aux)
+        for i in range(0,len(self.remainingPoles)):
+            p1= self.remainingPoles[i]
+            p2= complex(p1.real,-(p1.imag))
+            aux= signal.ZerosPolesGain([],[p1,p2],1)
+            funcs.append(aux)
+        self.stages=funcs
 
 
