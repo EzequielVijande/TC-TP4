@@ -154,7 +154,7 @@ class Manager(object):
         att=-self.data.mag
         self.GUI.Axes_Stage1.cla()
         self.GUI.plotAtte((self.data.f),att)
-        self.GUI.plotAtteNorm(self.data.f,self.data.mag)
+        self.GUI.plotAtteNorm(self.data.fn,self.data.Attn)
         self.GUI.plotPhase(self.data.f,self.data.phase)
         #self.GUI.plotQ(self.data.qs)
         self.GUI.plotStep(self.data.StepTime,self.data.StepResp)
@@ -576,6 +576,14 @@ class Manager(object):
         self.data.setfVector(w/(2*math.pi))
         self.data.setMag(mag)
         self.data.setPhase(phase)
+
+        #grafica normalizada
+        wn = np.logspace(-3, 7, 10000, endpoint=True)
+        norm_func= self.Aproximator.getNormFunction()
+        wn,magn,fasen= self.Aproximator.CalcBodePlot(wn,norm_func)
+        attn=-magn
+        self.data.SetfnVector(wn/(2*math.pi))
+        self.data.SetAttnVector(attn)
         #Respuesta al impulso
         #t_imp,h=(self.Aproximator.getFunction()).impulse(N=8000)
         #h=h.real

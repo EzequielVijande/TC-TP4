@@ -74,6 +74,10 @@ class UserData(object):
         self.qs[(self.qs)<0]=0
     def SetGroupDelay(self,gd):
         self.gd= gd
+    def SetAttnVector(self,Attn):
+        self.Attn= Attn
+    def SetfnVector(self,fn):
+        self.fn= fn
 
     #Para BP Y BR
     def setwo(self,wo):
