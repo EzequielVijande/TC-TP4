@@ -573,7 +573,7 @@ class Manager(object):
             self.Aproximator.gaussAnalysis(mode)
         finalFunc = self.Aproximator.getFunction()
         #Datos para la atenuacion y la fase
-        w = np.logspace(-2, 10, 50000, endpoint=True)
+        w = np.logspace(-1, 7, 90000, endpoint=True)
         w, mag, phase = self.Aproximator.CalcBodePlot(w,finalFunc)
         self.data.setfVector(w/(2*math.pi))
         self.data.setMag(mag)

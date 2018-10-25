@@ -936,7 +936,7 @@ class ApGUI(object):
         self.StagesButtons=[]
         for i in range(1,n+1):
             aux= "Etapa "+str(i)
-            self.StagesButtons.append(Button(master= self.StagesMenuFrame,text=aux))
+            self.StagesButtons.append(Button(master= self.StagesMenuFrame,text=aux,bg=BUTTON_COLOR))
             self.StagesButtons[i-1].pack(side="left",fill=BOTH,expand=True)
 
     #Callbacks de la segunda etapa
@@ -978,3 +978,14 @@ class ApGUI(object):
         self.AxesTotalTransf.set_ylim(bottom=ymin,top=ymax)
         self.AxesTotalTransf.semilogx(f,mag)
         self.AxesTotalTransf.grid(b=True,axis='both')
+
+    def GraphSelectedStage(self,f,mag,xmin,xmax,ymin,ymax,i):
+        self.AxesSelectedStage.cla()
+        self.AxesSelectedStage.set_xscale("log")
+        self.AxesSelectedStage.set_title("Ganancia de la etapa "+str(i))
+        self.AxesSelectedStage.set_xlabel("f(Hz)")
+        self.AxesSelectedStage.set_ylabel("G"+str(i)+"(dB)")
+        self.AxesSelectedStage.set_xlim(left=xmin,right=xmax)
+        self.AxesSelectedStage.set_ylim(bottom=ymin,top=ymax)
+        self.AxesSelectedStage.semilogx(f,mag)
+        self.AxesSelectedStage.grid(b=True,axis='both')
