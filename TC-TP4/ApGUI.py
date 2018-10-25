@@ -501,7 +501,7 @@ class ApGUI(object):
                 x0=0
                 y0=0
                 width1=frg
-                height=(1-Y)*t0
+                height1=(1-Y)*t0
                 self.first_rect= patches.Rectangle((x0,y0),width1,height1,linewidth=1,edgecolor='crimson',facecolor='tomato')
                 self.TemplateOn= True
 

@@ -263,12 +263,13 @@ class AproxAnalysis(object):
     # BESSEL
 
     def besselAnalysis(self):
+        self.filterType = 'bessel'
         self.poles = []
         self.zeros = []
-        self.createGroupDelayFunction()
+        self.createBesselFunction()
         return
 
-    def createGroupDelayFunction(self):
+    def createBesselFunction(self):
         self.n = 1
         condition = False
         wrgn= self.wrg*self.tauZero
@@ -289,7 +290,7 @@ class AproxAnalysis(object):
                 self.n = self.n + 1
         #tengo el n correcto, desnormalizo
         for i in range(0,len(AkArray)):
-            AkArray[i]=AkArray[i]*(self.tauZero**i)
+            AkArray[len(AkArray)-1-i]=AkArray[len(AkArray)-1-i]*(self.tauZero**i)
         self.function = signal.TransferFunction([1],AkArray)
         return
 
@@ -299,6 +300,82 @@ class AproxAnalysis(object):
             Ak = (math.factorial(2*self.n-i)/(math.factorial(i)*math.factorial(self.n-i)*(2**(self.n-i))))*(((2**self.n)*(math.factorial(self.n)))/math.factorial(2*self.n))
             AkArray.insert(0,Ak)
         return AkArray
+
+    # GAUSS
+
+    def besselAnalysis(self):
+        self.filterType = 'gauss'
+        self.poles = []
+        self.zeros = []
+        self.createGaussFunction()
+        return
+
+    def createGroupDelayFunction(self):
+        self.n = 1
+        condition = False
+        wrgn= self.wrg*self.tauZero
+        while condition == False:
+            #armo polinomio de orden n y calculo polos
+            coef = gaussPolynomialCoef()
+            poles = numpy.roots(p)
+            for i in range(0,len(poles)):
+                if poles[i].real >= 0:
+                    poles.remove(i)
+            pzfunc = signal.ZerosPolesGain([],poles,1)
+            self.normFunction = pzfunc.to_tf()
+            den = self.normFunction.den
+            #calculo retardo de grupo y evaluo en wrgn
+            w, h = signal.freqs([1], den)
+            groupDelay = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
+            diff = abs(w - wrgn)
+            diff = list(diff)
+            index = diff.index(min(diff))
+            tauWrgn = groupDelay[index]
+            if tauWrgn >= 1-self.gamma:
+                condition = True
+            else:
+                self.n = self.n + 1
+        #tengo el n correcto, desnormalizo
+        for i in range(0,len(den)):
+            den[len(den)-1-i]=den[len(den)-1-i]*(self.tauZero**i)
+        self.function = signal.TransferFunction([1],den)
+        return
+
+    def gaussPolynomialCoef(self):
+        p = [1]
+        for i in range(1,self.n+1):
+            p.insert(0,0)
+            pAux = 1/math.factorial(i)
+            p.insert(0,pAux)
+        return p;
+
+    # LEGENDRE
+
+    def legendreAnalysis(self):
+        self.filterType = 'legendre'
+        self.poles = []
+        self.zeros = []
+        self.epsilonLegendre()
+        self.nLegendre()
+        self.polesLegendre()
+        self.createFunction()
+        return
+
+    def epsilonLegendre():
+        self.epsilon = (10**(self.Ap/10))**(1/2)
+        return
+
+    def nLegendre():
+        condition = True
+        self.n = 1
+        while condition ==  False:
+
+            1#itero para encontrar n
+        return
+
+    def polesLegendre():
+        #como tengo el n armo polinomio y busco ceros
+        return
 
     # Getters
 
