@@ -33,9 +33,6 @@ class AproxAnalysis(object):
         self.wrg = wrg
         self.gamma = gamma
         self.nMode = 'normal'
-        self.nMin = 0
-        self.nMax = 0
-        self.nUser = 0
         if (self.type == 'BP') or (self.type == 'BR'):
             self.b = (self.wpPlus-self.wpMinus)/(math.sqrt(self.wpPlus*self.wpMinus))
         self.wsnCalc()
@@ -381,7 +378,7 @@ class AproxAnalysis(object):
         if self.nMode == 'normal' or self.nMode == 'range':
             while condition == False:
                 #armo polinomio de orden n y calculo polos
-                den = self.gaussDenGenerator(self)
+                den = self.gaussDenGenerator()
                 #calculo retardo de grupo y evaluo en wrgn
                 w, h = signal.freqs([1], den)
                 groupDelay = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
@@ -395,14 +392,14 @@ class AproxAnalysis(object):
                     self.n = self.n + 1
         elif self.nMode == 'fixed':
             self.n = self.nUser
-            den = self.gaussDenGenerator(self)
+            den = self.gaussDenGenerator()
         if self.nMode == 'range':
            if self.n > self.nMax:
                 self.n = self.nMax
-                den = self.gaussDenGenerator(self)
+                den = self.gaussDenGenerator()
            elif self.n < self.nMin:
                 self.n = self.nMin
-                den = self.gaussDenGenerator(self)
+                den = self.gaussDenGenerator()
         #tengo el n correcto, desnormalizo
         for i in range(0,len(den)):
             den[len(den)-1-i]=den[len(den)-1-i]*(self.tauZero**i)
@@ -428,12 +425,12 @@ class AproxAnalysis(object):
     # Setter 
 
     def setnRange(self,nMin,nMax):
-        self.nMin = nMin
-        self.nMax = nMax
+        self.nMin = int(nMin)
+        self.nMax = int(nMax)
         return
 
     def setnFixed(self,num):
-        self.nUser = num
+        self.nUser = int(num)
         return
 
     #Extras
