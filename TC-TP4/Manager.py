@@ -220,12 +220,8 @@ class Manager(object):
     def ValidateInputs(self):
         fil=self.GUI.filter.get()
         #valido los opcionales
-        if(self.GUI.SelectedCheck.get() == ap.Q_CHECK):
-            Qmax=self.GUI.qString.get()
-            QmaxSTR= self.IsValidNumber(Qmax,"Q")
-            if(QmaxSTR!="Ok"):
-                return QmaxSTR
-        elif(self.GUI.SelectedCheck.get() == ap.N_CHECK):
+        
+        if(self.GUI.SelectedCheck.get() == ap.N_CHECK):
             N=self.GUI.nString.get()
             nSTR= self.IsValidNumber(N,"N")
             if(nSTR!="Ok"):
@@ -246,14 +242,6 @@ class Manager(object):
             nmaxfloat= float(Nmax)
             if(nmaxfloat<=nminfloat):
                 return "Nmin debe ser menor que Nmax"
-
-
-
-        elif(self.GUI.SelectedCheck.get() == ap.Q_CHECK):
-            Qmax=self.GUI.qString.get()
-            QmaxSTR= self.IsValidNumber(Qmax,"Q")
-            if(QmaxSTR!="Ok"):
-                return QmaxSTR
 
         if(fil!= ap.GR):
             As= self.GUI.AsString.get()
@@ -547,7 +535,7 @@ class Manager(object):
     def CalculateGraphs(self):
         check_option= self.GUI.SelectedCheck.get()
         mode="normal"
-        if(check_option == ap.Q_CHECK):
+        if(check_option == ap.NORMAL_CHECK):
             mode="normal"
         elif(check_option == ap.N_CHECK):
             n=float(self.GUI.nString.get())
