@@ -874,6 +874,8 @@ class ApGUI(object):
         self.CurrentStageCanvas = FigureCanvasTkAgg(self.CurrentStageFig,master=self.StageGraphFrame)
         self.CurrentStageCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
         self.CurrentStageCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
+        self.AxesSelectedStage = self.CurrentStageFig.add_subplot(111)
+
         #Creo una toolbar para los graficos
         self.SelStagetoolbarFrame = Frame(master=self.StageGraphFrame)
         self.SelStagetoolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
@@ -915,6 +917,9 @@ class ApGUI(object):
         self.TransfTotalCanvas = FigureCanvasTkAgg(self.TransfTotalFig,master=self.CascadeGraphFrame)
         self.TransfTotalCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
         self.TransfTotalCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
+        self.AxesTotalTransf = self.CurrentStageFig.add_subplot(111)
+        self.GraphTotalTransference()
+        
         #Creo una toolbar para la grafica de cascada
         self.TransfTotToolbarFrame = Frame(master=self.CascadeGraphFrame)
         self.TransfTotToolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
@@ -963,3 +968,5 @@ class ApGUI(object):
         self.AproxButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.SliderFrame.pack(side=LEFT,anchor=NW,fill=BOTH,expand=True)
+    def GraphTotalTransference(f,att):
+        self.AxesTotalTransf.cla()
