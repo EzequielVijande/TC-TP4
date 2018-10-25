@@ -5,7 +5,7 @@ import control as c
 
 class AproxAnalysis(object):
 
-    def __init__(self, As=0, Ap=0, wp=0, ws=0, wpMinus=0, wpPlus=0, wsMinus=0, wsPlus=0, type="LP", a=0,tauZero=0,wrg=0,gamma=0):
+    def __init__(self, As=0, Ap=0, wp=0, ws=0, wpMinus=0, wpPlus=0, wsMinus=0, wsPlus=0, type="LP", a=0,tauZero=0,wrg=0,gamma=0,nMin = 0,nMax = 0,nUser = 0):
         
         return
 
@@ -67,10 +67,16 @@ class AproxAnalysis(object):
                 wo = (wsf**(self.a))*(wpf**(1-(self.a)))
             elif self.type == 'BP':
                 # calculo de B!!!
+                wsDelta = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*(self.wsPlus-self.wsMinus)
+                wpDelta = self.wpPlus-self.wpMinus
                 wo= (self.wpPlus*self.wpMinus)**(1/2)
+                self.b = (wsDelta**(self.a))*(wpDelta**(1-(self.a)))/wo
             elif self.type == 'BR':
                 # calculo de B!!!
+                wsDelta = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*(self.wsPlus-self.wsMinus)
+                wpDelta = self.wpPlus-self.wpMinus
                 wo= (self.wpPlus*self.wpMinus)**(1/2)
+                self.b = (wsDelta**(self.a))*(wpDelta**(1-(self.a)))/wo
         elif self.filterType == 'chebyshev':
             if (self.type == 'LP'): # HACER CALCULOS BIEN
                 wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*self.ws
@@ -116,7 +122,6 @@ class AproxAnalysis(object):
             else:
                 k=((10**(-self.Ap/20))**multiplier)*den[len(den)-1]/num[len(num)-1]
         return k
-
 
     def createFunction(self):
 
@@ -412,34 +417,6 @@ class AproxAnalysis(object):
             p.insert(0,pAux)
         return p;
 
-    # LEGENDRE
-
-    def legendreAnalysis(self):
-        self.filterType = 'legendre'
-        self.poles = []
-        self.zeros = []
-        self.epsilonLegendre()
-        self.nLegendre()
-        self.polesLegendre()
-        self.createFunction()
-        return
-
-    def epsilonLegendre():
-        self.epsilon = (10**(self.Ap/10))**(1/2)
-        return
-
-    def nLegendre():
-        condition = True
-        self.n = 1
-        while condition ==  False:
-
-            1#itero para encontrar n
-        return
-
-    def polesLegendre():
-        #como tengo el n armo polinomio y busco ceros
-        return
-
     # Getters
 
     def getFunction(self):
@@ -451,9 +428,12 @@ class AproxAnalysis(object):
     # Setter 
 
     def setnRange(self,nMin,nMax):
+        self.nMin = nMin
+        self.nMax = nMax
         return
-    
-    def setnFixed(self,n):
+
+    def setnFixed(self,num):
+        self.nUser = num
         return
 
     #Extras
