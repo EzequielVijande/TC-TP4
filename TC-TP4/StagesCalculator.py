@@ -9,6 +9,7 @@ class StagesCalculator(object):
     def __init__(self,func):
         self.total_transf= func
         self.stages=[]
+        self.Q = []
         self.GatherPolesAndZeroes() #junto los polos con sus ceros mas cercanos
         self.DefineCascadeOrder() #ordeno de menor q a mayor q
         self.ObtainStagesGains() #encuentro las constantes de cada etapa para maximizar rango dinamico
@@ -33,12 +34,37 @@ class StagesCalculator(object):
         self.remainingPoles= poles
         self.GetStagesTransferFunctions()
         return
+
     def DefineCascadeOrder(self):
+        for i in range(0,len(self.stages)):
+            Qaux = -abs(self.stages[i].poles[0])/(2*self.stages[i].poles[0].real)
+            self.Q.append(Qaux)
+        # tengo en Q los Qi correspondientes a cada etapa
+        self.Q, self.stages = zip(*sorted(zip(self.Q, self.stages)))
         return
         #funcion que ordena las etapas en orden de menor Q a mayor Q
+
     def ObtainStagesGains(self):
+        M = []
+        K = []
+        for i in range(0,len(self.stages)):
+            Mj = calcMaxGain(self.stages[i])
+            M.append(Mj)
+        pzFunc = self.total_transf.to_zpk()
+        Ko = pzFunc.gain*(M[len(M)-1]/M[0])
+        K.append(Ko)
+        for i in range(1,len(self.stages)):
+            auxK = (M[i-1])/(M[i])
+            K.append(auxK)
+        for i in range(0,len(self.stages)):
+            self.stages[i] = K[i]*self.stages[i]
         return
         #Funcion que calcula la constante que corresponde a cada etapa
+
+    def calcMaxGain(self,func):
+        w, mag, phase = signal.bode(func)
+        Mj = max(mag)
+        return Mj
 
     #Funciones de calculo
     def CalculateDistance(self,x1,y1,x2,y2):
