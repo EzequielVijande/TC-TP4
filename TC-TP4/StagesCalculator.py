@@ -97,5 +97,7 @@ class StagesCalculator(object):
             aux= signal.ZerosPolesGain([],[p1,p2],1)
             funcs.append(aux)
         self.stages=funcs
+    def GetNumberOfStages(self):
+        return len(self.stages)
 
 

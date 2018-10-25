@@ -105,8 +105,9 @@ class Manager(object):
     def OnNextEv(self):
         if(self.GUI.Graph_enable):
             self.estado=ETAPA2
-            self.GUI.Change_to_stage2()
             self.SeparateStages()
+            self.GUI.Change_to_stage2()
+            self.GUI.SetStagesButtons(self.CascadeManager.GetNumberOfStages())
         else:
              self.GUI.ShowMessage("Es necesario especificar una plantilla valida primero")
 

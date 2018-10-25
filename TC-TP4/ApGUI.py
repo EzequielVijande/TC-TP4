@@ -926,6 +926,14 @@ class ApGUI(object):
         self.StagesMenuFrame.pack(side="bottom",fill=BOTH,expand=True)
         self.etapa1button= Button(master=self.StagesMenuFrame,text="Etapa1",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.etapa1button.pack(side="left",fill=BOTH,expand=True)
+
+    def SetStagesButtons(self,n):
+        self.StagesButtons=[]
+        for i in range(1,n+1):
+            aux= "Etapa "+str(i)
+            self.StagesButtons.append(Button(master= self.StagesMenuFrame,text=aux))
+            self.StagesButtons[i-1].pack(side="left",fill=BOTH,expand=True)
+
     #Callbacks de la segunda etapa
     def export_call(self):
         self.Ev=EXPORT
