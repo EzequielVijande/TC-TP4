@@ -58,7 +58,7 @@ IMPULSE=6
 STEP=7
 Q_GRAPH=8
 #Check_BUTTONS
-Q_CHECK=1
+NORMAL_CHECK=1
 N_CHECK=2
 N_RANGE_CHECK=3
 #Colores principales
@@ -123,7 +123,7 @@ class ApGUI(object):
         self.AproxButtonsFrame = LabelFrame(self.root, text="Aproximacion", labelanchor="n",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.AproxButtonsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.selected_aprox = StringVar(master=self.AproxButtonsFrame)
-        self.selected_aprox.set(APROXIMACIONES[0]) # Empieza conButterworth como default
+        self.selected_aprox.set(APROXIMACIONES[0]) # Empieza con Butterworth como default
 
         self.pull_down_menu = OptionMenu(self.AproxButtonsFrame, self.selected_aprox, *APROXIMACIONES)
         self.pull_down_menu.config(bg=BUTTON_COLOR)
@@ -192,18 +192,16 @@ class ApGUI(object):
         self.YLabel=Label(master=self.SpecsFrame,text="Y",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
         self.entry_Y=Entry(master=self.SpecsFrame,textvariable=self.YString,state='disabled')
         #Alternativas de calculo
-        #Q
-        self.QFrame= Frame(master=self.SpecsFrame,background=FRAME_COLOR)
-        self.QFrame.pack(side="top",fill=BOTH,expand=True)
-        self.QCheck= Radiobutton(master=self.QFrame,text="Habilitar",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR,
-                                     indicatoron=False,variable=self.SelectedCheck,value=Q_CHECK,command=self.check_button_call)
-        self.QCheck.pack(side="left",fill=BOTH,expand=True)
-        self.QLabel= Label(master=self.QFrame,text="Q",anchor=W,background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.QLabel.pack(side="left",fill=BOTH,expand=True)
-        self.entry_Q=Entry(master=self.QFrame,textvariable=self.qString,state='disabled')
-        self.entry_Q.pack(side="left",fill=BOTH,expand=True)
+        self.ChecksFrame= Frame(master=self.SpecsFrame,background=FRAME_COLOR)
+        self.ChecksFrame.pack(side="top",fill=BOTH,expand=True)
+        #Normal
+        self.NormalFrame= Frame(master=self.ChecksFrame,background=FRAME_COLOR)
+        self.NormalFrame.pack(side="top",fill=BOTH,expand=True)
+        self.NormalCheck= Radiobutton(master=self.NormalFrame,text="Normal",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR,
+                                     indicatoron=False,variable=self.SelectedCheck,value=NORMAL_CHECK,command=self.check_button_call)
+        self.NormalCheck.pack(side="left",fill=BOTH,expand=True)
         #N fijo
-        self.NFrame= Frame(master=self.SpecsFrame,background=FRAME_COLOR)
+        self.NFrame= Frame(master=self.ChecksFrame,background=FRAME_COLOR)
         self.NFrame.pack(side="top",fill=BOTH,expand=True)
         self.NCheck= Radiobutton(master=self.NFrame,text="Habilitar",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR,
                                      indicatoron=False,variable=self.SelectedCheck,value=N_CHECK,command=self.check_button_call)
@@ -213,14 +211,14 @@ class ApGUI(object):
         self.entry_N=Entry(master=self.NFrame,textvariable=self.nString,state='disabled')
         self.entry_N.pack(side="left",fill=BOTH,expand=True)
         #Rango de n
-        self.N_rangeFrame= Frame(master=self.SpecsFrame,background=FRAME_COLOR)
+        self.N_rangeFrame= Frame(master=self.ChecksFrame,background=FRAME_COLOR)
         self.N_rangeFrame.pack(side="top",fill=BOTH,expand=True)
         self.N_rangeCheck= Radiobutton(master=self.NFrame,text="Habilitar",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR,
                                      indicatoron=False,variable=self.SelectedCheck,value=N_RANGE_CHECK,command=self.check_button_call)
         self.N_rangeCheck.pack(side="left",fill=BOTH,expand=True)
         #Hago otro frame para las entries de n
         self.N_entriesFrame= Frame(master=self.N_rangeFrame,background=BUTTON_COLOR)
-        self.N_entriesFrame.pack(side="top",fill=BOTH,expand=True)
+        self.N_entriesFrame.pack(side="left",fill=BOTH,expand=True)
 
         N_maxFrame =Frame(master=self.N_entriesFrame,background=BUTTON_COLOR)
         N_maxFrame.pack(side="top",fill=BOTH,expand=True)
@@ -345,18 +343,15 @@ class ApGUI(object):
     def put_template_call(self):
         self.Ev=PUT_TEMPLATE_EV
     def check_button_call(self):
-        if(self.SelectedCheck.get() == Q_CHECK):
-            self.entry_Q.config(state="normal")
+        if(self.SelectedCheck.get() == NORMAL_CHECK):
             self.entry_N.config(state="disabled")
             self.entry_N_max.config(state="disabled")
             self.entry_N_min.config(state="disabled")
         elif(self.SelectedCheck.get() == N_CHECK):
-            self.entry_Q.config(state="disabled")
             self.entry_N.config(state="normal")
             self.entry_N_max.config(state="disabled")
             self.entry_N_min.config(state="disabled")
         elif(self.SelectedCheck.get() == N_RANGE_CHECK):
-            self.entry_Q.config(state="disabled")
             self.entry_N.config(state="disabled")
             self.entry_N_max.config(state="normal")
             self.entry_N_min.config(state="normal")
@@ -638,9 +633,7 @@ class ApGUI(object):
         self.wsLabel.pack(fill=BOTH,expand=True)
         self.entry_ws.pack(fill=BOTH,expand=True)
         #checks
-        self.QFrame.pack(fill=BOTH,expand=True)
-        self.NFrame.pack(fill=BOTH,expand=True)
-        self.N_rangeFrame.pack(fill=BOTH,expand=True)
+        self.ChecksFrame.pack(fill=BOTH,expand=True)
 
     def PlaceBP_BR_Specs(self):
         #Entrada de Ap
@@ -653,10 +646,6 @@ class ApGUI(object):
         self.w0Label.pack(fill=BOTH, expand=True)
         self.entry_wo.config(state="normal")
         self.entry_wo.pack(fill=BOTH,expand=True)
-        #entrada de Q
-        self.QLabel.pack(fill=BOTH, expand=True)
-        self.entry_Q.config(state='normal')
-        self.entry_Q.pack(fill=BOTH,expand=True)
         #entrada de Δwp
         self.ΔwpLabel.pack(fill=BOTH, expand=True)
         self.entry_Δwp.config(state='normal')
@@ -666,9 +655,7 @@ class ApGUI(object):
         self.entry_Δws.config(state='normal')
         self.entry_Δws.pack(fill=BOTH,expand=True)
         #checks
-        self.QFrame.pack(fill=BOTH,expand=True)
-        self.NFrame.pack(fill=BOTH,expand=True)
-        self.N_rangeFrame.pack(fill=BOTH,expand=True)
+        self.ChecksFrame.pack(fill=BOTH,expand=True)
 
     def PlaceGR_Specs(self):
         self.τ0Label.pack(fill=BOTH,expand=True)
@@ -681,8 +668,7 @@ class ApGUI(object):
         self.entry_Y.config(state="normal")
         self.entry_Y.pack(fill=BOTH,expand=True)
         #checks
-        self.NFrame.pack(fill=BOTH,expand=True)
-        self.N_rangeFrame.pack(fill=BOTH,expand=True)
+        self.ChecksFrame.pack(fill=BOTH,expand=True)
 
     def DestroyLP_HP_Specs(self):
         self.ApLabel.pack_forget()
@@ -694,9 +680,7 @@ class ApGUI(object):
         self.wsLabel.pack_forget()
         self.entry_ws.pack_forget()
         #checks
-        self.QFrame.pack_forget()
-        self.NFrame.pack_forget()
-        self.N_rangeFrame.pack_forget()
+        self.ChecksFrame.pack_forget()
 
     def DestroyBP_BR_Specs(self):
         self.ApLabel.pack_forget()
@@ -705,16 +689,12 @@ class ApGUI(object):
         self.entry_as.pack_forget()
         self.w0Label.pack_forget()
         self.entry_wo.pack_forget()
-        self.QLabel.pack_forget()
-        self.entry_Q.pack_forget()
         self.ΔwpLabel.pack_forget()
         self.entry_Δwp.pack_forget()
         self.ΔwsLabel.pack_forget()
         self.entry_Δws.pack_forget()
         #checks
-        self.QFrame.pack_forget()
-        self.NFrame.pack_forget()
-        self.N_rangeFrame.pack_forget()
+        self.ChecksFrame.pack_forget()
 
 
     def DestroyGR_Specs(self):
@@ -725,9 +705,7 @@ class ApGUI(object):
         self.YLabel.pack_forget()
         self.entry_Y.pack_forget()
         #checks
-        self.QFrame.pack_forget()
-        self.NFrame.pack_forget()
-        self.N_rangeFrame.pack_forget()
+        self.ChecksFrame.pack_forget()
 
 
     #Ventana de save y load
