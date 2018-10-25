@@ -877,15 +877,16 @@ class ApGUI(object):
         #Seccion con la etapa seleccionada
         self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame,background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.StageGraphFrame.pack(side="left",fill=BOTH,expand=True)
-        self.CurrentStageFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
+        self.CurrentStageFig=Figure(figsize=(1,1), dpi=200,facecolor="lavender",constrained_layout=True)
         self.CurrentStageCanvas = FigureCanvasTkAgg(self.CurrentStageFig,master=self.StageGraphFrame)
-        self.CurrentStageCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
+        self.CurrentStageCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/2), height=(GRAPH_HEIGHT/2))
         self.CurrentStageCanvas.get_tk_widget().pack(side="right",fill=BOTH,expand=True)
         self.AxesSelectedStage = self.CurrentStageFig.add_subplot(111)
 
         #Creo una toolbar para los graficos
         self.SelStagetoolbarFrame = Frame(master=self.StageGraphFrame)
         self.SelStagetoolbarFrame.pack(side="bottom")
+
         self.SelStagetoolbar = NavigationToolbar2Tk(self.CurrentStageCanvas, self.SelStagetoolbarFrame)
         self.SelStagetoolbar.pack()
         #Parametros de interes de la etapa seleccionada

@@ -150,7 +150,11 @@ class AproxAnalysis(object):
         self.epsilonButterworth()
         if self.nMode == 'normal':
             self.nButterworth()
-            if self.n > 20:
+            if self.n > 10:
+                if (self.type == 'BP') or (self.type == 'BR'):
+                    self.n = 10
+                    self.nExceeded = True
+            elif self.n > 20:
                 self.n = 20
                 self.nExceeded = True
         elif self.nMode == 'fixed':

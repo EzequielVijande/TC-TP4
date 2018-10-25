@@ -569,6 +569,9 @@ class Manager(object):
             self.Aproximator.besselAnalysis(mode)
         elif(aprox == ap.APROXIMACIONES[4]):
             self.Aproximator.gaussAnalysis(mode)
+        if(self.Aproximator.nExceeded):
+            self.GUI.ShowMessage("El orden resultante es muy grande,utilizando n=20 por defecto")
+            self.Aproximator.nExceeded=False
         finalFunc = self.Aproximator.getFunction()
         #Datos para la atenuacion y la fase
         w = np.logspace(-1, 7, 90000, endpoint=True)
