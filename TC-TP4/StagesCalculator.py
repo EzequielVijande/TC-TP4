@@ -48,7 +48,7 @@ class StagesCalculator(object):
         M = []
         K = []
         for i in range(0,len(self.stages)):
-            Mj = calcMaxGain(self.stages[i])
+            Mj = self.calcMaxGain(self.stages[i])
             M.append(Mj)
         pzFunc = self.total_transf.to_zpk()
         Ko = pzFunc.gain*(M[len(M)-1]/M[0])
@@ -57,7 +57,7 @@ class StagesCalculator(object):
             auxK = (M[i-1])/(M[i])
             K.append(auxK)
         for i in range(0,len(self.stages)):
-            self.stages[i] = K[i]*self.stages[i]
+            (self.stages[i]).gain= (K[i].real)
         return
         #Funcion que calcula la constante que corresponde a cada etapa
 

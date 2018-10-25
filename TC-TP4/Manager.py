@@ -190,7 +190,6 @@ class Manager(object):
                 self.data.setwp(wp)
             elif(filt==ap.BP or filt==ap.BR):
                 wo= float(self.GUI.w0String.get())*2*(math.pi)
-                Q= float(self.GUI.qString.get())
                 Δwp= float(self.GUI.ΔwpString.get())*2*(math.pi)
                 Δws= float(self.GUI.ΔwsString.get())*2*(math.pi)
 
@@ -200,7 +199,6 @@ class Manager(object):
                 self.data.setwsMinus(wsMinus)
                 self.data.setwsPlus(wsPlus)
                 self.data.setwo(wo)
-                self.data.setQ(Q)
 
         elif(filt == ap.GR):
             self.data.t0 = float(self.GUI.τ0String.get())
@@ -280,7 +278,6 @@ class Manager(object):
                 Δwp= self.GUI.ΔwpString.get()
                 Δws= self.GUI.ΔwsString.get()
                 wo= self.GUI.w0String.get()
-                Q=self.GUI.qString.get()
             
                 ΔwpSTR= self.IsValidNumber(Δwp,"Δwp") #valido Δwp
                 if(ΔwpSTR != "Ok"):
@@ -293,10 +290,6 @@ class Manager(object):
                 woSTR= self.IsValidNumber(wo,"wo") #valido wo
                 if(woSTR != "Ok"):
                     return woSTR
-
-                QSTR= self.IsValidNumber(Q,"Q") #valido Q
-                if(QSTR != "Ok"):
-                    return QSTR
 
 
                 if(fil==ap.BP):
