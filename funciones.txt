@@ -1,0 +1,10 @@
+    def dynamicRange(self,index,VoutMAx,VinMin):
+        VinMax=(VoutMAx)/(calcMaxGain(self.stages[i]))
+        Rd = 20*math.log10(VinMax/VinMin)
+        return
+
+    def export(self):
+        f = open("tfFinal.txt","w+")
+        f.write(self.total_transf)
+        f.close()
+        return

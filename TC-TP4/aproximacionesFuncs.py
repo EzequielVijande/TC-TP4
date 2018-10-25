@@ -33,6 +33,7 @@ class AproxAnalysis(object):
         self.wrg = wrg
         self.gamma = gamma
         self.nMode = 'normal'
+        self.nExceeded = False
         if (self.type == 'BP') or (self.type == 'BR'):
             self.b = (self.wpPlus-self.wpMinus)/(math.sqrt(self.wpPlus*self.wpMinus))
         self.wsnCalc()
@@ -63,46 +64,32 @@ class AproxAnalysis(object):
                 wpf = self.wp
                 wo = (wsf**(self.a))*(wpf**(1-(self.a)))
             elif self.type == 'BP':
-                # calculo de B!!!
                 wsDelta = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*(self.wsPlus-self.wsMinus)
                 wpDelta = self.wpPlus-self.wpMinus
                 wo= (self.wpPlus*self.wpMinus)**(1/2)
                 self.b = (wsDelta**(self.a))*(wpDelta**(1-(self.a)))/wo
             elif self.type == 'BR':
-                # calculo de B!!!
                 wsDelta = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*(self.wsPlus-self.wsMinus)
                 wpDelta = self.wpPlus-self.wpMinus
                 wo= (self.wpPlus*self.wpMinus)**(1/2)
                 self.b = (wsDelta**(self.a))*(wpDelta**(1-(self.a)))/wo
         elif self.filterType == 'chebyshev':
-            if (self.type == 'LP'): # HACER CALCULOS BIEN
-                wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*self.ws
-                wpf = self.wp
-                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+            if (self.type == 'LP'):
+                wo = self.wp
             elif self.type == 'HP':
-                wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*self.ws
-                wpf = self.wp
-                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+                wo = self.wp
             elif self.type == 'BP':
-                # calculo de B!!!
                 wo= (self.wpPlus*self.wpMinus)**(1/2)
             elif self.type == 'BR':
-                # calculo de B!!!
                 wo= (self.wpPlus*self.wpMinus)**(1/2)
         elif self.filterType == 'inverseChebyshev':
-            if (self.type == 'LP'): # HACER CALCULOS BIEN
-                wsf = (((10**(self.Ap/10)-1)/(10**(self.As/10)-1))**(1/(2*self.n)))*self.ws
-                wpf = self.wp
-                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+            if (self.type == 'LP'):
+                wo = self.wp
             elif self.type == 'HP':
-                wsf = (((10**(self.As/10)-1)/(10**(self.Ap/10)-1))**(1/(2*self.n)))*self.ws
-                wpf = self.wp
-                wo = (wsf**(self.a))*(wpf**(1-(self.a)))
+                wo = self.wp
             elif self.type == 'BP':
-                # calculo de B!!!
                 wo= (self.wpPlus*self.wpMinus)**(1/2)
             elif self.type == 'BR':
-                # calculo de B!!!
                 wo= (self.wpPlus*self.wpMinus)**(1/2)
         return wo
 
@@ -163,6 +150,9 @@ class AproxAnalysis(object):
         self.epsilonButterworth()
         if self.nMode == 'normal':
             self.nButterworth()
+            if self.n > 20:
+                self.n = 20
+                self.nExceeded = True
         elif self.nMode == 'fixed':
             self.n = self.nUser
         elif self.nMode == 'range':
@@ -209,6 +199,9 @@ class AproxAnalysis(object):
         self.epsilonChebyshev()
         if self.nMode == 'normal':
             self.nChebyshev()
+            if self.n > 20:
+                self.n = 20
+                self.nExceeded = True
         elif self.nMode == 'fixed':
             self.n = self.nUser
         elif self.nMode == 'range':
@@ -253,6 +246,9 @@ class AproxAnalysis(object):
         self.epsilonChebyshevInverse()
         if self.nMode == 'normal':
             self.nChebyshevInverse()
+            if self.n > 20:
+                self.n = 20
+                self.nExceeded = True
         elif self.nMode == 'fixed':
             self.n = self.nUser
         elif self.nMode == 'range':
@@ -330,12 +326,16 @@ class AproxAnalysis(object):
             self.n = self.nUser
             AkArray = self.calcAkArray()
         if self.nMode == 'range':
-           if self.n > self.nMax:
+            if self.n > self.nMax:
                 self.n = self.nMax
                 AkArray = self.calcAkArray()
-           elif self.n < self.nMin:
+            elif self.n < self.nMin:
                 self.n = self.nMin
                 AkArray = self.calcAkArray()
+        if self.n > 20:
+            self.n = 20
+            AkArray = self.calcAkArray()
+            self.nExceeded = True
         #tengo el n correcto, desnormalizo
         for i in range(0,len(AkArray)):
             AkArray[len(AkArray)-1-i]=AkArray[len(AkArray)-1-i]*(self.tauZero**i)
@@ -394,12 +394,16 @@ class AproxAnalysis(object):
             self.n = self.nUser
             den = self.gaussDenGenerator()
         if self.nMode == 'range':
-           if self.n > self.nMax:
+            if self.n > self.nMax:
                 self.n = self.nMax
                 den = self.gaussDenGenerator()
-           elif self.n < self.nMin:
+            elif self.n < self.nMin:
                 self.n = self.nMin
                 den = self.gaussDenGenerator()
+        if self.n > 20:
+            self.n = 20
+            den = self.gaussDenGenerator()
+            self.nExceeded = True
         #tengo el n correcto, desnormalizo
         for i in range(0,len(den)):
             den[len(den)-1-i]=den[len(den)-1-i]*(self.tauZero**i)
@@ -433,6 +437,10 @@ class AproxAnalysis(object):
         self.nUser = int(num)
         return
 
+    def resetnExceeded(self):
+        self.nExceeded = False
+        return
+
     #Extras
     def CalcBodePlot(self,w,func):
         wFinal, magFinal, phaseFinal = signal.bode(func,w)
@@ -443,3 +451,5 @@ class AproxAnalysis(object):
         gdFinal = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
         gdFinal = np.append(gdFinal,gdFinal[len(gdFinal)-1])
         return w, gdFinal
+
+    
