@@ -303,7 +303,7 @@ class AproxAnalysis(object):
 
     # GAUSS
 
-    def besselAnalysis(self):
+    def gaussAnalysis(self):
         self.filterType = 'gauss'
         self.poles = []
         self.zeros = []
