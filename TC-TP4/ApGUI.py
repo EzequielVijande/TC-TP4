@@ -842,13 +842,10 @@ class ApGUI(object):
         self.RDString= StringVar() #Variable donde se guarda el rango dinamico
         self.RDString.set("Rango dinamico = ")
         self.OptionsFrame = LabelFrame(self.root, text="Opciones",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
-        self.OptionsFrame.pack(side="left",fill=BOTH,expand=True)
+        self.OptionsFrame.pack(side="right",fill=BOTH,expand=True)
         self.PrevButton= Button(master=self.OptionsFrame,text="Previous",command=self.prev_call
                                 ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.PrevButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
-        self.ExportButton= Button(master=self.OptionsFrame,text="Export H(s) as txt",command=self.export_call
-                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
-        self.ExportButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
         self.CreateStageButon= Button(master=self.OptionsFrame,text="Create Stage",command=self.create_stage_call
                                 ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.CreateStageButon.pack(side=BOTTOM,fill=BOTH,expand=True)
@@ -879,7 +876,7 @@ class ApGUI(object):
 
         #Seccion con la etapa seleccionada
         self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame,background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
-        self.StageGraphFrame.pack(side="right",fill=BOTH,expand=True)
+        self.StageGraphFrame.pack(side="left",fill=BOTH,expand=True)
         self.CurrentStageFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
         self.CurrentStageCanvas = FigureCanvasTkAgg(self.CurrentStageFig,master=self.StageGraphFrame)
         self.CurrentStageCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
@@ -896,19 +893,19 @@ class ApGUI(object):
         self.StageParamsFrame.pack(side="left")
         #fp
         self.TransfwpLabel= Label(master=self.StageParamsFrame,text="fp(Hz)",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.TransfwpLabel.pack()
+        self.TransfwpLabel.pack(fill=BOTH,expand=True)
         self.entry_Transfwz=Entry(master=self.StageParamsFrame,textvariable=self.fpString)
-        self.entry_Transfwz.pack()
+        self.entry_Transfwz.pack(fill=BOTH,expand=True)
         #H(0)
         self.G0Label= Label(master=self.StageParamsFrame,text="H(0)(dB)",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.G0Label.pack()
+        self.G0Label.pack(fill=BOTH,expand=True)
         self.entry_G0=Entry(master=self.StageParamsFrame,textvariable=self.G0String)
-        self.entry_G0.pack()
+        self.entry_G0.pack(fill=BOTH,expand=True)
         #Qp
         self.QpLabel= Label(master=self.StageParamsFrame,text="Qp",background=BUTTON_COLOR,fg=BUTTON_FONT_COLOR)
-        self.QpLabel.pack()
+        self.QpLabel.pack(fill=BOTH,expand=True)
         self.entry_Qp=Entry(master=self.StageParamsFrame,textvariable=self.QpString)
-        self.entry_Qp.pack()
+        self.entry_Qp.pack(fill=BOTH,expand=True)
 
         self.TotalCheck = Checkbutton(master=self.StageParamsFrame, text="Cascada",
                         variable=self.FullTransferFunction,onvalue=1, offvalue=0,command=self.full_transfer_call,
@@ -988,3 +985,6 @@ class ApGUI(object):
         self.RDString.set("Rango dinamico = "+str(int(Rd)))
     def full_transfer_call(self):
         self.Ev=TRANSFER_FUNCTION_CHECK_EV
+    def DeleteStageButton(self,i):
+        aux= self.StagesButtons.pop(i)
+        aux.destroy()

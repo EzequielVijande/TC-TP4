@@ -741,3 +741,5 @@ class Manager(object):
             i=(self.GUI.StageVar.get())-1
             f,mag = self.CascadeManager.CalculateBode(i)
             self.GUI.GraphSelectedStage(f,mag,xmin,xmax,ymin,ymax,i+1)
+    def OnDeleteStageEv(self):
+        return
