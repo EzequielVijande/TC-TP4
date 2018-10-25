@@ -48,6 +48,7 @@ CHANGED_V_LIMITS_EV=12
 CHANGED_STAGE_PARAMS=13
 RESET=14
 EXPORT=15
+TRANSFER_FUNCTION_CHECK_EV=16
 #Grafica activa
 ATT=1
 ATT_N=2
@@ -805,9 +806,6 @@ class ApGUI(object):
         if(self.q_is_in_plot):
             self.q_container.remove()
             self.q_is_in_plot=False
-        #if(self.q_container):
-          #      del self.q_container
-            #    self.q_container=[]
     #
     #
     #
@@ -829,6 +827,7 @@ class ApGUI(object):
         self.InitializeSecondStage()
 
     def InitializeSecondStage(self):
+        self.FullTransferFunction= IntVar()
         self.StageVar= IntVar()
         matplotlib.rcParams.update({'font.size': 8})
         self.PlaceStagesMenu()
@@ -875,13 +874,13 @@ class ApGUI(object):
         self.QpString= StringVar()
         self.G0String= StringVar()
 
-        self.TransferGraphsFrame= LabelFrame(master=self.root, text="Ganancias",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
+        self.TransferGraphsFrame= LabelFrame(master=self.root, text="Graficos de Ganancias",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.TransferGraphsFrame.pack(side="left",fill=BOTH,expand=True)
 
         #Seccion con la etapa seleccionada
-        self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Etapa seleccionada",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
+        self.StageGraphFrame= LabelFrame(master=self.TransferGraphsFrame,background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
         self.StageGraphFrame.pack(side="right",fill=BOTH,expand=True)
-        self.CurrentStageFig=Figure(figsize=(0.01,0.01), dpi=200,facecolor="lavender")
+        self.CurrentStageFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender",constrained_layout=True)
         self.CurrentStageCanvas = FigureCanvasTkAgg(self.CurrentStageFig,master=self.StageGraphFrame)
         self.CurrentStageCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
         self.CurrentStageCanvas.get_tk_widget().pack(side="right",fill=BOTH,expand=True)
@@ -911,20 +910,10 @@ class ApGUI(object):
         self.entry_Qp=Entry(master=self.StageParamsFrame,textvariable=self.QpString)
         self.entry_Qp.pack()
 
-        #Seccion con la ganancia de todas las etapas en cascada
-        self.CascadeGraphFrame= LabelFrame(master=self.TransferGraphsFrame, text="Ganancia total(cascada)",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
-        self.CascadeGraphFrame.pack(side="left",fill=BOTH,expand=True)
-        self.TransfTotalFig=Figure(figsize=(0.1,0.1), dpi=200,facecolor="lavender")
-        self.TransfTotalCanvas = FigureCanvasTkAgg(self.TransfTotalFig,master=self.CascadeGraphFrame)
-        self.TransfTotalCanvas.get_tk_widget().config( width=(GRAPH_WIDTH/3), height=(GRAPH_HEIGHT/3))
-        self.TransfTotalCanvas.get_tk_widget().pack(side=TOP,fill=BOTH,expand=True)
-        self.AxesTotalTransf = self.TransfTotalFig.add_subplot(111)
-        
-        #Creo una toolbar para la grafica de cascada
-        self.TransfTotToolbarFrame = Frame(master=self.CascadeGraphFrame)
-        self.TransfTotToolbarFrame.pack(side=TOP,fill=BOTH,expand=True)
-        self.TransfTotToolbar = NavigationToolbar2Tk(self.TransfTotalCanvas, self.TransfTotToolbarFrame)
-        self.TransfTotToolbar.pack(fill=BOTH,expand=True)
+        self.TotalCheck = Checkbutton(master=self.StageParamsFrame, text="Cascada",
+                        variable=self.FullTransferFunction,onvalue=1, offvalue=0,command=self.full_transfer_call,
+                        background=BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
+        self.TotalCheck.pack()
 
     def PlaceStagesMenu(self):
         self.StagesMenuFrame= LabelFrame(self.root, text="Etapas",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
@@ -972,15 +961,15 @@ class ApGUI(object):
         self.SpecsFrame.pack(anchor=NW,fill=BOTH,expand=True)
         self.SliderFrame.pack(side=LEFT,anchor=NW,fill=BOTH,expand=True)
     def GraphTotalTransference(self,f,mag,xmin,xmax,ymin,ymax):
-        self.AxesTotalTransf.cla()
-        self.AxesTotalTransf.set_xscale("log")
-        self.AxesTotalTransf.set_title("Ganancia en cascada")
-        self.AxesTotalTransf.set_xlabel("f(Hz)")
-        self.AxesTotalTransf.set_ylabel("|H(f)|(dB)")
-        self.AxesTotalTransf.set_xlim(left=xmin,right=xmax)
-        self.AxesTotalTransf.set_ylim(bottom=ymin,top=ymax)
-        self.AxesTotalTransf.semilogx(f,mag)
-        self.AxesTotalTransf.grid(b=True,axis='both')
+        self.AxesSelectedStage.cla()
+        self.AxesSelectedStage.set_xscale("log")
+        self.AxesSelectedStage.set_title("Ganancia en cascada")
+        self.AxesSelectedStage.set_xlabel("f(Hz)")
+        self.AxesSelectedStage.set_ylabel("|H(f)|(dB)")
+        self.AxesSelectedStage.set_xlim(left=xmin,right=xmax)
+        self.AxesSelectedStage.set_ylim(bottom=ymin,top=ymax)
+        self.AxesSelectedStage.semilogx(f,mag)
+        self.AxesSelectedStage.grid(b=True,axis='both')
 
     def GraphSelectedStage(self,f,mag,xmin,xmax,ymin,ymax,i):
         self.AxesSelectedStage.cla()
@@ -997,3 +986,5 @@ class ApGUI(object):
         self.QpString.set(str(int(qp)))
         self.G0String.set(str(int(G0)))
         self.RDString.set("Rango dinamico = "+str(int(Rd)))
+    def full_transfer_call(self):
+        self.Ev=TRANSFER_FUNCTION_CHECK_EV

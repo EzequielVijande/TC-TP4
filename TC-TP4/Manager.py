@@ -62,6 +62,8 @@ class Manager(object):
                 self.OnChangedStageParams()
             elif(ev == ap.EXPORT):
                 self.OnExportEv()
+            elif(ev== ap.TRANSFER_FUNCTION_CHECK_EV):
+                self.OnTransCheck()
             if(ev == ap.NO_EV):
                 self.OnNoEv()
 
@@ -105,7 +107,6 @@ class Manager(object):
             self.GUI.Change_to_stage2()
             self.GUI.SetStagesButtons(self.CascadeManager.GetNumberOfStages())
             xmin,xmax,ymin,ymax = self.GraphLimitsSecondStage()
-            self.GUI.GraphTotalTransference(self.data.f,self.data.mag,xmin,xmax,ymin,ymax)
             self.GraphSelectedStage(xmin,xmax,ymin,ymax)
         else:
              self.GUI.ShowMessage("Es necesario especificar una plantilla valida primero")
@@ -725,4 +726,18 @@ class Manager(object):
         self.GUI.UpdateParameters(fp,qp,G0,Rd)
         f,mag = self.CascadeManager.CalculateBode(i)
         xmin,xmax,ymin,ymax= self.GraphLimitsSecondStage()
-        self.GUI.GraphSelectedStage(f,mag,xmin,xmax,ymin,ymax,i+1)
+        if(self.GUI.FullTransferFunction.get()):
+            return
+        else:
+            self.GUI.GraphSelectedStage(f,mag,xmin,xmax,ymin,ymax,i+1)
+
+    def OnExportEv(self):
+        self.CascadeManager.export()
+    def OnTransCheck(self):
+        xmin,xmax,ymin,ymax = self.GraphLimitsSecondStage()
+        if(self.GUI.FullTransferFunction.get()):
+            self.GUI.GraphTotalTransference(self.data.f,self.data.mag,xmin,xmax,ymin,ymax)
+        else:
+            i=(self.GUI.StageVar.get())-1
+            f,mag = self.CascadeManager.CalculateBode(i)
+            self.GUI.GraphSelectedStage(f,mag,xmin,xmax,ymin,ymax,i+1)

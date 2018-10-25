@@ -109,7 +109,7 @@ class StagesCalculator(object):
 
     def export(self):
         f = open("tfFinal.txt","w+")
-        f.write(self.total_transf)
+        print(self.total_transf,file="tfFinal.txt")
         f.close()
         return
     def CalculateBode(self,index):
