@@ -32,6 +32,10 @@ class AproxAnalysis(object):
         self.tauZero = tauZero
         self.wrg = wrg
         self.gamma = gamma
+        self.nMode = 'normal'
+        self.nMin = 0
+        self.nMax = 0
+        self.nUser = 0
         if (self.type == 'BP') or (self.type == 'BR'):
             self.b = (self.wpPlus-self.wpMinus)/(math.sqrt(self.wpPlus*self.wpMinus))
         self.wsnCalc()
@@ -149,12 +153,22 @@ class AproxAnalysis(object):
 
     # BUTTERWORTH
 
-    def butterworthAnalysis(self):
+    def butterworthAnalysis(self,type):
+        self.nMode = type
         self.filterType = 'butterworth'
         self.poles = []
         self.zeros = []
         self.epsilonButterworth()
-        self.nButterworth()
+        if self.nMode == 'normal':
+            self.nButterworth()
+        elif self.nMode == 'fixed':
+            self.n = self.nUser
+        elif self.nMode == 'range':
+            self.nButterworth()
+            if self.n > self.nMax:
+                self.n = self.nMax
+            elif self.n < self.nMin:
+                self.n = self.nMin
         self.polesButterworth()
         self.createFunction()
         return
@@ -185,12 +199,22 @@ class AproxAnalysis(object):
 
     # CHEBYSHEV
 
-    def chebyshevAnalysis(self):
+    def chebyshevAnalysis(self,type):
+        self.nMode = type
         self.filterType = 'chebyshev'
         self.poles = []
         self.zeros = []
         self.epsilonChebyshev()
-        self.nChebyshev()
+        if self.nMode == 'normal':
+            self.nChebyshev()
+        elif self.nMode == 'fixed':
+            self.n = self.nUser
+        elif self.nMode == 'range':
+            self.nChebyshev()
+            if self.n > self.nMax:
+                self.n = self.nMax
+            elif self.n < self.nMin:
+                self.n = self.nMin
         self.polesChebyshev()
         self.createFunction()
         return
@@ -219,12 +243,22 @@ class AproxAnalysis(object):
 
     # CHEBYSHEV INVERSE
 
-    def chebyshevInverseAnalysis(self):
+    def chebyshevInverseAnalysis(self,type):
+        self.nMode = type
         self.filterType = 'inverseChebyshev'
         self.poles = []
         self.zeros = []
         self.epsilonChebyshevInverse()
-        self.nChebyshevInverse()
+        if self.nMode == 'normal':
+            self.nChebyshevInverse()
+        elif self.nMode == 'fixed':
+            self.n = self.nUser
+        elif self.nMode == 'range':
+            self.nChebyshevInverse()
+            if self.n > self.nMax:
+                self.n = self.nMax
+            elif self.n < self.nMin:
+                self.n = self.nMin
         self.polesChebyshevInverse()
         self.zerosChebyshevInverse()
         self.createFunction()
@@ -262,7 +296,8 @@ class AproxAnalysis(object):
 
     # BESSEL
 
-    def besselAnalysis(self):
+    def besselAnalysis(self,type):
+        self.nMode = type
         self.filterType = 'bessel'
         self.poles = []
         self.zeros = []
@@ -273,21 +308,32 @@ class AproxAnalysis(object):
         self.n = 1
         condition = False
         wrgn= self.wrg*self.tauZero
-        while condition == False:
+        if self.nMode == 'normal' or self.nMode == 'range':
+            while condition == False:
+                AkArray = self.calcAkArray()
+                #ahora creo funcion normalizada
+                self.normFunction = signal.TransferFunction([1],AkArray)
+                #calculo retardo de grupo y evaluo en wrgn
+                w, h = signal.freqs([1], AkArray)
+                groupDelay = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
+                diff = abs(w - wrgn)
+                diff = list(diff)
+                index = diff.index(min(diff))
+                tauWrgn = groupDelay[index]
+                if tauWrgn >= 1-self.gamma:
+                    condition = True
+                else:
+                    self.n = self.n + 1
+        elif self.nMode == 'fixed':
+            self.n = self.nUser
             AkArray = self.calcAkArray()
-            #ahora creo funcion normalizada
-            self.normFunction = signal.TransferFunction([1],AkArray)
-            #calculo retardo de grupo y evaluo en wrgn
-            w, h = signal.freqs([1], AkArray)
-            groupDelay = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
-            diff = abs(w - wrgn)
-            diff = list(diff)
-            index = diff.index(min(diff))
-            tauWrgn = groupDelay[index]
-            if tauWrgn >= 1-self.gamma:
-                condition = True
-            else:
-                self.n = self.n + 1
+        if self.nMode == 'range':
+           if self.n > self.nMax:
+                self.n = self.nMax
+                AkArray = self.calcAkArray()
+           elif self.n < self.nMin:
+                self.n = self.nMin
+                AkArray = self.calcAkArray()
         #tengo el n correcto, desnormalizo
         for i in range(0,len(AkArray)):
             AkArray[len(AkArray)-1-i]=AkArray[len(AkArray)-1-i]*(self.tauZero**i)
@@ -303,38 +349,55 @@ class AproxAnalysis(object):
 
     # GAUSS
 
-    def gaussAnalysis(self):
+    def gaussAnalysis(self,type):
+        self.nMode = type
         self.filterType = 'gauss'
         self.poles = []
         self.zeros = []
         self.createGaussFunction()
         return
 
-    def createGroupDelayFunction(self):
+    def gaussDenGenerator(self):
+        coef = self.gaussPolynomialCoef()
+        auxPoles = np.roots(coef)
+        poles = []
+        for i in range(0,auxPoles.size):
+            if auxPoles[i].real < 0:
+                poles.append(auxPoles[i])
+        pzfunc = signal.ZerosPolesGain([],poles,1)
+        self.normFunction = pzfunc.to_tf()
+        den = self.normFunction.den
+        return den
+
+    def createGaussFunction(self):
         self.n = 1
         condition = False
         wrgn= self.wrg*self.tauZero
-        while condition == False:
-            #armo polinomio de orden n y calculo polos
-            coef = gaussPolynomialCoef()
-            poles = numpy.roots(p)
-            for i in range(0,len(poles)):
-                if poles[i].real >= 0:
-                    poles.remove(i)
-            pzfunc = signal.ZerosPolesGain([],poles,1)
-            self.normFunction = pzfunc.to_tf()
-            den = self.normFunction.den
-            #calculo retardo de grupo y evaluo en wrgn
-            w, h = signal.freqs([1], den)
-            groupDelay = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
-            diff = abs(w - wrgn)
-            diff = list(diff)
-            index = diff.index(min(diff))
-            tauWrgn = groupDelay[index]
-            if tauWrgn >= 1-self.gamma:
-                condition = True
-            else:
-                self.n = self.n + 1
+        if self.nMode == 'normal' or self.nMode == 'range':
+            while condition == False:
+                #armo polinomio de orden n y calculo polos
+                den = self.gaussDenGenerator(self)
+                #calculo retardo de grupo y evaluo en wrgn
+                w, h = signal.freqs([1], den)
+                groupDelay = -np.diff(np.unwrap(np.angle(h))) / np.diff(w)
+                diff = abs(w - wrgn)
+                diff = list(diff)
+                index = diff.index(min(diff))
+                tauWrgn = groupDelay[index-1]
+                if tauWrgn >= 1-self.gamma:
+                    condition = True
+                else:
+                    self.n = self.n + 1
+        elif self.nMode == 'fixed':
+            self.n = self.nUser
+            den = self.gaussDenGenerator(self)
+        if self.nMode == 'range':
+           if self.n > self.nMax:
+                self.n = self.nMax
+                den = self.gaussDenGenerator(self)
+           elif self.n < self.nMin:
+                self.n = self.nMin
+                den = self.gaussDenGenerator(self)
         #tengo el n correcto, desnormalizo
         for i in range(0,len(den)):
             den[len(den)-1-i]=den[len(den)-1-i]*(self.tauZero**i)
@@ -384,6 +447,14 @@ class AproxAnalysis(object):
 
     def getNormFunction(self):
         return self.normFunction
+
+    # Setter 
+
+    def setnRange(self,nMin,nMax):
+        return
+    
+    def setnFixed(self,n):
+        return
 
     #Extras
     def CalcBodePlot(self,w,func):
