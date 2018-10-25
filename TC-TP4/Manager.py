@@ -18,6 +18,8 @@ class Manager(object):
         self.data=data
         self.GUI=GUI
         self.estado= ETAPA1
+        self.vmin=0.001
+        self.vmax=13.5
 
     #Getters
     def getState(self):
@@ -48,10 +50,6 @@ class Manager(object):
         elif(self.estado == ETAPA2):
             if(ev == ap.PREV_EV):
                 self.OnPrevEv()
-            elif(ev == ap.SAVE_EV):
-                self.OnSave2Ev()
-            elif(ev == ap.LOAD_EV):
-                self.OnLoad2Ev()
             elif(ev == ap.QUIT_EV):
                 self.OnQuitEv()
             elif(ev == ap.CREATE_STAGE_EV):
@@ -60,14 +58,12 @@ class Manager(object):
                 self.OnDeleteStageEv()
             elif(ev == ap.SELECT_STAGE_EV):
                 self.OnSelectStageEv()
-            elif(ev == ap.CHANGED_V_LIMITS_EV):
-                self.OnChangedV()
             elif(ev == ap.CHANGED_STAGE_PARAMS):
                 self.OnChangedStageParams()
-            elif(ev == ap.RESET):
-                self.OnResetEv()
             elif(ev == ap.EXPORT):
                 self.OnExportEv()
+            if(ev == ap.NO_EV):
+                self.OnNoEv()
 
         self.GUI.EventSolved()    #Settea que ya no hay evento a resolver
 
@@ -725,8 +721,8 @@ class Manager(object):
 
     def OnSelectStageEv(self):
         i=(self.GUI.StageVar.get())-1
-        fp,qp,G0 = self.CascadeManager.UpdateParameters(i)
-        self.GUI.UpdateParameters(fp,qp,G0)
+        fp,qp,G0,Rd = self.CascadeManager.UpdateParameters(i,self.vmin,self.vmax)
+        self.GUI.UpdateParameters(fp,qp,G0,Rd)
         f,mag = self.CascadeManager.CalculateBode(i)
         xmin,xmax,ymin,ymax= self.GraphLimitsSecondStage()
         self.GUI.GraphSelectedStage(f,mag,xmin,xmax,ymin,ymax,i+1)

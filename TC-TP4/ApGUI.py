@@ -815,9 +815,9 @@ class ApGUI(object):
 
     def PlaceOptions(self):
         self.vMinString= StringVar() #Valor minimo posible a la entrada
-        self.vMinString.set("10")
+        self.vMinString.set("vMin = 10mV")
         self.vMaxString= StringVar() #Valor maximo posible a la salida
-        self.vMaxString.set("14")
+        self.vMaxString.set("vMax = 14V")
         self.RDString= StringVar() #Variable donde se guarda el rango dinamico
         self.RDString.set("Rango dinamico = ")
         self.OptionsFrame = LabelFrame(self.root, text="Opciones",background=FRAME_COLOR,fg=FRAME_TEXT_COLOR)
@@ -825,12 +825,6 @@ class ApGUI(object):
         self.PrevButton= Button(master=self.OptionsFrame,text="Previous",command=self.prev_call
                                 ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.PrevButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
-        self.Save2Button= Button(master=self.OptionsFrame,text="Save",command=self.save_call
-                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
-        self.Save2Button.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
-        self.Load2Button= Button(master=self.OptionsFrame,text="Load",command=self.load_call
-                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
-        self.Load2Button.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
         self.ExportButton= Button(master=self.OptionsFrame,text="Export H(s) as txt",command=self.export_call
                                 ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.ExportButton.pack(anchor=SW,side=BOTTOM,fill=BOTH,expand=True)
@@ -840,20 +834,13 @@ class ApGUI(object):
         self.DeleteStageButon= Button(master=self.OptionsFrame,text="Delete Stage",command=self.delete_stage_call
                                 ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.DeleteStageButon.pack(side=BOTTOM,fill=BOTH,expand=True)
-        self.ResetStageButon= Button(master=self.OptionsFrame,text="Reset",command=self.reset_stage_call
-                                ,background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
-        self.ResetStageButon.pack(side=BOTTOM,fill=BOTH,expand=True)
         
 
-        self.VminLabel= Label(master=self.OptionsFrame,text="Vmin(mV)",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
+        self.VminLabel= Label(master=self.OptionsFrame,textvariable=self.vMinString,background=BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.VminLabel.pack(anchor=SW,fill=BOTH,expand=True)
-        self.entry_Vmin=Entry(master=self.OptionsFrame,textvariable=self.vMinString)
-        self.entry_Vmin.pack(anchor=SE,fill=BOTH,expand=True)
 
-        self.VmaxLabel= Label(master=self.OptionsFrame,text="Vmax(V)",background=GRAPH_BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
+        self.VmaxLabel= Label(master=self.OptionsFrame,textvariable=self.vMaxString,background=BUTTON_COLOR,fg=GRAPH_BUTTON_TEXT_COLOR)
         self.VmaxLabel.pack(anchor=SW,fill=BOTH,expand=True)
-        self.entry_Vmax=Entry(master=self.OptionsFrame,textvariable=self.vMaxString)
-        self.entry_Vmax.pack(anchor=SE,fill=BOTH,expand=True)
 
         self.RangoDText= Label(master=self.OptionsFrame,bg=BUTTON_COLOR,textvariable=self.RDString,
                                fg=BUTTON_FONT_COLOR)
@@ -983,7 +970,8 @@ class ApGUI(object):
         self.AxesSelectedStage.set_ylim(bottom=ymin,top=ymax)
         self.AxesSelectedStage.semilogx(f,mag)
         self.AxesSelectedStage.grid(b=True,axis='both')
-    def UpdateParameters(self,fp,qp,G0):
+    def UpdateParameters(self,fp,qp,G0,Rd):
         self.fpString.set(str(int(fp)))
         self.QpString.set(str(int(qp)))
         self.G0String.set(str(int(G0)))
+        self.RDString.set("Rango dinamico = "+str(int(Rd)))

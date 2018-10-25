@@ -67,6 +67,13 @@ class StagesCalculator(object):
         return Mj
 
     #Funciones de calculo
+    def dynamicRange(self,index,VoutMAx,VinMin):
+        aux=self.calcMaxGain(self.stages[index])
+        G=10**(aux/20)
+        VinMax=(VoutMAx)/(G)
+        Rd = 20*math.log10(VinMax/VinMin)
+        return Rd
+
     def CalculateDistance(self,x1,y1,x2,y2):
         delta_x= abs(x1-x2)
         delta_y= abs(y1-y2)
@@ -100,13 +107,18 @@ class StagesCalculator(object):
     def GetNumberOfStages(self):
         return len(self.stages)
 
+    def export(self):
+        f = open("tfFinal.txt","w+")
+        f.write(self.total_transf)
+        f.close()
+        return
     def CalculateBode(self,index):
         #Calcula lo necesario para graficar el bode de la etapa i-esima
         w= np.logspace(-1, 7, 90000, endpoint=True)
         w,mag,fase= signal.bode( (self.stages[index]),w)
         return (w/(2*math.pi)),mag
 
-    def UpdateParameters(self,index):
+    def UpdateParameters(self,index,vmin,vmax):
         transf_act= self.stages[index]
         poles=transf_act.poles
         zeros=transf_act.zeros
@@ -116,7 +128,8 @@ class StagesCalculator(object):
         num= (transf_act.to_tf()).num
         den= (transf_act.to_tf()).den
         k=num[len(num)-1]/den[len(den)-1]
-        return fp,Qp,k
+        Rd= self.dynamicRange(index,vmax,vmin)
+        return fp,Qp,k,Rd
 
 
 
