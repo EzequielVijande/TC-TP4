@@ -1,6 +1,6 @@
 from scipy import signal
 import math
-import numpy
+import numpy as np
 import control as c
 
 class StagesCalculator(object):
@@ -99,5 +99,11 @@ class StagesCalculator(object):
         self.stages=funcs
     def GetNumberOfStages(self):
         return len(self.stages)
+
+    def CalculateBode(self,index):
+        #Calcula lo necesario para graficar el bode de la etapa i-esima
+        w= np.logspace(-1, 7, 90000, endpoint=True)
+        w,mag,fase= signal.bode( (self.stages[index]),w)
+        return (w/(2*math.pi)),mag
 
 

@@ -110,6 +110,7 @@ class Manager(object):
             self.GUI.SetStagesButtons(self.CascadeManager.GetNumberOfStages())
             xmin,xmax,ymin,ymax = self.GraphLimitsSecondStage()
             self.GUI.GraphTotalTransference(self.data.f,self.data.mag,xmin,xmax,ymin,ymax)
+            self.GraphSelectedStage(xmin,xmax,ymin,ymax)
         else:
              self.GUI.ShowMessage("Es necesario especificar una plantilla valida primero")
 
@@ -717,3 +718,7 @@ class Manager(object):
                 ymin=-40
                 ymax=0
                 return xmin,xmax,ymin,ymax
+    def GraphSelectedStage(self, xmin,xmax,ymin,ymax):
+        i=(self.GUI.StageVar.get())-1
+        f,mag = self.CascadeManager.CalculateBode(i)
+        self.GUI.GraphSelectedStage(f,mag,xmin,xmax,ymin,ymax,i+1)

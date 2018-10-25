@@ -807,6 +807,7 @@ class ApGUI(object):
         self.InitializeSecondStage()
 
     def InitializeSecondStage(self):
+        self.StageVar= IntVar()
         matplotlib.rcParams.update({'font.size': 8})
         self.PlaceStagesMenu()
         self.PlaceTransferFunctionGraph()
@@ -936,10 +937,15 @@ class ApGUI(object):
         self.StagesButtons=[]
         for i in range(1,n+1):
             aux= "Etapa "+str(i)
-            self.StagesButtons.append(Button(master= self.StagesMenuFrame,text=aux,bg=BUTTON_COLOR))
+            self.StagesButtons.append(Radiobutton(master= self.StagesMenuFrame,text=aux,bg=BUTTON_COLOR,
+                                                  indicatoron=False,variable=self.StageVar,value=i,
+                                                  command=self.select_stage_call))
             self.StagesButtons[i-1].pack(side="left",fill=BOTH,expand=True)
+        self.StagesButtons[0].select()
 
     #Callbacks de la segunda etapa
+    def select_stage_call(self):
+        self.Ev=SELECT_STAGE_EV
     def export_call(self):
         self.Ev=EXPORT
     
